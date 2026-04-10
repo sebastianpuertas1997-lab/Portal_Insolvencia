@@ -6,68 +6,58 @@
 <title>Seguimiento — Colombia Abogados</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
 <style>
-:root{--navy:#002855;--navy-l:#003d80;--navy-d:#001a3a;--gold:#c9a84c;--gold-l:#f5e6b8;--gold-d:#a68a3e;--bg:#f4f6f9;--white:#fff;--muted:#64748b;--light:#e8ecf2;--success:#16a34a;--success-bg:#f0fdf4;--warn:#d97706;--warn-bg:#fffbeb;--danger:#dc2626;--danger-bg:#fef2f2}
+:root{--navy:#002855;--navy-l:#003d80;--navy-d:#001a3a;--gold:#c9a84c;--gold-l:#f5e6b8;--bg:#f4f6f9;--white:#fff;--muted:#64748b;--light:#e8ecf2;--ok:#16a34a;--ok-bg:#f0fdf4;--warn:#d97706;--warn-bg:#fffbeb;--err:#dc2626}
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'DM Sans',sans-serif;background:var(--bg);color:#1a1a2e;min-height:100vh;-webkit-font-smoothing:antialiased}
  
-/* LOGIN */
 .login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(160deg,var(--navy-d),var(--navy));padding:24px}
 .login-box{text-align:center;max-width:380px;width:100%}
 .login-logo{width:72px;height:72px;border-radius:22px;background:linear-gradient(135deg,var(--navy),var(--navy-l));display:flex;align-items:center;justify-content:center;margin:0 auto 24px;font-size:32px;box-shadow:0 12px 40px rgba(0,40,85,0.5)}
 .login-box h1{font-family:'Playfair Display',serif;font-size:26px;color:#fff;margin-bottom:6px}
 .login-box .sub{color:var(--gold);font-size:11px;letter-spacing:3px;text-transform:uppercase;margin-bottom:36px}
-.login-box input{width:100%;padding:18px 20px;border-radius:16px;border:2px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.06);font-size:18px;outline:none;text-align:center;font-family:'DM Sans';font-weight:600;letter-spacing:3px;color:#fff;transition:border-color 0.2s}
+.login-box input{width:100%;padding:18px 20px;border-radius:16px;border:2px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.06);font-size:18px;outline:none;text-align:center;font-family:'DM Sans';font-weight:600;letter-spacing:3px;color:#fff}
 .login-box input:focus{border-color:var(--gold)}
 .login-box input::placeholder{color:rgba(255,255,255,0.25);letter-spacing:1px;font-size:14px}
-.login-box button{width:100%;margin-top:16px;padding:16px;border-radius:14px;border:none;background:var(--gold);color:var(--navy-d);font-weight:800;font-size:15px;cursor:pointer;box-shadow:0 4px 20px rgba(201,168,76,0.3)}
-.login-box button:active{transform:scale(0.98)}
-.err{color:#ff6b6b;font-size:13px;margin-top:12px}
-.loading{color:var(--gold);font-size:13px;margin-top:16px}
+.login-box button{width:100%;margin-top:16px;padding:16px;border-radius:14px;border:none;background:var(--gold);color:var(--navy-d);font-weight:800;font-size:15px;cursor:pointer}
+.login-err{color:#ff6b6b;font-size:13px;margin-top:12px}
+.login-load{color:var(--gold);font-size:13px;margin-top:16px}
  
-/* PORTAL */
 .portal{display:none}
-.hdr{background:linear-gradient(135deg,var(--navy-d),var(--navy));color:#fff;padding:24px 20px 28px}
-.hdr-inner{max-width:680px;margin:0 auto}
-.back{background:none;border:none;color:rgba(255,255,255,0.4);font-size:13px;cursor:pointer;font-family:'DM Sans';margin-bottom:16px;padding:4px 0}
-.hdr-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+ 
+/* HEADER */
+.hdr{background:linear-gradient(135deg,var(--navy-d),var(--navy));color:#fff;padding:24px 20px 0}
+.hdr-in{max-width:700px;margin:0 auto}
+.back{background:none;border:none;color:rgba(255,255,255,0.4);font-size:13px;cursor:pointer;font-family:'DM Sans';margin-bottom:14px;padding:4px 0}
+.hdr-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
 .hdr-brand{font-size:10px;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:3px}
 .hdr h1{font-family:'Playfair Display',serif;font-size:24px;margin:6px 0 4px;line-height:1.2}
 .hdr-sub{font-size:13px;color:rgba(255,255,255,0.5)}
 .ring{width:62px;height:62px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .ring-in{width:48px;height:48px;border-radius:50%;background:var(--navy-d);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800}
  
-/* DEADLINE BANNER */
-.dl-banner{margin-top:20px;border-radius:14px;padding:16px 18px;display:none}
-.dl-banner.show{display:block}
-.dl-banner.ok{background:rgba(201,168,76,0.12);border:1px solid rgba(201,168,76,0.3)}
-.dl-banner.warn{background:rgba(217,119,6,0.12);border:1px solid rgba(217,119,6,0.3)}
-.dl-banner.danger{background:rgba(220,38,38,0.12);border:1px solid rgba(220,38,38,0.3)}
-.dl-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:2px;margin-bottom:6px}
-.dl-title{font-size:16px;font-weight:700;margin-bottom:4px}
-.dl-desc{font-size:12px;color:rgba(255,255,255,0.6);margin-bottom:10px;line-height:1.5}
-.dl-bar{height:8px;border-radius:4px;background:rgba(255,255,255,0.1);overflow:hidden}
-.dl-fill{height:100%;border-radius:4px;transition:width 0.6s}
-.dl-nums{display:flex;justify-content:space-between;font-size:12px;margin-top:6px;font-weight:600}
- 
-/* MILESTONE BAR */
-.ms{margin-top:24px}
-.ms-track-wrap{position:relative;height:40px;margin-bottom:4px}
-.ms-line{position:absolute;top:14px;left:8px;right:8px;height:4px;background:rgba(255,255,255,0.1);border-radius:2px}
-.ms-prog{position:absolute;top:14px;left:8px;height:4px;background:var(--gold);border-radius:2px;transition:width 0.6s}
-.ms-dots{display:flex;justify-content:space-between;position:relative;padding:0 0}
-.ms-d{text-align:center;flex:1}
-.ms-c{width:28px;height:28px;margin:0 auto;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;transition:all 0.3s}
-.ms-c.done{background:var(--gold);color:var(--navy-d)}
-.ms-c.act{background:#fff;color:var(--navy);box-shadow:0 0 0 4px rgba(201,168,76,0.3)}
-.ms-c.pend{background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.3);border:2px solid rgba(255,255,255,0.15)}
-.ms-n{font-size:9px;margin-top:5px;line-height:1.3;color:rgba(255,255,255,0.45);font-weight:500}
-.ms-n.done{color:var(--gold)}
-.ms-n.act{color:#fff;font-weight:700}
+/* MACRO TRACKING - RAPPI STYLE */
+.macro{padding:28px 0 24px}
+.macro-track{display:flex;align-items:flex-start;justify-content:space-between;position:relative}
+.macro-line{position:absolute;top:28px;left:60px;right:60px;height:4px;background:rgba(255,255,255,0.1);border-radius:2px}
+.macro-prog{position:absolute;top:28px;left:60px;height:4px;background:var(--gold);border-radius:2px;transition:width 0.6s}
+.macro-step{text-align:center;position:relative;z-index:2;flex:1;max-width:180px}
+.macro-icon{width:56px;height:56px;border-radius:50%;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;font-size:22px;transition:all 0.3s}
+.macro-icon.done{background:var(--ok);color:#fff;box-shadow:0 4px 16px rgba(22,163,74,0.3)}
+.macro-icon.act{background:var(--gold);color:var(--navy-d);box-shadow:0 0 0 5px rgba(201,168,76,0.25),0 4px 16px rgba(201,168,76,0.3)}
+.macro-icon.pend{background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.3);border:2px solid rgba(255,255,255,0.15)}
+.macro-label{font-size:12px;font-weight:700;color:#fff;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px}
+.macro-label.pend{color:rgba(255,255,255,0.35)}
+.macro-date{font-size:12px;color:rgba(255,255,255,0.7);font-weight:600}
+.macro-date.pend{color:rgba(255,255,255,0.25)}
+.macro-deadline{font-size:10px;margin-top:3px;font-weight:600;padding:2px 10px;border-radius:10px;display:inline-block}
+.macro-deadline.ok{background:rgba(201,168,76,0.15);color:var(--gold)}
+.macro-deadline.warn{background:rgba(217,119,6,0.2);color:#fbbf24}
+.macro-deadline.danger{background:rgba(220,38,38,0.2);color:#ff6b6b}
  
 /* CONTENT */
-.cnt{max-width:680px;margin:0 auto;padding:20px 16px 0}
+.cnt{max-width:700px;margin:0 auto;padding:20px 16px 0}
  
-/* CARDS */
+/* KPI CARDS */
 .crds{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
 .crd{background:var(--white);border-radius:16px;padding:16px;border:1px solid var(--light);box-shadow:0 2px 8px rgba(0,0,0,0.04)}
 .crd-ic{font-size:20px;margin-bottom:6px}
@@ -75,7 +65,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:#1a1a2e;min-hei
 .crd-vl{font-size:22px;font-weight:800;margin-top:3px;line-height:1.2}
 .crd-sb{font-size:11px;color:var(--muted);margin-top:3px}
  
-/* ACTIVE */
+/* ACTIVE BOX */
 .act-box{background:var(--gold-l);border:1.5px solid var(--gold);border-radius:16px;padding:16px 18px;margin-bottom:16px}
 .act-lb{font-size:10px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:2px;margin-bottom:6px}
 .act-nm{font-size:17px;font-weight:700;color:var(--navy-d);margin-bottom:4px}
@@ -103,7 +93,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:#1a1a2e;min-hei
 .pb{margin-bottom:16px}
 .pb-info{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:5px}
 .pb-trk{height:10px;background:var(--light);border-radius:5px}
-.pb-fill{height:100%;background:var(--navy);border-radius:5px;transition:width 0.6s}
+.pb-fill{height:100%;background:var(--navy);border-radius:5px}
 .pc{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .pc-t{font-size:11px;font-weight:800;color:var(--navy);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;padding-bottom:8px}
 .pi{padding:12px 14px;border-radius:14px;margin-bottom:10px}
@@ -112,25 +102,23 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:#1a1a2e;min-hei
 .pi-am{font-size:16px;font-weight:800}
 .pill{display:inline-block;padding:3px 12px;border-radius:20px;font-size:10px;font-weight:700}
 .pi-dt{font-size:10px;color:var(--muted);margin-top:4px}
- 
 .ftr{text-align:center;padding:16px 0 28px}
 .ftr p{font-size:9px;color:var(--muted);font-weight:600;letter-spacing:2px;text-transform:uppercase}
  
-/* MOBILE FIRST */
 @media(max-width:480px){
   .hdr h1{font-size:20px}
+  .macro-icon{width:46px;height:46px;font-size:18px}
+  .macro-label{font-size:10px}
+  .macro-date{font-size:10px}
+  .macro-line,.macro-prog{top:23px}
+  .macro-line{left:40px;right:40px}
+  .macro-prog{left:40px}
   .crds{grid-template-columns:1fr 1fr}
   .crd{padding:12px}
   .crd-vl{font-size:18px}
   .pc{grid-template-columns:1fr}
-  .ms-c{width:24px;height:24px;font-size:9px}
-  .ms-n{font-size:8px}
-  .dl-title{font-size:14px}
   .ring{width:54px;height:54px}
   .ring-in{width:42px;height:42px;font-size:14px}
-}
-@media(min-width:481px) and (max-width:768px){
-  .crds{grid-template-columns:1fr 1fr}
 }
 @media(min-width:769px){
   .crds{grid-template-columns:repeat(4,1fr)}
@@ -146,14 +134,14 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:#1a1a2e;min-hei
     <p class="sub">Colombia Abogados</p>
     <input type="text" id="cedInput" placeholder="Número de cédula" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
     <button onclick="buscar()">Consultar</button>
-    <p class="err" id="errMsg"></p>
-    <p class="loading" id="loadMsg" style="display:none">Buscando su caso...</p>
+    <p class="login-err" id="errMsg"></p>
+    <p class="login-load" id="loadMsg" style="display:none">Buscando su caso...</p>
   </div>
 </div>
  
 <div class="portal" id="portalView">
   <div class="hdr">
-    <div class="hdr-inner">
+    <div class="hdr-in">
       <button class="back" onclick="volver()">← Volver</button>
       <div class="hdr-top">
         <div>
@@ -163,110 +151,67 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:#1a1a2e;min-hei
         </div>
         <div class="ring" id="ring"><div class="ring-in" id="ringTxt">0%</div></div>
       </div>
-      <div id="dlBanner"></div>
-      <div class="ms" id="msBar"></div>
+      <div class="macro" id="macroBar"></div>
     </div>
   </div>
   <div class="cnt">
     <div class="crds" id="cards"></div>
     <div id="actBox"></div>
-    <div class="sec">
-      <button class="sec-btn" onclick="tog(this)"><span class="sec-t">📋 Detalle del proceso</span><span class="sec-arr">▾</span></button>
-      <div class="sec-body" id="tl"></div>
-    </div>
-    <div class="sec">
-      <button class="sec-btn" onclick="tog(this)"><span class="sec-t">💰 Detalle de pagos</span><span class="sec-arr">▾</span></button>
-      <div class="sec-body" id="pays"></div>
-    </div>
+    <div class="sec"><button class="sec-btn" onclick="tog(this)"><span class="sec-t">📋 Detalle del proceso</span><span class="sec-arr">▾</span></button><div class="sec-body" id="tl"></div></div>
+    <div class="sec"><button class="sec-btn" onclick="tog(this)"><span class="sec-t">💰 Detalle de pagos</span><span class="sec-arr">▾</span></button><div class="sec-body" id="pays"></div></div>
     <div class="ftr"><p>Colombia Abogados · Portal de Seguimiento</p></div>
   </div>
 </div>
  
 <script>
-var SID = "1kYSL702hd5--O6kvMDYNvLU_oUKJmfAI0dziYiwyZwY";
-var SNM = "CASOS";
- 
-var STEPS = [
+var SID="1kYSL702hd5--O6kvMDYNvLU_oUKJmfAI0dziYiwyZwY",SNM="CASOS";
+var STEPS=[
   {id:"s1",col:17,n:"Envío contrato y poder",cd:"Le enviamos los documentos de contrato y poder para su firma."},
   {id:"s2",col:19,n:"Documentos firmados",cd:"Recibimos sus documentos firmados correctamente."},
   {id:"s3",col:21,n:"Anticipo honorarios",cd:"Se registra su pago de anticipo de honorarios."},
   {id:"s4",col:23,n:"Solicitud documentos",cd:"Le solicitamos la documentación necesaria para radicar su caso."},
-  {id:"s5",col:25,n:"Documentos completos",cd:"Recibimos toda su documentación. A partir de aquí inician 15 días hábiles para la admisión de su caso.",tm:15},
+  {id:"s5",col:25,n:"Documentos completos",cd:"Recibimos toda su documentación. A partir de aquí inician 15 días hábiles para la admisión de su caso.",tm:15,mk:true},
   {id:"s6",col:27,n:"Solicitud radicada",cd:"Su solicitud fue radicada ante el centro de conciliación."},
-  {id:"s7",col:29,n:"Auto de admisión",cd:"¡Su caso fue admitido por el centro de conciliación!",ms:true},
-  {id:"s8",col:31,n:"Notificación acreedores",cd:"Acreedores notificados. Se congelan embargos, demandas y remates. Inician 60 días hábiles para primera audiencia.",tm:60,ms:true},
-  {id:"s9",col:33,n:"Primera audiencia",cd:"Se lleva a cabo la primera audiencia de conciliación con sus acreedores.",ms:true},
-  {id:"a1",col:35,n:"Segunda audiencia",cd:"Segunda audiencia de negociación con acreedores.",op:true},
+  {id:"s7",col:29,n:"Auto de admisión",cd:"¡Su caso fue admitido por el centro de conciliación!",ms:true,mk:true},
+  {id:"s8",col:31,n:"Notificación acreedores",cd:"Acreedores notificados. Se congelan embargos, demandas y remates.",tm:60,ms:true},
+  {id:"s9",col:33,n:"Primera audiencia",cd:"Primera audiencia de conciliación con sus acreedores.",ms:true,mk:true},
+  {id:"a1",col:35,n:"Segunda audiencia",cd:"Segunda audiencia de negociación.",op:true},
   {id:"a2",col:37,n:"Tercera audiencia",cd:"Audiencia final de negociación.",op:true},
   {id:"fn",col:39,n:"Resultado final",cd:"Resultado del proceso de insolvencia.",ms:true}
 ];
+var PAYS=[{col:41,cat:"hon"},{col:44,cat:"hon"},{col:47,cat:"hon"},{col:50,cat:"cen"},{col:53,cat:"cen"}];
+var PN=["Anticipo honorarios","Cuota 2 honorarios","Cuota 3 honorarios","50% Centro (admisión)","50% Centro (audiencia)"];
  
-var PAYS = [{col:41,cat:"hon"},{col:44,cat:"hon"},{col:47,cat:"hon"},{col:50,cat:"cen"},{col:53,cat:"cen"}];
-var PNAMES = ["Anticipo honorarios","Cuota 2 honorarios","Cuota 3 honorarios","50% Centro (admisión)","50% Centro (audiencia)"];
- 
-var fm = function(v){return new Intl.NumberFormat("es-CO",{style:"currency",currency:"COP",maximumFractionDigits:0}).format(v||0);};
- 
-function pD(v){
-  if(!v)return null;
-  if(typeof v==="string"&&v.indexOf("Date(")===0){var p=v.replace("Date(","").replace(")","").split(",");return new Date(+p[0],+p[1],+p[2]);}
-  var d=new Date(v);return isNaN(d.getTime())?null:d;
-}
-function fD(v){var d=pD(v);if(!d)return "—";return d.toLocaleDateString("es-CO",{day:"numeric",month:"short",year:"numeric"});}
+var fm=function(v){return new Intl.NumberFormat("es-CO",{style:"currency",currency:"COP",maximumFractionDigits:0}).format(v||0);};
+function pD(v){if(!v)return null;if(typeof v==="string"&&v.indexOf("Date(")===0){var p=v.replace("Date(","").replace(")","").split(",");return new Date(+p[0],+p[1],+p[2]);}var d=new Date(v);return isNaN(d.getTime())?null:d;}
+function fD(v){var d=pD(v);if(!d)return"—";return d.toLocaleDateString("es-CO",{day:"numeric",month:"short",year:"numeric"});}
 function dBt(a,b){var da=pD(a),db=pD(b);if(!da||!db)return 0;return Math.max(0,Math.round((db-da)/86400000));}
 function nS(v){return v?String(v).toUpperCase().trim():"PENDIENTE";}
+function addDays(v,d){var dt=pD(v);if(!dt)return null;dt.setDate(dt.getDate()+d);return dt;}
  
-function qSheet(q){
-  return new Promise(function(ok,fail){
-    var cb="cb_"+Math.random().toString(36).slice(2,8);
-    var to=setTimeout(function(){delete window[cb];fail(new Error("Timeout"));},12000);
-    window[cb]=function(data){clearTimeout(to);delete window[cb];var el=document.getElementById("jp_"+cb);if(el)el.remove();ok(data);};
-    var s=document.createElement("script");s.id="jp_"+cb;
-    s.src="https://docs.google.com/spreadsheets/d/"+SID+"/gviz/tq?tqx=responseHandler:"+cb+"&sheet="+encodeURIComponent(SNM)+"&headers=2&tq="+encodeURIComponent(q);
-    s.onerror=function(){clearTimeout(to);delete window[cb];s.remove();fail(new Error("Red"));};
-    document.body.appendChild(s);
-  });
-}
+function qSheet(q){return new Promise(function(ok,fail){var cb="cb_"+Math.random().toString(36).slice(2,8);var to=setTimeout(function(){delete window[cb];fail();},12000);window[cb]=function(data){clearTimeout(to);delete window[cb];var el=document.getElementById("jp_"+cb);if(el)el.remove();ok(data);};var s=document.createElement("script");s.id="jp_"+cb;s.src="https://docs.google.com/spreadsheets/d/"+SID+"/gviz/tq?tqx=responseHandler:"+cb+"&sheet="+encodeURIComponent(SNM)+"&headers=2&tq="+encodeURIComponent(q);s.onerror=function(){clearTimeout(to);delete window[cb];s.remove();fail();};document.body.appendChild(s);});}
  
 function buscar(){
   var ced=document.getElementById("cedInput").value.replace(/[^0-9]/g,"");
   if(!ced){document.getElementById("errMsg").textContent="Ingrese su cédula";return;}
-  document.getElementById("errMsg").textContent="";
-  document.getElementById("loadMsg").style.display="block";
- 
-  var queries=["SELECT * WHERE C = "+ced,"SELECT * WHERE C = '"+ced+"'"];
-  var idx=0;
- 
-  function tryNext(){
-    if(idx>=queries.length){
-      document.getElementById("errMsg").textContent="No se encontró un caso con esa cédula.";
-      document.getElementById("loadMsg").style.display="none";
-      return;
-    }
-    qSheet(queries[idx]).then(function(data){
-      if(data&&data.table&&data.table.rows&&data.table.rows.length>0){
-        document.getElementById("loadMsg").style.display="none";
-        procesar(data.table.rows[0].c);
-      } else {idx++;tryNext();}
-    }).catch(function(){idx++;tryNext();});
-  }
-  tryNext();
+  document.getElementById("errMsg").textContent="";document.getElementById("loadMsg").style.display="block";
+  var qs=["SELECT * WHERE C = "+ced,"SELECT * WHERE C = '"+ced+"'"],idx=0;
+  function tryN(){if(idx>=qs.length){document.getElementById("errMsg").textContent="No se encontró un caso con esa cédula.";document.getElementById("loadMsg").style.display="none";return;}
+  qSheet(qs[idx]).then(function(d){if(d&&d.table&&d.table.rows&&d.table.rows.length>0){document.getElementById("loadMsg").style.display="none";proc(d.table.rows[0].c);}else{idx++;tryN();}}).catch(function(){idx++;tryN();});}
+  tryN();
 }
  
-function procesar(row){
+function proc(row){
   var g=function(i){return row[i]?(row[i].v!==null?row[i].v:null):null;};
- 
   var c={nm:g(1),ced:g(2),cel:g(3),cor:g(4),ab:g(5),mod:nS(g(6)),deu:g(7),hon:g(8),cen:g(9),fi:g(10),p1:g(11),p2:g(12),p3:g(13),desc:g(14),est:g(15),fc:g(16),steps:[],pays:[]};
- 
-  STEPS.forEach(function(s){c.steps.push({id:s.id,n:s.n,cd:s.cd,ms:s.ms,op:s.op,tm:s.tm,est:nS(g(s.col)),fecha:g(s.col+1)});});
-  PAYS.forEach(function(p,i){c.pays.push({nm:PNAMES[i],mt:g(p.col)||0,est:nS(g(p.col+1)),fe:g(p.col+2),cat:p.cat});});
- 
+  STEPS.forEach(function(s){c.steps.push({id:s.id,n:s.n,cd:s.cd,ms:s.ms,op:s.op,tm:s.tm,mk:s.mk,est:nS(g(s.col)),fecha:g(s.col+1)});});
+  PAYS.forEach(function(p,i){c.pays.push({nm:PN[i],mt:g(p.col)||0,est:nS(g(p.col+1)),fe:g(p.col+2),cat:p.cat});});
   render(c);
 }
  
 function render(c){
   document.getElementById("loginView").style.display="none";
   document.getElementById("portalView").style.display="block";
- 
   document.getElementById("pNom").textContent=c.nm||"—";
   var modT=c.mod==="ACUERDO"?"Acuerdo con Acreedores":c.mod==="LIQUIDACIÓN"||c.mod==="LIQUIDACION"?"Liquidación Patrimonial":c.mod;
   document.getElementById("pInfo").textContent=modT+(c.ab?" · "+c.ab:"");
@@ -281,125 +226,162 @@ function render(c){
   document.getElementById("ring").style.background="conic-gradient(var(--gold) "+pct*3.6+"deg, rgba(255,255,255,0.08) "+pct*3.6+"deg)";
   document.getElementById("ringTxt").textContent=pct+"%";
  
-  // Deadline calculations
+  // Key milestones for macro bar: s5 (docs completos), s7 (auto admision), s9 (1ra audiencia)
   var s5=c.steps.filter(function(s){return s.id==="s5";})[0];
   var s7=c.steps.filter(function(s){return s.id==="s7";})[0];
   var s8=c.steps.filter(function(s){return s.id==="s8";})[0];
   var s9=c.steps.filter(function(s){return s.id==="s9";})[0];
  
-  var dlType=null,dlDays=0,dlMax=0,dlRest=0,dlTitle="",dlDesc="";
+  // Macro tracking bar (3 big milestones)
+  var macros=[
+    {n:"Docs completos",icon:"📂",step:s5},
+    {n:"Auto admisión",icon:"⚖️",step:s7},
+    {n:"1ra Audiencia",icon:"🤝",step:s9}
+  ];
  
-  if(s5&&s5.est==="COMPLETADO"&&s5.fecha&&s7&&s7.est!=="COMPLETADO"){
-    dlDays=dBt(s5.fecha,new Date().toISOString());dlMax=15;dlRest=Math.max(0,15-dlDays);
-    dlTitle="Plazo para Auto de Admisión";dlDesc="Desde que se completó la documentación, el centro tiene 15 días hábiles para emitir el auto de admisión.";dlType="active";
+  // Calculate deadlines for each macro step
+  var dl15_days=0,dl15_rest=0,dl15_date=null;
+  var dl60_days=0,dl60_rest=0,dl60_date=null;
+ 
+  if(s5&&s5.est==="COMPLETADO"&&s5.fecha){
+    dl15_days=dBt(s5.fecha,new Date().toISOString());
+    dl15_rest=Math.max(0,15-dl15_days);
+    dl15_date=addDays(s5.fecha,15);
   }
-  if(s8&&s8.est==="COMPLETADO"&&s8.fecha&&s9&&s9.est!=="COMPLETADO"){
-    dlDays=dBt(s8.fecha,new Date().toISOString());dlMax=60;dlRest=Math.max(0,60-dlDays);
-    dlTitle="Plazo para Primera Audiencia";dlDesc="Desde la notificación a acreedores, hay 60 días hábiles para la primera audiencia de conciliación.";dlType="active";
+  if(s8&&s8.est==="COMPLETADO"&&s8.fecha){
+    dl60_days=dBt(s8.fecha,new Date().toISOString());
+    dl60_rest=Math.max(0,60-dl60_days);
+    dl60_date=addDays(s8.fecha,60);
   }
  
-  // Deadline banner
-  var dlHTML="";
-  if(dlType){
-    var cls=dlRest<=3?"danger":dlRest<=7?"warn":"ok";
-    var col=dlRest<=3?"var(--danger)":dlRest<=7?"var(--warn)":"var(--gold)";
-    var lblCol=dlRest<=3?"#ff6b6b":dlRest<=7?"#fbbf24":"var(--gold)";
-    var pctDl=Math.min(100,dlDays/dlMax*100);
-    dlHTML='<div class="dl-banner show '+cls+'">';
-    dlHTML+='<p class="dl-label" style="color:'+lblCol+'">⏱ Plazo legal activo</p>';
-    dlHTML+='<p class="dl-title" style="color:#fff">'+dlTitle+'</p>';
-    dlHTML+='<p class="dl-desc">'+dlDesc+'</p>';
-    dlHTML+='<div class="dl-bar"><div class="dl-fill" style="width:'+pctDl+'%;background:'+col+'"></div></div>';
-    dlHTML+='<div class="dl-nums"><span style="color:rgba(255,255,255,0.5)">Día '+dlDays+' de '+dlMax+'</span><span style="color:'+col+';font-weight:800">'+dlRest+' días restantes</span></div>';
-    dlHTML+='</div>';
-  }
-  document.getElementById("dlBanner").innerHTML=dlHTML;
+  // Macro progress
+  var macroDone=0;
+  macros.forEach(function(m){if(m.step&&m.step.est==="COMPLETADO")macroDone++;});
+  var macroPct=Math.round(macroDone/macros.length*100);
  
-  // Milestone bar
-  var milestones=vis.filter(function(s){return s.ms||s.id==="s1"||s.id==="s3"||s.id==="s5";});
-  var msHTML='<div class="ms-track-wrap"><div class="ms-line"></div><div class="ms-prog" style="width:calc('+(pct)+'% - 16px)"></div><div class="ms-dots">';
-  milestones.forEach(function(s){
-    var isDone=s.est==="COMPLETADO",isAct=s.est==="ACTIVO";
-    var cls2=isDone?"done":isAct?"act":"pend";
-    msHTML+='<div class="ms-d"><div class="ms-c '+cls2+'">'+(isDone?"✓":isAct?"●":"")+'</div><p class="ms-n '+cls2+'">'+s.n+'</p></div>';
+  var mHTML='<div class="macro-track">';
+  mHTML+='<div class="macro-line"></div>';
+  mHTML+='<div class="macro-prog" style="width:calc('+macroPct+'% - 40px)"></div>';
+ 
+  macros.forEach(function(m,i){
+    var isDone=m.step&&m.step.est==="COMPLETADO";
+    var isAct=m.step&&m.step.est==="ACTIVO";
+    var cls=isDone?"done":isAct?"act":"pend";
+    var dateStr="";
+    var deadlineHTML="";
+ 
+    if(isDone&&m.step.fecha){
+      dateStr=fD(m.step.fecha);
+    } else if(i===1&&!isDone){
+      // Auto admision - show deadline from s5
+      if(s5&&s5.est==="COMPLETADO"&&s7&&s7.est!=="COMPLETADO"){
+        dateStr="Pendiente";
+        var dlCls=dl15_rest<=3?"danger":dl15_rest<=7?"warn":"ok";
+        deadlineHTML='<div class="macro-deadline '+dlCls+'">Plazo: '+fD(dl15_date)+'</div>';
+      } else { dateStr="Pendiente"; }
+    } else if(i===2&&!isDone){
+      // 1ra audiencia - show deadline from s8
+      if(s8&&s8.est==="COMPLETADO"&&s9&&s9.est!=="COMPLETADO"){
+        dateStr="Pendiente";
+        var dlCls2=dl60_rest<=5?"danger":dl60_rest<=15?"warn":"ok";
+        deadlineHTML='<div class="macro-deadline '+dlCls2+'">Plazo: '+fD(dl60_date)+'</div>';
+      } else { dateStr="Pendiente"; }
+    } else {
+      dateStr="Pendiente";
+    }
+ 
+    mHTML+='<div class="macro-step">';
+    mHTML+='<div class="macro-icon '+cls+'">'+(isDone?"✓":m.icon)+'</div>';
+    mHTML+='<div class="macro-label '+(isDone||isAct?"":"pend")+'">'+m.n+'</div>';
+    mHTML+='<div class="macro-date '+(isDone?"":"pend")+'">'+dateStr+'</div>';
+    mHTML+=deadlineHTML;
+    mHTML+='</div>';
   });
-  msHTML+='</div></div>';
-  document.getElementById("msBar").innerHTML=msHTML;
+  mHTML+='</div>';
+  document.getElementById("macroBar").innerHTML=mHTML;
  
-  // Payments totals
+  // Payments
   var paid=0,totalPay=0;
   c.pays.forEach(function(p){if(p.est==="PAGADO")paid+=p.mt;totalPay+=p.mt;});
  
-  // Cards
-  var diasProc=dBt(c.fc,new Date().toISOString());
-  var h="";
-  h+=mkCard("📊","Progreso",pct+"%",done+"/"+total+" etapas",pct===100?"var(--success)":"var(--navy)");
-  if(dlType){
-    var dlCol2=dlRest<=3?"var(--danger)":dlRest<=7?"var(--warn)":"var(--navy)";
-    h+=mkCard("⏱","Plazo legal",dlRest+"d","de "+dlMax+" días",dlCol2);
-  } else {
-    h+=mkCard("📅","En proceso",diasProc+"d","desde el inicio","var(--navy)");
+  // Active deadline for KPI card
+  var dlActive=false,dlDays2=0,dlMax2=0,dlRest2=0,dlName="";
+  if(s5&&s5.est==="COMPLETADO"&&s5.fecha&&s7&&s7.est!=="COMPLETADO"){
+    dlActive=true;dlDays2=dl15_days;dlMax2=15;dlRest2=dl15_rest;dlName="admisión";
   }
-  h+=mkCard("💰","Pagado",fm(paid),"de "+fm(totalPay),"var(--success)");
-  if(c.ab)h+=mkCard("👤","Abogado",c.ab,"","var(--navy)");
+  if(s8&&s8.est==="COMPLETADO"&&s8.fecha&&s9&&s9.est!=="COMPLETADO"){
+    dlActive=true;dlDays2=dl60_days;dlMax2=60;dlRest2=dl60_rest;dlName="audiencia";
+  }
+ 
+  // Days since first payment
+  var diasPago=c.fi?dBt(c.fi,new Date().toISOString()):0;
+ 
+  // Cards - 4 unique KPIs
+  var h="";
+  h+=mkC("📅","Desde pago inicial",diasPago+"d","desde "+fD(c.fi),"var(--navy)");
+  if(dlActive){
+    var dlCol=dlRest2<=3?"var(--err)":dlRest2<=7?"var(--warn)":"var(--navy)";
+    h+=mkC("⏱","Plazo "+dlName,dlRest2+"d rest.","día "+dlDays2+" de "+dlMax2,dlCol);
+  } else {
+    var diasProc=dBt(c.fc,new Date().toISOString());
+    h+=mkC("⏱","En proceso",diasProc+"d","desde inicio","var(--navy)");
+  }
+  h+=mkC("💰","Pagado",fm(paid),"de "+fm(totalPay),"var(--ok)");
+  if(c.ab){
+    var abShort=c.ab.split(" ").slice(0,2).join(" ");
+    h+=mkC("👤","Abogado",abShort,"","var(--navy)");
+  }
   document.getElementById("cards").innerHTML=h;
  
-  // Active step box
+  // Active step
   var aHTML="";
   if(active){
-    aHTML='<div class="act-box"><p class="act-lb">Etapa actual</p><p class="act-nm">'+active.n+'</p><p class="act-ds">'+active.cd+'</p></div>';
+    aHTML='<div class="act-box"><p class="act-lb">Etapa actual</p><p class="act-nm">'+active.n+'</p><p class="act-ds">'+active.cd+'</p>';
+    if(dlActive){
+      var pctDl=Math.min(100,dlDays2/dlMax2*100);
+      var dlCol3=dlRest2<=3?"var(--err)":dlRest2<=7?"var(--warn)":"var(--navy)";
+      aHTML+='<div style="margin-top:12px"><div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:4px"><span>Día '+dlDays2+' de '+dlMax2+'</span><span style="font-weight:800;color:'+dlCol3+'">'+dlRest2+' días restantes</span></div>';
+      aHTML+='<div style="height:8px;background:#e8e0c8;border-radius:4px"><div style="width:'+pctDl+'%;height:100%;background:'+dlCol3+';border-radius:4px"></div></div></div>';
+    }
+    aHTML+='</div>';
   }
   document.getElementById("actBox").innerHTML=aHTML;
  
   // Timeline
   var tHTML="";
   vis.forEach(function(s,i){
-    var isL=i===vis.length-1;
-    var isDone=s.est==="COMPLETADO",isAct=s.est==="ACTIVO";
-    var col2=isDone?"var(--success)":isAct?"var(--navy)":"var(--light)";
-    var sz=s.ms?22:16;
-    tHTML+='<div class="tl" style="padding-bottom:'+(isL?0:18)+'px">';
-    tHTML+='<div class="tl-l"><div class="tl-dot" style="width:'+sz+'px;height:'+sz+'px;background:'+(isDone?col2:"var(--white)")+';border:3px solid '+col2+';'+(isAct?"box-shadow:0 0 0 3px rgba(0,40,85,0.15);":"")+'">'+(isDone?"✓":"")+'</div>';
-    if(!isL)tHTML+='<div class="tl-cn" style="background:'+(isDone?"var(--success)":"var(--light)")+'"></div>';
+    var isL=i===vis.length-1;var isDone=s.est==="COMPLETADO",isAct=s.est==="ACTIVO";
+    var col2=isDone?"var(--ok)":isAct?"var(--navy)":"var(--light)";var sz=s.ms?22:16;
+    tHTML+='<div class="tl" style="padding-bottom:'+(isL?0:18)+'px"><div class="tl-l"><div class="tl-dot" style="width:'+sz+'px;height:'+sz+'px;background:'+(isDone?col2:"var(--white)")+';border:3px solid '+col2+';'+(isAct?"box-shadow:0 0 0 3px rgba(0,40,85,0.15);":"")+'">'+(isDone?"✓":"")+'</div>';
+    if(!isL)tHTML+='<div class="tl-cn" style="background:'+(isDone?"var(--ok)":"var(--light)")+'"></div>';
     tHTML+='</div><div class="tl-r"><div class="tl-rw"><span class="tl-nm" style="font-weight:'+(isAct?800:600)+';color:'+(!isDone&&!isAct?"var(--muted)":"var(--navy-d)")+'">'+s.n+'</span>';
     if(s.fecha)tHTML+='<span class="tl-dt">'+fD(s.fecha)+'</span>';
-    tHTML+='</div>';
-    if(isDone||isAct)tHTML+='<p class="tl-desc">'+s.cd+'</p>';
-    tHTML+='</div></div>';
+    tHTML+='</div>';if(isDone||isAct)tHTML+='<p class="tl-desc">'+s.cd+'</p>';tHTML+='</div></div>';
   });
   document.getElementById("tl").innerHTML=tHTML;
  
-  // Payments split
+  // Payments
   var honP=c.pays.filter(function(p){return p.cat==="hon";});
   var cenP=c.pays.filter(function(p){return p.cat==="cen";});
   var pHTML='<div class="pb"><div class="pb-info"><span>'+fm(paid)+' pagados</span><span>'+fm(totalPay)+' total</span></div><div class="pb-trk"><div class="pb-fill" style="width:'+(totalPay?paid/totalPay*100:0)+'%"></div></div></div>';
   pHTML+='<div class="pc"><div><p class="pc-t" style="border-bottom:2px solid var(--navy)">Honorarios Firma</p>';
-  honP.forEach(function(p){pHTML+=mkPay(p);});
+  honP.forEach(function(p){pHTML+=mkP(p);});
   pHTML+='</div><div><p class="pc-t" style="border-bottom:2px solid var(--gold)">Centro Conciliación</p>';
-  cenP.forEach(function(p){pHTML+=mkPay(p);});
+  cenP.forEach(function(p){pHTML+=mkP(p);});
   pHTML+='</div></div>';
   document.getElementById("pays").innerHTML=pHTML;
 }
  
-function mkCard(ic,lb,vl,sb,col){
-  return '<div class="crd"><div class="crd-ic">'+ic+'</div><div class="crd-lb">'+lb+'</div><div class="crd-vl" style="color:'+col+'">'+vl+'</div>'+(sb?'<div class="crd-sb">'+sb+'</div>':'')+'</div>';
-}
+function mkC(ic,lb,vl,sb,col){return'<div class="crd"><div class="crd-ic">'+ic+'</div><div class="crd-lb">'+lb+'</div><div class="crd-vl" style="color:'+col+'">'+vl+'</div>'+(sb?'<div class="crd-sb">'+sb+'</div>':'')+'</div>';}
  
-function mkPay(p){
-  var isPd=p.est==="PAGADO";
-  var bg=isPd?"var(--success-bg)":"var(--bg)";
-  var brd=isPd?"#bbf7d0":"var(--light)";
-  var amC=isPd?"var(--success)":"var(--navy-d)";
-  var pBg=isPd?"var(--success-bg)":"var(--warn-bg)";
-  var pC=isPd?"var(--success)":"var(--warn)";
-  var pT=isPd?"✓ Pagado":"Pendiente";
+function mkP(p){
+  var isPd=p.est==="PAGADO";var bg=isPd?"var(--ok-bg)":"var(--bg)";var brd=isPd?"#bbf7d0":"var(--light)";
+  var amC=isPd?"var(--ok)":"var(--navy-d)";var pBg=isPd?"var(--ok-bg)":"var(--warn-bg)";var pC=isPd?"var(--ok)":"var(--warn)";var pT=isPd?"✓ Pagado":"Pendiente";
   var dt=isPd&&p.fe?"Pagado: "+fD(p.fe):p.fe?"Vence: "+fD(p.fe):"";
-  var h='<div class="pi" style="background:'+bg+';border:1px solid '+brd+'"><div class="pi-nm">'+p.nm+'</div><div class="pi-rw"><span class="pi-am" style="color:'+amC+'">'+fm(p.mt)+'</span><span class="pill" style="color:'+pC+';background:'+pBg+'">'+pT+'</span></div>';
-  if(dt)h+='<div class="pi-dt">'+dt+'</div>';
-  return h+'</div>';
+  return'<div class="pi" style="background:'+bg+';border:1px solid '+brd+'"><div class="pi-nm">'+p.nm+'</div><div class="pi-rw"><span class="pi-am" style="color:'+amC+'">'+fm(p.mt)+'</span><span class="pill" style="color:'+pC+';background:'+pBg+'">'+pT+'</span></div>'+(dt?'<div class="pi-dt">'+dt+'</div>':'')+'</div>';
 }
  
-function tog(btn){var b=btn.nextElementSibling;var a=btn.querySelector(".sec-arr");if(b.style.display==="block"){b.style.display="none";a.style.transform="rotate(0deg)";}else{b.style.display="block";a.style.transform="rotate(180deg)";}}
+function tog(b){var bd=b.nextElementSibling;var a=b.querySelector(".sec-arr");if(bd.style.display==="block"){bd.style.display="none";a.style.transform="rotate(0deg)";}else{bd.style.display="block";a.style.transform="rotate(180deg)";}}
 function volver(){document.getElementById("portalView").style.display="none";document.getElementById("loginView").style.display="flex";document.getElementById("cedInput").value="";}
 document.getElementById("cedInput").addEventListener("keydown",function(e){if(e.key==="Enter")buscar();});
 </script>

@@ -3,483 +3,277 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Portal de Seguimiento — Colombia Abogados</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+<title>Portal de Seguimiento — Abogados Colombia</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
-:root{--navy:#002855;--navy-l:#003d80;--navy-d:#001a3a;--gold:#c9a84c;--gold-l:#f5e6b8;--bg:#f4f6f9;--white:#fff;--muted:#64748b;--light:#e8ecf2;--success:#16a34a;--success-bg:#f0fdf4;--warn:#d97706;--warn-bg:#fffbeb;--danger:#dc2626}
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'DM Sans',sans-serif;background:var(--bg);color:#1a1a2e;min-height:100vh}
-.sf{font-family:'Playfair Display',serif}
+  :root {
+    --navy: #002855; --navy-l: #003d80; --navy-d: #001a3a;
+    --gold: #c9a84c; --gold-l: #f5e6b8;
+    --bg: #f8fafc; --white: #fff;
+    --muted: #64748b; --light: #e2e8f0;
+    --success: #10b981; --success-bg: #d1fae5;
+    --warn: #f59e0b; --warn-bg: #fef3c7;
+    --danger: #ef4444; --text-main: #1e293b;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text-main); min-height: 100vh; display: flex; flex-direction: column; }
+  .sf { font-family: 'Playfair Display', serif; }
 
-/* Login */
-.login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(160deg,var(--navy-d),var(--navy));padding:20px}
-.login-box{text-align:center;max-width:400px;width:100%}
-.login-logo{width:64px;height:64px;border-radius:20px;background:linear-gradient(135deg,var(--navy),var(--navy-l));display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:28px;box-shadow:0 8px 30px rgba(0,40,85,0.4)}
-.login-box h1{font-family:'Playfair Display',serif;font-size:28px;color:#fff;margin-bottom:4px}
-.login-box .sub{color:var(--gold);font-size:11px;letter-spacing:3px;text-transform:uppercase;margin-bottom:32px}
-.login-box input{width:100%;padding:16px 20px;border-radius:16px;border:2px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.05);font-size:16px;outline:none;text-align:center;font-family:'DM Sans';font-weight:600;letter-spacing:2px;color:#fff;transition:border-color 0.2s}
-.login-box input:focus{border-color:var(--gold)}
-.login-box input::placeholder{color:rgba(255,255,255,0.3)}
-.login-box button{width:100%;margin-top:16px;padding:14px;border-radius:14px;border:none;background:var(--gold);color:var(--navy-d);font-weight:800;font-size:14px;cursor:pointer;box-shadow:0 4px 20px rgba(201,168,76,0.3);transition:transform 0.1s}
-.login-box button:active{transform:scale(0.98)}
-.err{color:var(--danger);font-size:12px;margin-top:10px}
-.loading{color:var(--gold);font-size:13px;margin-top:16px}
+  /* Login (Intacto) */
+  .login-wrap { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, var(--navy) 0%, var(--navy-d) 100%); padding: 20px; }
+  .login-box { background: var(--white); padding: 40px 30px; border-radius: 16px; box-shadow: 0 20px 40px rgba(0,0,0,0.2); width: 100%; max-width: 400px; text-align: center; }
+  .login-box h1 { color: var(--navy); font-size: 24px; margin-bottom: 10px; }
+  .login-box p { color: var(--muted); font-size: 14px; margin-bottom: 25px; }
+  .input-group { margin-bottom: 20px; text-align: left; }
+  .input-group label { display: block; font-size: 13px; font-weight: 600; color: var(--navy); margin-bottom: 8px; text-transform: uppercase; }
+  .input-group input { width: 100%; padding: 14px; border: 2px solid var(--light); border-radius: 8px; font-size: 16px; outline: none; }
+  .input-group input:focus { border-color: var(--gold); }
+  button { width: 100%; padding: 14px; background: var(--gold); color: var(--navy-d); border: none; border-radius: 8px; font-size: 16px; font-weight: 700; cursor: pointer; transition: 0.2s; }
+  button:hover { background: #d4b55b; transform: translateY(-2px); }
 
-/* Portal */
-.portal{display:none}
-.header{background:linear-gradient(135deg,var(--navy-d),var(--navy));color:#fff;padding:28px 20px 20px}
-.header-inner{max-width:720px;margin:0 auto}
-.back-btn{background:none;border:none;color:var(--muted);font-size:12px;cursor:pointer;margin-bottom:12px;font-family:'DM Sans'}
-.header-row{display:flex;justify-content:space-between;align-items:center}
-.header-label{font-size:9px;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:3px}
-.header h1{font-family:'Playfair Display',serif;font-size:22px;margin:4px 0 2px}
-.header .info{font-size:11px;color:var(--muted)}
-.pct-ring{width:58px;height:58px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.pct-inner{width:46px;height:46px;border-radius:50%;background:var(--navy-d);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800}
+  /* Dashboard Header (Intacto) */
+  .dash-wrap { display: none; max-width: 1000px; margin: 0 auto; width: 100%; padding: 20px; }
+  header { display: flex; justify-content: space-between; align-items: center; padding: 20px 0; border-bottom: 1px solid var(--light); margin-bottom: 30px; }
+  .brand h2 { font-size: 22px; color: var(--navy); }
+  .brand p { font-size: 14px; color: var(--muted); }
+  .btn-out { background: transparent; border: 1px solid var(--light); color: var(--muted); padding: 8px 16px; border-radius: 6px; }
 
-/* Milestone bar */
-.ms-bar{margin-top:20px;position:relative}
-.ms-track{position:absolute;top:9px;left:0;right:0;height:3px;background:var(--navy-l);border-radius:2px}
-.ms-fill{position:absolute;top:9px;left:0;height:3px;background:var(--gold);border-radius:2px;transition:width 0.5s}
-.ms-dots{display:flex;justify-content:space-between;position:relative}
-.ms-dot{text-align:center;width:56px}
-.ms-circle{margin:0 auto;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:8px;color:#fff;transition:all 0.3s}
-.ms-name{font-size:7px;margin-top:4px;line-height:1.2}
+  /* NUEVO: Progress Tracker Dinámico (Estilo Rappi - Scroll en celular) */
+  .tracker-container { background: var(--white); padding: 30px; border-radius: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); margin-bottom: 30px; overflow-x: auto; }
+  .tracker-container h3 { font-size: 18px; color: var(--navy); margin-bottom: 25px; display: flex; align-items: center; gap: 10px; }
+  .tracker { display: flex; justify-content: space-between; position: relative; min-width: 800px; /* Obliga el scroll en celular */ }
+  .step { flex: 1; text-align: center; position: relative; z-index: 2; }
+  .step::before { content: ''; position: absolute; top: 20px; left: -50%; width: 100%; height: 4px; background: var(--light); z-index: -1; }
+  .step:first-child::before { display: none; }
+  
+  .step-circle { width: 44px; height: 44px; border-radius: 50%; background: var(--white); border: 4px solid var(--light); color: var(--muted); display: flex; align-items: center; justify-content: center; margin: 0 auto 15px; font-weight: bold; font-size: 18px; transition: 0.3s; }
+  .step-label { font-size: 13px; font-weight: 600; color: var(--muted); }
+  .step-date { font-size: 11px; color: var(--muted); margin-top: 5px; }
+  .step-deadline { font-size: 11px; color: var(--warn); font-weight: bold; margin-top: 5px; background: var(--warn-bg); padding: 2px 6px; border-radius: 4px; display: inline-block;}
 
-/* Content */
-.content{max-width:720px;margin:-1px auto 0;padding:16px 20px 0}
+  /* Estados del tracker */
+  .step.done .step-circle { background: var(--navy); border-color: var(--navy); color: var(--white); }
+  .step.done::before { background: var(--navy); }
+  .step.done .step-label { color: var(--navy); }
+  
+  .step.active .step-circle { background: var(--gold); border-color: var(--gold); color: var(--navy-d); animation: pulse 2s infinite; }
+  .step.active::before { background: var(--navy); } 
+  .step.active .step-label { color: var(--navy); font-weight: 700; }
 
-/* Cards */
-.cards{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px}
-.card{background:var(--white);border-radius:16px;padding:14px 16px;border:1px solid var(--light);flex:1;min-width:120px;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
-.card-icon{font-size:18px;margin-bottom:4px}
-.card-label{font-size:9px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
-.card-value{font-size:20px;font-weight:800;margin-top:2px}
-.card-sub{font-size:10px;color:var(--muted);margin-top:2px}
+  @keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(201, 168, 76, 0.4); }
+    70% { box-shadow: 0 0 0 15px rgba(201, 168, 76, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(201, 168, 76, 0); }
+  }
 
-/* Active step */
-.active-box{background:var(--gold-l);border:1px solid var(--gold);border-radius:16px;padding:14px 18px;margin-bottom:16px}
-.active-label{font-size:9px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:2px;margin-bottom:4px}
-.active-name{font-size:15px;font-weight:700;color:var(--navy-d);margin-bottom:2px}
-.active-desc{font-size:11px;color:var(--muted)}
-.timer-bar{margin-top:8px}
-.timer-info{display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-bottom:3px}
-.timer-track{height:6px;background:#e8e0c8;border-radius:3px}
-.timer-fill{height:100%;border-radius:3px;transition:width 0.5s}
-
-/* Sections */
-.section{background:var(--white);border-radius:20px;box-shadow:0 2px 12px rgba(0,0,0,0.05);border:1px solid var(--light);margin-bottom:16px;overflow:hidden}
-.section-btn{width:100%;padding:16px 20px;display:flex;justify-content:space-between;align-items:center;background:none;border:none;cursor:pointer;font-family:'DM Sans'}
-.section-title{font-family:'Playfair Display',serif;font-size:16px;color:var(--navy);font-weight:700}
-.section-arrow{font-size:18px;color:var(--muted);transition:transform 0.3s}
-.section-body{padding:0 20px 20px;display:none}
-
-/* Timeline */
-.tl-item{display:flex;gap:14px}
-.tl-line{display:flex;flex-direction:column;align-items:center;width:20px}
-.tl-dot{border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:7px;color:#fff}
-.tl-conn{width:2px;flex:1;min-height:16px}
-.tl-content{flex:1}
-.tl-row{display:flex;justify-content:space-between;align-items:center}
-.tl-name{font-size:13px}
-.tl-date{font-size:10px;color:var(--muted)}
-.tl-desc{font-size:11px;color:var(--muted);margin:3px 0 0;line-height:1.5}
-
-/* Payments */
-.pay-bar{margin-bottom:14px}
-.pay-bar-info{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:4px}
-.pay-bar-track{height:8px;background:var(--light);border-radius:4px}
-.pay-bar-fill{height:100%;background:var(--navy);border-radius:4px;transition:width 0.5s}
-.pay-cols{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-.pay-col-title{font-size:10px;font-weight:800;color:var(--navy);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;padding-bottom:6px}
-.pay-item{padding:10px 12px;border-radius:12px;margin-bottom:8px}
-.pay-name{font-size:11px;font-weight:600;color:var(--navy-d);margin-bottom:2px}
-.pay-row{display:flex;justify-content:space-between;align-items:center}
-.pay-amount{font-size:14px;font-weight:800}
-.pill{display:inline-block;padding:2px 10px;border-radius:20px;font-size:10px;font-weight:700}
-
-.footer{text-align:center;padding:12px 0 24px}
-.footer p{font-size:9px;color:var(--muted);font-weight:600;letter-spacing:2px;text-transform:uppercase}
-
-@media(max-width:600px){
-  .cards{flex-direction:column}
-  .card{min-width:auto}
-  .pay-cols{grid-template-columns:1fr}
-  .header h1{font-size:18px}
-}
+  /* Tarjetas y Grid Responsivo */
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px; }
+  @media (max-width: 768px) { .grid { grid-template-columns: 1fr; } }
+  .card { background: var(--white); padding: 25px; border-radius: 16px; border: 1px solid var(--light); }
+  .card-header { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; border-bottom: 1px solid var(--light); padding-bottom: 15px; }
+  .card-icon { width: 40px; height: 40px; border-radius: 10px; background: var(--navy-l); color: var(--white); display: flex; align-items: center; justify-content: center; font-size: 18px; }
+  .card-title { font-size: 16px; font-weight: 700; color: var(--navy); }
+  
+  .info-row { display: flex; flex-direction: column; margin-bottom: 15px; }
+  .info-label { font-size: 12px; color: var(--muted); text-transform: uppercase; font-weight: 600; margin-bottom: 4px; }
+  .info-val { font-size: 15px; color: var(--text-main); font-weight: 500; }
+  
+  #loading, #errorMsg { display: none; text-align: center; margin-top: 15px; font-size: 14px; }
+  #errorMsg { color: var(--danger); background: #fee2e2; padding: 10px; border-radius: 6px; }
 </style>
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 </head>
 <body>
 
-<!-- LOGIN -->
 <div class="login-wrap" id="loginView">
   <div class="login-box">
-    <div class="login-logo">⚖️</div>
-    <h1 class="sf">Consulte su Proceso</h1>
-    <p class="sub">Colombia Abogados</p>
-    <input type="text" id="cedInput" placeholder="Número de cédula" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
-    <button onclick="buscar()">Consultar</button>
-    <p class="err" id="errMsg"></p>
-    <p class="loading" id="loadMsg" style="display:none">Buscando su caso...</p>
+    <h1 class="sf">Abogados Colombia</h1>
+    <p>Portal Seguro de Seguimiento</p>
+    <div class="input-group">
+      <label>Documento de Identidad</label>
+      <input type="text" id="cedula" placeholder="Ej. 1020304050" onkeypress="if(event.key==='Enter') consultar()">
+    </div>
+    <button onclick="consultar()">Consultar Estado del Proceso</button>
+    <div id="loading"><i class="fas fa-circle-notch fa-spin"></i> Conectando de forma segura...</div>
+    <div id="errorMsg"></div>
   </div>
 </div>
 
-<!-- PORTAL -->
-<div class="portal" id="portalView">
-  <div class="header">
-    <div class="header-inner">
-      <button class="back-btn" onclick="volver()">← Volver</button>
-      <div class="header-row">
-        <div>
-          <p class="header-label">Colombia Abogados</p>
-          <h1 class="sf" id="pNombre">—</h1>
-          <p class="info" id="pInfo">—</p>
-        </div>
-        <div class="pct-ring" id="pctRing">
-          <div class="pct-inner" id="pctText">0%</div>
-        </div>
-      </div>
-      <div class="ms-bar">
-        <div class="ms-track"></div>
-        <div class="ms-fill" id="msFill"></div>
-        <div class="ms-dots" id="msDots"></div>
-      </div>
+<div class="dash-wrap" id="dashView">
+  <header>
+    <div class="brand">
+      <h2 class="sf">Abogados Colombia</h2>
+      <p>Hola, <span id="clientName" style="font-weight:700;color:var(--navy)"></span></p>
     </div>
-  </div>
-
-  <div class="content">
-    <div class="cards" id="cardsRow"></div>
-    <div id="activeBox"></div>
-
-    <div class="section">
-      <button class="section-btn" onclick="toggleSec(this)">
-        <span class="section-title">📋 Detalle del Proceso</span>
-        <span class="section-arrow">▾</span>
-      </button>
-      <div class="section-body" id="timeline"></div>
-    </div>
-
-    <div class="section">
-      <button class="section-btn" onclick="toggleSec(this)">
-        <span class="section-title">💰 Detalle de Pagos</span>
-        <span class="section-arrow">▾</span>
-      </button>
-      <div class="section-body" id="payments"></div>
-    </div>
-
-    <div class="footer"><p>Colombia Abogados · Portal de Seguimiento</p></div>
-  </div>
+    <button class="btn-out" onclick="salir()">Salir</button>
+  </header>
+  <div id="portalContent"></div>
 </div>
 
 <script>
-const SHEET_ID = "1kYSL702hd5--O6kvMDYNvLU_oUKJmfAI0dziYiwyZwY";
-const SHEET_NAME = "CASOS";
+google.charts.load('current', {'packages':['corechart']});
 
-const STEPS = [
-  {id:"s1",col:17,n:"Envío contrato y poder",cd:"Le enviamos los documentos de contrato y poder para su firma."},
-  {id:"s2",col:19,n:"Documentos firmados",cd:"Recibimos sus documentos firmados."},
-  {id:"s3",col:21,n:"Anticipo honorarios",cd:"Se registra su pago de anticipo de honorarios."},
-  {id:"s4",col:23,n:"Solicitud documentos",cd:"Le solicitamos la documentación necesaria para radicar su caso."},
-  {id:"s5",col:25,n:"Documentos completos",cd:"Recibimos toda su documentación. Inician 15 días hábiles para la admisión.",tm:15},
-  {id:"s6",col:27,n:"Solicitud radicada",cd:"Su solicitud fue radicada ante el centro de conciliación."},
-  {id:"s7",col:29,n:"Auto de admisión",cd:"¡Su caso fue admitido por el centro de conciliación!",ms:true},
-  {id:"s8",col:31,n:"Notificación acreedores",cd:"Acreedores notificados. Se congelan embargos, demandas y remates.",tm:60,ms:true},
-  {id:"s9",col:33,n:"Primera audiencia",cd:"Primera audiencia de conciliación con sus acreedores.",ms:true},
-  {id:"a1",col:35,n:"Segunda audiencia",cd:"Segunda audiencia de negociación.",op:true},
-  {id:"a2",col:37,n:"Tercera audiencia",cd:"Audiencia final de negociación.",op:true},
-  {id:"fn",col:39,n:"Resultado final",cd:"Resultado del proceso.",ms:true},
-];
+const SHEET_ID = '15zG1iRk0qYJq5WdCqg5v1hIXXe9K-z6b9jM43GstF90';
 
-const PAYS = [
-  {col:41,cat:"hon"},{col:44,cat:"hon"},{col:47,cat:"hon"},
-  {col:50,cat:"cen"},{col:53,cat:"cen"}
-];
-
-const fmt = v => new Intl.NumberFormat("es-CO",{style:"currency",currency:"COP",maximumFractionDigits:0}).format(v||0);
-
+// Utilidad para formatear fechas de Google Sheets
 function parseDate(v) {
-  if (!v) return null;
+  if (!v || v === "" || v === 0) return null;
   if (typeof v === "string" && v.startsWith("Date(")) {
     const parts = v.replace("Date(","").replace(")","").split(",").map(Number);
     return new Date(parts[0], parts[1], parts[2]);
   }
   const d = new Date(v);
-  return isNaN(d.getTime()) ? null : d;
+  return (isNaN(d.getTime()) || d.getFullYear() < 2000) ? null : d;
 }
 
-function fmtDate(v) {
-  const d = parseDate(v);
-  if (!d) return "—";
-  return d.toLocaleDateString("es-CO",{day:"numeric",month:"short",year:"numeric"});
-}
-
-function daysBetween(a, b) {
-  if (!a || !b) return 0;
-  const da = parseDate(a), db = parseDate(b);
-  if (!da || !db) return 0;
-  return Math.max(0, Math.round((db - da) / 86400000));
-}
-
-function normStatus(v) {
-  if (!v) return "PENDIENTE";
-  return String(v).toUpperCase().trim();
-}
-
-async function buscar() {
-  const ced = document.getElementById("cedInput").value.replace(/[^0-9]/g,"");
-  if (!ced) { document.getElementById("errMsg").textContent = "Ingrese su cédula"; return; }
-
-  document.getElementById("errMsg").textContent = "";
-  document.getElementById("loadMsg").style.display = "block";
-
-  try {
-    // Try numeric match first, then text match
-    let json = null;
-    const queries = [
-      "SELECT * WHERE C = " + ced,
-      "SELECT * WHERE C = '" + ced + "'",
-    ];
-
-    for (const q of queries) {
-      try {
-        const url = "https://docs.google.com/spreadsheets/d/" + SHEET_ID + "/gviz/tq?tqx=out:json&sheet=" + encodeURIComponent(SHEET_NAME) + "&headers=2&tq=" + encodeURIComponent(q);
-        const res = await fetch(url);
-        const text = await res.text();
-        const start = text.indexOf("(");
-        const end = text.lastIndexOf(")");
-        if (start === -1 || end === -1) continue;
-        const parsed = JSON.parse(text.substring(start + 1, end));
-        if (parsed.table && parsed.table.rows && parsed.table.rows.length > 0) {
-          json = parsed;
-          break;
-        }
-      } catch(e) { continue; }
+// Matemática de Días Hábiles
+function addBusinessDays(startDate, daysToAdd) {
+  if(!startDate) return null;
+  let currentDate = new Date(startDate.getTime());
+  let addedDays = 0;
+  while (addedDays < daysToAdd) {
+    currentDate.setDate(currentDate.getDate() + 1);
+    if (currentDate.getDay() !== 0 && currentDate.getDay() !== 6) { // 0 es Domingo, 6 es Sábado
+      addedDays++;
     }
-
-    if (!json) {
-      document.getElementById("errMsg").textContent = "No se encontró un caso con esa cédula.";
-      document.getElementById("loadMsg").style.display = "none";
-      return;
-    }
-
-    const row = json.table.rows[0].c;
-    const g = (i) => row[i] ? (row[i].v !== null ? row[i].v : null) : null;
-
-    const caso = {
-      nombre: g(1), cedula: g(2), celular: g(3), correo: g(4),
-      abogado: g(5), modalidad: normStatus(g(6)),
-      deuda: g(7), honorarios: g(8), centro: g(9),
-      fechaInicio: g(10), pct1: g(11), pct2: g(12), pct3: g(13),
-      desc: g(14), estrategia: g(15), fechaCreacion: g(16),
-      steps: [], pays: []
-    };
-
-    // Parse steps
-    STEPS.forEach(s => {
-      const est = normStatus(g(s.col));
-      const fecha = g(s.col + 1);
-      caso.steps.push({...s, est, fecha});
-    });
-
-    // Parse payments
-    PAYS.forEach((p, i) => {
-      const monto = g(p.col) || 0;
-      const est = normStatus(g(p.col + 1));
-      const fecha = g(p.col + 2);
-      const names = ["Anticipo honorarios","Cuota 2 honorarios","Cuota 3 honorarios","50% Centro (admisión)","50% Centro (audiencia)"];
-      caso.pays.push({name: names[i], monto, est, fecha, cat: p.cat});
-    });
-
-    renderPortal(caso);
-
-  } catch(e) {
-    console.error(e);
-    document.getElementById("errMsg").textContent = "Error: " + e.message + ". Verifique que el Sheet esté compartido como público.";
   }
-  document.getElementById("loadMsg").style.display = "none";
+  return currentDate;
 }
 
-function renderPortal(c) {
+// Sumar días calendario normales
+function addDays(date, days) {
+  if(!date) return null;
+  let result = new Date(date);
+  result.setDate(result.getDate() + days);
+  return result;
+}
+
+function formatDate(date) {
+  if(!date) return "";
+  return date.toLocaleDateString('es-CO', { day: '2-digit', month: 'short', year: 'numeric' });
+}
+
+function consultar() {
+  const c = document.getElementById("cedula").value.trim();
+  if(!c) return;
+  document.getElementById("errorMsg").style.display = "none";
+  document.getElementById("loading").style.display = "block";
+  
+  const qStr = `select * where C='${c}' or C=${c}`; // Cambiado a Columna C según tu Excel
+  const query = new google.visualization.Query(`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?sheet=CASOS&tq=${encodeURIComponent(qStr)}`);
+  query.send(processRes);
+}
+
+function processRes(res) {
+  document.getElementById("loading").style.display = "none";
+  if(res.isError() || !res.getDataTable() || res.getDataTable().getNumberOfRows() === 0) {
+    const err = document.getElementById("errorMsg");
+    err.innerText = "No encontramos un proceso activo con este documento.";
+    err.style.display = "block";
+    return;
+  }
+  
+  const dt = res.getDataTable();
+  const row = [];
+  for(let i=0; i<dt.getNumberOfColumns(); i++) {
+    row.push(dt.getValue(0, i));
+  }
+  
+  // Mapeo basado en tu Excel CSV
+  const clientData = {
+    name: row[1],
+    docsCompletosFecha: parseDate(row[26]), // Columna S5 Fecha
+    radicacionFecha: parseDate(row[28]),    // Columna S6 Fecha
+    autoAdmisionFecha: parseDate(row[30]),  // Columna S7 Fecha
+    audienciaFecha: parseDate(row[34])      // Columna S9 Fecha
+  };
+
   document.getElementById("loginView").style.display = "none";
-  document.getElementById("portalView").style.display = "block";
+  document.getElementById("dashView").style.display = "block";
+  document.getElementById("clientName").innerText = clientData.name || "Cliente";
+  
+  renderPortal(clientData);
+}
 
-  // Header
-  document.getElementById("pNombre").textContent = c.nombre || "—";
-  const modTxt = c.modalidad === "ACUERDO" ? "Acuerdo con Acreedores" : c.modalidad === "LIQUIDACIÓN" || c.modalidad === "LIQUIDACION" ? "Liquidación Patrimonial" : c.modalidad;
-  document.getElementById("pInfo").textContent = modTxt + (c.abogado ? " · " + c.abogado : "");
+function renderPortal(d) {
+  // Lógica de fechas límite según las políticas de tu negocio
+  const limiteAuto = addDays(d.docsCompletosFecha, 15); // 15 días calendario
+  const limiteAudiencia = addBusinessDays(d.autoAdmisionFecha, 60); // 60 días hábiles
 
-  // Steps analysis
-  const visSteps = c.steps.filter(s => {
-    if (s.op && s.est === "PENDIENTE") return false;
-    return true;
-  });
-  const done = visSteps.filter(s => s.est === "COMPLETADO").length;
-  const total = visSteps.length;
-  const pct = total ? Math.round(done / total * 100) : 0;
-  const active = visSteps.find(s => s.est === "ACTIVO");
+  // Determinar la etapa actual basado en qué fechas existen
+  let etapaActualIndex = 0;
+  if (d.docsCompletosFecha) etapaActualIndex = 0;
+  if (d.radicacionFecha) etapaActualIndex = 1;
+  if (d.autoAdmisionFecha) etapaActualIndex = 2;
+  if (d.audienciaFecha) etapaActualIndex = 3;
 
-  // Pct ring
-  document.getElementById("pctRing").style.background = `conic-gradient(var(--gold) ${pct*3.6}deg, var(--navy-l) ${pct*3.6}deg)`;
-  document.getElementById("pctText").textContent = pct + "%";
+  const etapas = [
+    { n: "Docs Completos", fecha: d.docsCompletosFecha },
+    { n: "Radicación", fecha: d.radicacionFecha },
+    { n: "Auto de Admisión", fecha: d.autoAdmisionFecha, limite: limiteAuto, alerta: "Meta: 15 días" },
+    { n: "1ra Audiencia", fecha: d.audienciaFecha, limite: limiteAudiencia, alerta: "Meta: 60 días hábiles" },
+    { n: "Resultado Final", fecha: null }
+  ];
 
-  // Milestones
-  const milestones = visSteps.filter(s => s.ms || s.id === "s1" || s.id === "s3" || s.id === "s5");
-  document.getElementById("msFill").style.width = pct + "%";
-  let msHTML = "";
-  milestones.forEach(s => {
-    const isDone = s.est === "COMPLETADO", isAct = s.est === "ACTIVO";
-    const sz = isDone ? 20 : isAct ? 22 : 14;
-    const bg = isDone ? "var(--gold)" : isAct ? "#fff" : "var(--navy-l)";
-    const brd = isAct ? "3px solid var(--gold)" : "2px solid transparent";
-    const col = isDone ? "var(--navy-d)" : "var(--muted)";
-    const shadow = isAct ? "box-shadow:0 0 0 4px rgba(201,168,76,0.2);" : "";
-    msHTML += '<div class="ms-dot"><div class="ms-circle" style="width:'+sz+'px;height:'+sz+'px;background:'+bg+';border:'+brd+';'+shadow+'">'+( isDone?"✓":"")+'</div><p class="ms-name" style="color:'+(isDone?"var(--gold)":isAct?"#fff":"var(--muted)")+';font-weight:'+(isDone||isAct?700:400)+'">'+s.n+'</p></div>';
-  });
-  document.getElementById("msDots").innerHTML = msHTML;
+  let stepsHtml = '';
+  etapas.forEach((et, idx) => {
+    let statusClass = '';
+    let icon = idx + 1;
+    let fechaLabel = '';
 
-  // Time calcs
-  const today = new Date();
-  const created = parseDate(c.fechaCreacion);
-  const diasTotal = created ? Math.round((today - created) / 86400000) : 0;
-  let diasEtapa = 0, deadline = null, diasRest = null;
-
-  // Check s5 -> s7 countdown (15 days)
-  const s5 = c.steps.find(s => s.id === "s5");
-  const s7 = c.steps.find(s => s.id === "s7");
-  if (s5 && s5.est === "COMPLETADO" && s5.fecha && s7 && s7.est !== "COMPLETADO") {
-    diasEtapa = daysBetween(s5.fecha, today.toISOString());
-    deadline = 15; diasRest = Math.max(0, 15 - diasEtapa);
-  }
-  // Check s8 -> s9 countdown (60 days)
-  const s8 = c.steps.find(s => s.id === "s8");
-  const s9 = c.steps.find(s => s.id === "s9");
-  if (s8 && s8.est === "COMPLETADO" && s8.fecha && s9 && s9.est !== "COMPLETADO") {
-    diasEtapa = daysBetween(s8.fecha, today.toISOString());
-    deadline = 60; diasRest = Math.max(0, 60 - diasEtapa);
-  }
-
-  // Payments
-  const paid = c.pays.filter(p => p.est === "PAGADO").reduce((a, p) => a + (p.monto || 0), 0);
-  const totalPay = c.pays.reduce((a, p) => a + (p.monto || 0), 0);
-
-  // Cards
-  let cardsHTML = "";
-  cardsHTML += card("📊", "Progreso", pct+"%", done+"/"+total+" etapas", pct===100?"var(--success)":"var(--navy)");
-  cardsHTML += card("📅", "Tiempo", diasTotal+"d", diasRest!==null?diasRest+"d restantes":"En curso", diasRest!==null&&diasRest<5?"var(--danger)":"var(--navy)");
-  cardsHTML += card("💰", "Pagado", fmt(paid), "de "+fmt(totalPay), "var(--success)");
-  if (c.abogado) cardsHTML += card("👤", "Abogado", c.abogado, "", "var(--navy)");
-  document.getElementById("cardsRow").innerHTML = cardsHTML;
-
-  // Active step
-  let actHTML = "";
-  if (active) {
-    actHTML = `<div class="active-box">
-      <p class="active-label">Etapa Actual</p>
-      <p class="active-name">${active.n}</p>
-      <p class="active-desc">${active.cd}</p>`;
-    if (diasRest !== null) {
-      const pctTimer = Math.min(100, diasEtapa / deadline * 100);
-      const col = diasRest < 5 ? "var(--danger)" : "var(--navy)";
-      actHTML += `<div class="timer-bar">
-        <div class="timer-info"><span>Día ${diasEtapa} de ${deadline}</span><span style="font-weight:700;color:${col}">${diasRest} días restantes</span></div>
-        <div class="timer-track"><div class="timer-fill" style="width:${pctTimer}%;background:${col}"></div></div>
-      </div>`;
+    if (idx < etapaActualIndex) {
+      statusClass = 'done';
+      icon = '<i class="fas fa-check"></i>';
+      fechaLabel = `<div class="step-date">OK: ${formatDate(et.fecha)}</div>`;
+    } else if (idx === etapaActualIndex) {
+      statusClass = 'active';
+      fechaLabel = `<div class="step-date" style="color:var(--navy);font-weight:bold;">En proceso</div>`;
+      if (et.limite) {
+        fechaLabel += `<div class="step-deadline">Límite aprox: ${formatDate(et.limite)}</div>`;
+      }
+    } else {
+      if (et.alerta) {
+         fechaLabel = `<div class="step-date" style="opacity:0.6">${et.alerta}</div>`;
+      }
     }
-    actHTML += `</div>`;
-  }
-  document.getElementById("activeBox").innerHTML = actHTML;
 
-  // Timeline
-  let tlHTML = "";
-  visSteps.forEach((s, i) => {
-    const isLast = i === visSteps.length - 1;
-    const isDone = s.est === "COMPLETADO", isAct = s.est === "ACTIVO";
-    const col = isDone ? "var(--success)" : isAct ? "var(--navy)" : "var(--light)";
-    const sz = s.ms ? 20 : 14;
-    tlHTML += `<div class="tl-item" style="padding-bottom:${isLast?0:16}px">
-      <div class="tl-line">
-        <div class="tl-dot" style="width:${sz}px;height:${sz}px;background:${isDone?col:"var(--white)"};border:3px solid ${col};${isAct?"box-shadow:0 0 0 3px rgba(0,40,85,0.15);":""}">${isDone?"✓":""}</div>
-        ${!isLast?`<div class="tl-conn" style="background:${isDone?"var(--success)":"var(--light)"}"></div>`:""}
+    stepsHtml += `
+      <div class="step ${statusClass}">
+        <div class="step-circle">${icon}</div>
+        <div class="step-label">${et.n}</div>
+        ${fechaLabel}
       </div>
-      <div class="tl-content">
-        <div class="tl-row">
-          <span class="tl-name" style="font-weight:${isAct?800:600};color:${!isDone&&!isAct?"var(--muted)":"var(--navy-d)"}">${s.n}</span>
-          ${s.fecha?`<span class="tl-date">${fmtDate(s.fecha)}</span>`:""}
-        </div>
-        ${isDone||isAct?`<p class="tl-desc">${s.cd}</p>`:""}
-      </div>
-    </div>`;
+    `;
   });
-  document.getElementById("timeline").innerHTML = tlHTML;
 
-  // Payments
-  const honPays = c.pays.filter(p => p.cat === "hon");
-  const cenPays = c.pays.filter(p => p.cat === "cen");
-
-  let payHTML = `<div class="pay-bar">
-    <div class="pay-bar-info"><span>${fmt(paid)} pagados</span><span>${fmt(totalPay)} total</span></div>
-    <div class="pay-bar-track"><div class="pay-bar-fill" style="width:${totalPay?paid/totalPay*100:0}%"></div></div>
-  </div>
-  <div class="pay-cols">
-    <div>
-      <p class="pay-col-title" style="border-bottom:2px solid var(--navy)">Honorarios Firma</p>
-      ${honPays.map(p => payItem(p)).join("")}
+  const html = `
+    <div class="tracker-container">
+      <h3><i class="fas fa-tasks"></i> Progreso del caso</h3>
+      <div class="tracker">${stepsHtml}</div>
     </div>
-    <div>
-      <p class="pay-col-title" style="border-bottom:2px solid var(--gold)">Centro Conciliación</p>
-      ${cenPays.map(p => payItem(p)).join("")}
+    <div class="grid">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon"><i class="fas fa-info-circle"></i></div>
+          <div class="card-title">Resumen de Tiempos Legales</div>
+        </div>
+        <p style="font-size:14px; color:var(--muted); margin-bottom: 15px;">
+          Por política interna, nuestros tiempos proyectados son:
+        </p>
+        <div class="info-row"><span class="info-label">Emisión Auto de Admisión</span><span class="info-val">15 días tras Docs Completos</span></div>
+        <div class="info-row"><span class="info-label">1ra Audiencia de Conciliación</span><span class="info-val">60 días hábiles tras Auto de Admisión</span></div>
+      </div>
     </div>
-  </div>`;
-  document.getElementById("payments").innerHTML = payHTML;
+  `;
+  document.getElementById("portalContent").innerHTML = html;
 }
 
-function card(icon, label, value, sub, color) {
-  return `<div class="card">
-    <div class="card-icon">${icon}</div>
-    <div class="card-label">${label}</div>
-    <div class="card-value" style="color:${color}">${value}</div>
-    ${sub?`<div class="card-sub">${sub}</div>`:""}
-  </div>`;
-}
-
-function payItem(p) {
-  const isPaid = p.est === "PAGADO";
-  const bg = isPaid ? "var(--success-bg)" : "var(--bg)";
-  const brd = isPaid ? "#bbf7d0" : "var(--light)";
-  const amCol = isPaid ? "var(--success)" : "var(--navy-d)";
-  const pillBg = isPaid ? "var(--success-bg)" : "var(--warn-bg)";
-  const pillCol = isPaid ? "var(--success)" : "var(--warn)";
-  const pillTxt = isPaid ? "✓ Pagado" : "Pendiente";
-  const dateTxt = isPaid && p.fecha ? "Pagado: " + fmtDate(p.fecha) : p.fecha ? "Vence: " + fmtDate(p.fecha) : "";
-  return `<div class="pay-item" style="background:${bg};border:1px solid ${brd}">
-    <div class="pay-name">${p.name}</div>
-    <div class="pay-row">
-      <span class="pay-amount" style="color:${amCol}">${fmt(p.monto)}</span>
-      <span class="pill" style="color:${pillCol};background:${pillBg}">${pillTxt}</span>
-    </div>
-    ${dateTxt?`<div style="font-size:9px;color:var(--muted);margin-top:3px">${dateTxt}</div>`:""}
-  </div>`;
-}
-
-function toggleSec(btn) {
-  const body = btn.nextElementSibling;
-  const arrow = btn.querySelector(".section-arrow");
-  if (body.style.display === "block") {
-    body.style.display = "none";
-    arrow.style.transform = "rotate(0deg)";
-  } else {
-    body.style.display = "block";
-    arrow.style.transform = "rotate(180deg)";
-  }
-}
-
-function volver() {
-  document.getElementById("portalView").style.display = "none";
+function salir() {
+  document.getElementById("cedula").value = "";
+  document.getElementById("dashView").style.display = "none";
   document.getElementById("loginView").style.display = "flex";
-  document.getElementById("cedInput").value = "";
 }
-
-document.getElementById("cedInput").addEventListener("keydown", e => { if (e.key === "Enter") buscar(); });
 </script>
 </body>
 </html>

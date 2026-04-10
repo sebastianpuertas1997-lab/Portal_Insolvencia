@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portal de Seguimiento — Colombia Abogados</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#002855;--navy-l:#003d80;--navy-d:#001a3a;--gold:#c9a84c;--gold-l:#f5e6b8;--bg:#f4f6f9;--white:#fff;--muted:#64748b;--light:#e8ecf2;--success:#16a34a;--success-bg:#f0fdf4;--warn:#d97706;--warn-bg:#fffbeb;--danger:#dc2626}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:#1a1a2e;min-height:100vh}
+.sf{font-family:'Playfair Display',serif}
+
+/* Login */
+.login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(160deg,var(--navy-d),var(--navy));padding:20px}
+.login-box{text-align:center;max-width:400px;width:100%}
+.login-logo{width:64px;height:64px;border-radius:20px;background:linear-gradient(135deg,var(--navy),var(--navy-l));display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:28px;box-shadow:0 8px 30px rgba(0,40,85,0.4)}
+.login-box h1{font-family:'Playfair Display',serif;font-size:28px;color:#fff;margin-bottom:4px}
+.login-box .sub{color:var(--gold);font-size:11px;letter-spacing:3px;text-transform:uppercase;margin-bottom:32px}
+.login-box input{width:100%;padding:16px 20px;border-radius:16px;border:2px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.05);font-size:16px;outline:none;text-align:center;font-family:'DM Sans';font-weight:600;letter-spacing:2px;color:#fff;transition:border-color 0.2s}
+.login-box input:focus{border-color:var(--gold)}
+.login-box input::placeholder{color:rgba(255,255,255,0.3)}
+.login-box button{width:100%;margin-top:16px;padding:14px;border-radius:14px;border:none;background:var(--gold);color:var(--navy-d);font-weight:800;font-size:14px;cursor:pointer;box-shadow:0 4px 20px rgba(201,168,76,0.3);transition:transform 0.1s}
+.login-box button:active{transform:scale(0.98)}
+.err{color:var(--danger);font-size:12px;margin-top:10px}
+.loading{color:var(--gold);font-size:13px;margin-top:16px}
+
+/* Portal */
+.portal{display:none}
+.header{background:linear-gradient(135deg,var(--navy-d),var(--navy));color:#fff;padding:28px 20px 20px}
+.header-inner{max-width:720px;margin:0 auto}
+.back-btn{background:none;border:none;color:var(--muted);font-size:12px;cursor:pointer;margin-bottom:12px;font-family:'DM Sans'}
+.header-row{display:flex;justify-content:space-between;align-items:center}
+.header-label{font-size:9px;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:3px}
+.header h1{font-family:'Playfair Display',serif;font-size:22px;margin:4px 0 2px}
+.header .info{font-size:11px;color:var(--muted)}
+.pct-ring{width:58px;height:58px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.pct-inner{width:46px;height:46px;border-radius:50%;background:var(--navy-d);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800}
+
+/* Milestone bar */
+.ms-bar{margin-top:20px;position:relative}
+.ms-track{position:absolute;top:9px;left:0;right:0;height:3px;background:var(--navy-l);border-radius:2px}
+.ms-fill{position:absolute;top:9px;left:0;height:3px;background:var(--gold);border-radius:2px;transition:width 0.5s}
+.ms-dots{display:flex;justify-content:space-between;position:relative}
+.ms-dot{text-align:center;width:56px}
+.ms-circle{margin:0 auto;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:8px;color:#fff;transition:all 0.3s}
+.ms-name{font-size:7px;margin-top:4px;line-height:1.2}
+
+/* Content */
+.content{max-width:720px;margin:-1px auto 0;padding:16px 20px 0}
+
+/* Cards */
+.cards{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px}
+.card{background:var(--white);border-radius:16px;padding:14px 16px;border:1px solid var(--light);flex:1;min-width:120px;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.card-icon{font-size:18px;margin-bottom:4px}
+.card-label{font-size:9px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
+.card-value{font-size:20px;font-weight:800;margin-top:2px}
+.card-sub{font-size:10px;color:var(--muted);margin-top:2px}
+
+/* Active step */
+.active-box{background:var(--gold-l);border:1px solid var(--gold);border-radius:16px;padding:14px 18px;margin-bottom:16px}
+.active-label{font-size:9px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:2px;margin-bottom:4px}
+.active-name{font-size:15px;font-weight:700;color:var(--navy-d);margin-bottom:2px}
+.active-desc{font-size:11px;color:var(--muted)}
+.timer-bar{margin-top:8px}
+.timer-info{display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-bottom:3px}
+.timer-track{height:6px;background:#e8e0c8;border-radius:3px}
+.timer-fill{height:100%;border-radius:3px;transition:width 0.5s}
+
+/* Sections */
+.section{background:var(--white);border-radius:20px;box-shadow:0 2px 12px rgba(0,0,0,0.05);border:1px solid var(--light);margin-bottom:16px;overflow:hidden}
+.section-btn{width:100%;padding:16px 20px;display:flex;justify-content:space-between;align-items:center;background:none;border:none;cursor:pointer;font-family:'DM Sans'}
+.section-title{font-family:'Playfair Display',serif;font-size:16px;color:var(--navy);font-weight:700}
+.section-arrow{font-size:18px;color:var(--muted);transition:transform 0.3s}
+.section-body{padding:0 20px 20px;display:none}
+
+/* Timeline */
+.tl-item{display:flex;gap:14px}
+.tl-line{display:flex;flex-direction:column;align-items:center;width:20px}
+.tl-dot{border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:7px;color:#fff}
+.tl-conn{width:2px;flex:1;min-height:16px}
+.tl-content{flex:1}
+.tl-row{display:flex;justify-content:space-between;align-items:center}
+.tl-name{font-size:13px}
+.tl-date{font-size:10px;color:var(--muted)}
+.tl-desc{font-size:11px;color:var(--muted);margin:3px 0 0;line-height:1.5}
+
+/* Payments */
+.pay-bar{margin-bottom:14px}
+.pay-bar-info{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:4px}
+.pay-bar-track{height:8px;background:var(--light);border-radius:4px}
+.pay-bar-fill{height:100%;background:var(--navy);border-radius:4px;transition:width 0.5s}
+.pay-cols{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.pay-col-title{font-size:10px;font-weight:800;color:var(--navy);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;padding-bottom:6px}
+.pay-item{padding:10px 12px;border-radius:12px;margin-bottom:8px}
+.pay-name{font-size:11px;font-weight:600;color:var(--navy-d);margin-bottom:2px}
+.pay-row{display:flex;justify-content:space-between;align-items:center}
+.pay-amount{font-size:14px;font-weight:800}
+.pill{display:inline-block;padding:2px 10px;border-radius:20px;font-size:10px;font-weight:700}
+
+.footer{text-align:center;padding:12px 0 24px}
+.footer p{font-size:9px;color:var(--muted);font-weight:600;letter-spacing:2px;text-transform:uppercase}
+
+@media(max-width:600px){
+  .cards{flex-direction:column}
+  .card{min-width:auto}
+  .pay-cols{grid-template-columns:1fr}
+  .header h1{font-size:18px}
+}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div class="login-wrap" id="loginView">
+  <div class="login-box">
+    <div class="login-logo">⚖️</div>
+    <h1 class="sf">Consulte su Proceso</h1>
+    <p class="sub">Colombia Abogados</p>
+    <input type="text" id="cedInput" placeholder="Número de cédula" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+    <button onclick="buscar()">Consultar</button>
+    <p class="err" id="errMsg"></p>
+    <p class="loading" id="loadMsg" style="display:none">Buscando su caso...</p>
+  </div>
+</div>
+
+<!-- PORTAL -->
+<div class="portal" id="portalView">
+  <div class="header">
+    <div class="header-inner">
+      <button class="back-btn" onclick="volver()">← Volver</button>
+      <div class="header-row">
+        <div>
+          <p class="header-label">Colombia Abogados</p>
+          <h1 class="sf" id="pNombre">—</h1>
+          <p class="info" id="pInfo">—</p>
+        </div>
+        <div class="pct-ring" id="pctRing">
+          <div class="pct-inner" id="pctText">0%</div>
+        </div>
+      </div>
+      <div class="ms-bar">
+        <div class="ms-track"></div>
+        <div class="ms-fill" id="msFill"></div>
+        <div class="ms-dots" id="msDots"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="cards" id="cardsRow"></div>
+    <div id="activeBox"></div>
+
+    <div class="section">
+      <button class="section-btn" onclick="toggleSec(this)">
+        <span class="section-title">📋 Detalle del Proceso</span>
+        <span class="section-arrow">▾</span>
+      </button>
+      <div class="section-body" id="timeline"></div>
+    </div>
+
+    <div class="section">
+      <button class="section-btn" onclick="toggleSec(this)">
+        <span class="section-title">💰 Detalle de Pagos</span>
+        <span class="section-arrow">▾</span>
+      </button>
+      <div class="section-body" id="payments"></div>
+    </div>
+
+    <div class="footer"><p>Colombia Abogados · Portal de Seguimiento</p></div>
+  </div>
+</div>
+
+<script>
+const SHEET_ID = "1kYSL702hd5--O6kvMDYNvLU_oUKJmfAI0dziYiwyZwY";
+const SHEET_NAME = "CASOS";
+
+const STEPS = [
+  {id:"s1",col:17,n:"Envío contrato y poder",cd:"Le enviamos los documentos de contrato y poder para su firma."},
+  {id:"s2",col:19,n:"Documentos firmados",cd:"Recibimos sus documentos firmados."},
+  {id:"s3",col:21,n:"Anticipo honorarios",cd:"Se registra su pago de anticipo de honorarios."},
+  {id:"s4",col:23,n:"Solicitud documentos",cd:"Le solicitamos la documentación necesaria para radicar su caso."},
+  {id:"s5",col:25,n:"Documentos completos",cd:"Recibimos toda su documentación. Inician 15 días hábiles para la admisión.",tm:15},
+  {id:"s6",col:27,n:"Solicitud radicada",cd:"Su solicitud fue radicada ante el centro de conciliación."},
+  {id:"s7",col:29,n:"Auto de admisión",cd:"¡Su caso fue admitido por el centro de conciliación!",ms:true},
+  {id:"s8",col:31,n:"Notificación acreedores",cd:"Acreedores notificados. Se congelan embargos, demandas y remates.",tm:60,ms:true},
+  {id:"s9",col:33,n:"Primera audiencia",cd:"Primera audiencia de conciliación con sus acreedores.",ms:true},
+  {id:"a1",col:35,n:"Segunda audiencia",cd:"Segunda audiencia de negociación.",op:true},
+  {id:"a2",col:37,n:"Tercera audiencia",cd:"Audiencia final de negociación.",op:true},
+  {id:"fn",col:39,n:"Resultado final",cd:"Resultado del proceso.",ms:true},
+];
+
+const PAYS = [
+  {col:41,cat:"hon"},{col:44,cat:"hon"},{col:47,cat:"hon"},
+  {col:50,cat:"cen"},{col:53,cat:"cen"}
+];
+
+const fmt = v => new Intl.NumberFormat("es-CO",{style:"currency",currency:"COP",maximumFractionDigits:0}).format(v||0);
+
+function parseDate(v) {
+  if (!v) return null;
+  if (typeof v === "string" && v.startsWith("Date(")) {
+    const parts = v.replace("Date(","").replace(")","").split(",").map(Number);
+    return new Date(parts[0], parts[1], parts[2]);
+  }
+  const d = new Date(v);
+  return isNaN(d.getTime()) ? null : d;
+}
+
+function fmtDate(v) {
+  const d = parseDate(v);
+  if (!d) return "—";
+  return d.toLocaleDateString("es-CO",{day:"numeric",month:"short",year:"numeric"});
+}
+
+function daysBetween(a, b) {
+  if (!a || !b) return 0;
+  const da = parseDate(a), db = parseDate(b);
+  if (!da || !db) return 0;
+  return Math.max(0, Math.round((db - da) / 86400000));
+}
+
+function normStatus(v) {
+  if (!v) return "PENDIENTE";
+  return String(v).toUpperCase().trim();
+}
+
+async function buscar() {
+  const ced = document.getElementById("cedInput").value.replace(/[^0-9]/g,"");
+  if (!ced) { document.getElementById("errMsg").textContent = "Ingrese su cédula"; return; }
+
+  document.getElementById("errMsg").textContent = "";
+  document.getElementById("loadMsg").style.display = "block";
+
+  try {
+    // Try numeric match first, then text match
+    let json = null;
+    const queries = [
+      "SELECT * WHERE C = " + ced,
+      "SELECT * WHERE C = '" + ced + "'",
+    ];
+
+    for (const q of queries) {
+      try {
+        const url = "https://docs.google.com/spreadsheets/d/" + SHEET_ID + "/gviz/tq?tqx=out:json&sheet=" + encodeURIComponent(SHEET_NAME) + "&headers=2&tq=" + encodeURIComponent(q);
+        const res = await fetch(url);
+        const text = await res.text();
+        const start = text.indexOf("(");
+        const end = text.lastIndexOf(")");
+        if (start === -1 || end === -1) continue;
+        const parsed = JSON.parse(text.substring(start + 1, end));
+        if (parsed.table && parsed.table.rows && parsed.table.rows.length > 0) {
+          json = parsed;
+          break;
+        }
+      } catch(e) { continue; }
+    }
+
+    if (!json) {
+      document.getElementById("errMsg").textContent = "No se encontró un caso con esa cédula.";
+      document.getElementById("loadMsg").style.display = "none";
+      return;
+    }
+
+    const row = json.table.rows[0].c;
+    const g = (i) => row[i] ? (row[i].v !== null ? row[i].v : null) : null;
+
+    const caso = {
+      nombre: g(1), cedula: g(2), celular: g(3), correo: g(4),
+      abogado: g(5), modalidad: normStatus(g(6)),
+      deuda: g(7), honorarios: g(8), centro: g(9),
+      fechaInicio: g(10), pct1: g(11), pct2: g(12), pct3: g(13),
+      desc: g(14), estrategia: g(15), fechaCreacion: g(16),
+      steps: [], pays: []
+    };
+
+    // Parse steps
+    STEPS.forEach(s => {
+      const est = normStatus(g(s.col));
+      const fecha = g(s.col + 1);
+      caso.steps.push({...s, est, fecha});
+    });
+
+    // Parse payments
+    PAYS.forEach((p, i) => {
+      const monto = g(p.col) || 0;
+      const est = normStatus(g(p.col + 1));
+      const fecha = g(p.col + 2);
+      const names = ["Anticipo honorarios","Cuota 2 honorarios","Cuota 3 honorarios","50% Centro (admisión)","50% Centro (audiencia)"];
+      caso.pays.push({name: names[i], monto, est, fecha, cat: p.cat});
+    });
+
+    renderPortal(caso);
+
+  } catch(e) {
+    console.error(e);
+    document.getElementById("errMsg").textContent = "Error: " + e.message + ". Verifique que el Sheet esté compartido como público.";
+  }
+  document.getElementById("loadMsg").style.display = "none";
+}
+
+function renderPortal(c) {
+  document.getElementById("loginView").style.display = "none";
+  document.getElementById("portalView").style.display = "block";
+
+  // Header
+  document.getElementById("pNombre").textContent = c.nombre || "—";
+  const modTxt = c.modalidad === "ACUERDO" ? "Acuerdo con Acreedores" : c.modalidad === "LIQUIDACIÓN" || c.modalidad === "LIQUIDACION" ? "Liquidación Patrimonial" : c.modalidad;
+  document.getElementById("pInfo").textContent = modTxt + (c.abogado ? " · " + c.abogado : "");
+
+  // Steps analysis
+  const visSteps = c.steps.filter(s => {
+    if (s.op && s.est === "PENDIENTE") return false;
+    return true;
+  });
+  const done = visSteps.filter(s => s.est === "COMPLETADO").length;
+  const total = visSteps.length;
+  const pct = total ? Math.round(done / total * 100) : 0;
+  const active = visSteps.find(s => s.est === "ACTIVO");
+
+  // Pct ring
+  document.getElementById("pctRing").style.background = `conic-gradient(var(--gold) ${pct*3.6}deg, var(--navy-l) ${pct*3.6}deg)`;
+  document.getElementById("pctText").textContent = pct + "%";
+
+  // Milestones
+  const milestones = visSteps.filter(s => s.ms || s.id === "s1" || s.id === "s3" || s.id === "s5");
+  document.getElementById("msFill").style.width = pct + "%";
+  let msHTML = "";
+  milestones.forEach(s => {
+    const isDone = s.est === "COMPLETADO", isAct = s.est === "ACTIVO";
+    const sz = isDone ? 20 : isAct ? 22 : 14;
+    const bg = isDone ? "var(--gold)" : isAct ? "#fff" : "var(--navy-l)";
+    const brd = isAct ? "3px solid var(--gold)" : "2px solid transparent";
+    const col = isDone ? "var(--navy-d)" : "var(--muted)";
+    const shadow = isAct ? "box-shadow:0 0 0 4px rgba(201,168,76,0.2);" : "";
+    msHTML += '<div class="ms-dot"><div class="ms-circle" style="width:'+sz+'px;height:'+sz+'px;background:'+bg+';border:'+brd+';'+shadow+'">'+( isDone?"✓":"")+'</div><p class="ms-name" style="color:'+(isDone?"var(--gold)":isAct?"#fff":"var(--muted)")+';font-weight:'+(isDone||isAct?700:400)+'">'+s.n+'</p></div>';
+  });
+  document.getElementById("msDots").innerHTML = msHTML;
+
+  // Time calcs
+  const today = new Date();
+  const created = parseDate(c.fechaCreacion);
+  const diasTotal = created ? Math.round((today - created) / 86400000) : 0;
+  let diasEtapa = 0, deadline = null, diasRest = null;
+
+  // Check s5 -> s7 countdown (15 days)
+  const s5 = c.steps.find(s => s.id === "s5");
+  const s7 = c.steps.find(s => s.id === "s7");
+  if (s5 && s5.est === "COMPLETADO" && s5.fecha && s7 && s7.est !== "COMPLETADO") {
+    diasEtapa = daysBetween(s5.fecha, today.toISOString());
+    deadline = 15; diasRest = Math.max(0, 15 - diasEtapa);
+  }
+  // Check s8 -> s9 countdown (60 days)
+  const s8 = c.steps.find(s => s.id === "s8");
+  const s9 = c.steps.find(s => s.id === "s9");
+  if (s8 && s8.est === "COMPLETADO" && s8.fecha && s9 && s9.est !== "COMPLETADO") {
+    diasEtapa = daysBetween(s8.fecha, today.toISOString());
+    deadline = 60; diasRest = Math.max(0, 60 - diasEtapa);
+  }
+
+  // Payments
+  const paid = c.pays.filter(p => p.est === "PAGADO").reduce((a, p) => a + (p.monto || 0), 0);
+  const totalPay = c.pays.reduce((a, p) => a + (p.monto || 0), 0);
+
+  // Cards
+  let cardsHTML = "";
+  cardsHTML += card("📊", "Progreso", pct+"%", done+"/"+total+" etapas", pct===100?"var(--success)":"var(--navy)");
+  cardsHTML += card("📅", "Tiempo", diasTotal+"d", diasRest!==null?diasRest+"d restantes":"En curso", diasRest!==null&&diasRest<5?"var(--danger)":"var(--navy)");
+  cardsHTML += card("💰", "Pagado", fmt(paid), "de "+fmt(totalPay), "var(--success)");
+  if (c.abogado) cardsHTML += card("👤", "Abogado", c.abogado, "", "var(--navy)");
+  document.getElementById("cardsRow").innerHTML = cardsHTML;
+
+  // Active step
+  let actHTML = "";
+  if (active) {
+    actHTML = `<div class="active-box">
+      <p class="active-label">Etapa Actual</p>
+      <p class="active-name">${active.n}</p>
+      <p class="active-desc">${active.cd}</p>`;
+    if (diasRest !== null) {
+      const pctTimer = Math.min(100, diasEtapa / deadline * 100);
+      const col = diasRest < 5 ? "var(--danger)" : "var(--navy)";
+      actHTML += `<div class="timer-bar">
+        <div class="timer-info"><span>Día ${diasEtapa} de ${deadline}</span><span style="font-weight:700;color:${col}">${diasRest} días restantes</span></div>
+        <div class="timer-track"><div class="timer-fill" style="width:${pctTimer}%;background:${col}"></div></div>
+      </div>`;
+    }
+    actHTML += `</div>`;
+  }
+  document.getElementById("activeBox").innerHTML = actHTML;
+
+  // Timeline
+  let tlHTML = "";
+  visSteps.forEach((s, i) => {
+    const isLast = i === visSteps.length - 1;
+    const isDone = s.est === "COMPLETADO", isAct = s.est === "ACTIVO";
+    const col = isDone ? "var(--success)" : isAct ? "var(--navy)" : "var(--light)";
+    const sz = s.ms ? 20 : 14;
+    tlHTML += `<div class="tl-item" style="padding-bottom:${isLast?0:16}px">
+      <div class="tl-line">
+        <div class="tl-dot" style="width:${sz}px;height:${sz}px;background:${isDone?col:"var(--white)"};border:3px solid ${col};${isAct?"box-shadow:0 0 0 3px rgba(0,40,85,0.15);":""}">${isDone?"✓":""}</div>
+        ${!isLast?`<div class="tl-conn" style="background:${isDone?"var(--success)":"var(--light)"}"></div>`:""}
+      </div>
+      <div class="tl-content">
+        <div class="tl-row">
+          <span class="tl-name" style="font-weight:${isAct?800:600};color:${!isDone&&!isAct?"var(--muted)":"var(--navy-d)"}">${s.n}</span>
+          ${s.fecha?`<span class="tl-date">${fmtDate(s.fecha)}</span>`:""}
+        </div>
+        ${isDone||isAct?`<p class="tl-desc">${s.cd}</p>`:""}
+      </div>
+    </div>`;
+  });
+  document.getElementById("timeline").innerHTML = tlHTML;
+
+  // Payments
+  const honPays = c.pays.filter(p => p.cat === "hon");
+  const cenPays = c.pays.filter(p => p.cat === "cen");
+
+  let payHTML = `<div class="pay-bar">
+    <div class="pay-bar-info"><span>${fmt(paid)} pagados</span><span>${fmt(totalPay)} total</span></div>
+    <div class="pay-bar-track"><div class="pay-bar-fill" style="width:${totalPay?paid/totalPay*100:0}%"></div></div>
+  </div>
+  <div class="pay-cols">
+    <div>
+      <p class="pay-col-title" style="border-bottom:2px solid var(--navy)">Honorarios Firma</p>
+      ${honPays.map(p => payItem(p)).join("")}
+    </div>
+    <div>
+      <p class="pay-col-title" style="border-bottom:2px solid var(--gold)">Centro Conciliación</p>
+      ${cenPays.map(p => payItem(p)).join("")}
+    </div>
+  </div>`;
+  document.getElementById("payments").innerHTML = payHTML;
+}
+
+function card(icon, label, value, sub, color) {
+  return `<div class="card">
+    <div class="card-icon">${icon}</div>
+    <div class="card-label">${label}</div>
+    <div class="card-value" style="color:${color}">${value}</div>
+    ${sub?`<div class="card-sub">${sub}</div>`:""}
+  </div>`;
+}
+
+function payItem(p) {
+  const isPaid = p.est === "PAGADO";
+  const bg = isPaid ? "var(--success-bg)" : "var(--bg)";
+  const brd = isPaid ? "#bbf7d0" : "var(--light)";
+  const amCol = isPaid ? "var(--success)" : "var(--navy-d)";
+  const pillBg = isPaid ? "var(--success-bg)" : "var(--warn-bg)";
+  const pillCol = isPaid ? "var(--success)" : "var(--warn)";
+  const pillTxt = isPaid ? "✓ Pagado" : "Pendiente";
+  const dateTxt = isPaid && p.fecha ? "Pagado: " + fmtDate(p.fecha) : p.fecha ? "Vence: " + fmtDate(p.fecha) : "";
+  return `<div class="pay-item" style="background:${bg};border:1px solid ${brd}">
+    <div class="pay-name">${p.name}</div>
+    <div class="pay-row">
+      <span class="pay-amount" style="color:${amCol}">${fmt(p.monto)}</span>
+      <span class="pill" style="color:${pillCol};background:${pillBg}">${pillTxt}</span>
+    </div>
+    ${dateTxt?`<div style="font-size:9px;color:var(--muted);margin-top:3px">${dateTxt}</div>`:""}
+  </div>`;
+}
+
+function toggleSec(btn) {
+  const body = btn.nextElementSibling;
+  const arrow = btn.querySelector(".section-arrow");
+  if (body.style.display === "block") {
+    body.style.display = "none";
+    arrow.style.transform = "rotate(0deg)";
+  } else {
+    body.style.display = "block";
+    arrow.style.transform = "rotate(180deg)";
+  }
+}
+
+function volver() {
+  document.getElementById("portalView").style.display = "none";
+  document.getElementById("loginView").style.display = "flex";
+  document.getElementById("cedInput").value = "";
+}
+
+document.getElementById("cedInput").addEventListener("keydown", e => { if (e.key === "Enter") buscar(); });
+</script>
+</body>
+</html>

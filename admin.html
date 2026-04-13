@@ -6,273 +6,468 @@
 <title>Operaciones — Colombia Abogados</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
 <style>
-:root{--navy:#002855;--navy-l:#003d80;--navy-d:#001a3a;--gold:#c9a84c;--gold-l:#f5e6b8;--bg:#f0f2f5;--white:#fff;--muted:#64748b;--light:#e2e8f0;--ok:#16a34a;--ok-bg:#dcfce7;--warn:#d97706;--warn-bg:#fef3c7;--info:#2563eb;--info-bg:#dbeafe;--err:#dc2626;--err-bg:#fef2f2;--purple:#7c3aed}
+:root{--navy:#002855;--navy-l:#003d80;--navy-d:#001a3a;--gold:#c9a84c;--gold-l:#f5e6b8;--bg:#f0f2f5;--white:#fff;--muted:#64748b;--light:#e2e8f0;--ok:#16a34a;--ok-bg:#dcfce7;--warn:#d97706;--warn-bg:#fef3c7;--info:#2563eb;--info-bg:#dbeafe;--err:#dc2626;--err-bg:#fef2f2}
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'DM Sans',sans-serif;background:var(--bg);color:#1a1a2e;min-height:100vh}
-.topbar{background:var(--navy);padding:0 20px;display:flex;align-items:center;height:56px;position:sticky;top:0;z-index:50}
+.topbar{background:linear-gradient(135deg,var(--navy-d),var(--navy));padding:0 24px;display:flex;align-items:center;height:56px;position:sticky;top:0;z-index:50}
 .topbar-logo{font-family:'Playfair Display',serif;font-size:18px;color:#fff;margin-right:auto}
-.topbar-logo span{color:var(--gold);font-size:12px;font-weight:400;font-family:'DM Sans';letter-spacing:2px;text-transform:uppercase;margin-left:10px}
-.topbar-user{color:var(--gold);font-size:12px;font-weight:700;letter-spacing:1px}
-.tabs{background:var(--white);border-bottom:1px solid var(--light);display:flex;overflow-x:auto;position:sticky;top:56px;z-index:40}
-.tab{padding:14px 20px;font-size:13px;font-weight:600;color:var(--muted);cursor:pointer;white-space:nowrap;border-bottom:3px solid transparent;transition:all 0.2s}
+.topbar-logo span{color:var(--gold);font-size:11px;font-weight:500;font-family:'DM Sans';letter-spacing:2px;text-transform:uppercase;margin-left:12px}
+.topbar-user{color:var(--gold);font-size:12px;font-weight:700}
+.tabs{background:var(--white);border-bottom:2px solid var(--light);display:flex;overflow-x:auto;position:sticky;top:56px;z-index:40;padding:0 16px}
+.tab{padding:14px 20px;font-size:13px;font-weight:600;color:var(--muted);cursor:pointer;white-space:nowrap;border-bottom:3px solid transparent;transition:all 0.2s;user-select:none}
 .tab:hover{color:var(--navy)}
-.tab.active{color:var(--navy);border-bottom-color:var(--gold)}
-.main{max-width:960px;margin:0 auto;padding:20px 16px}
-.page{display:none}.page.active{display:block}
-.card{background:var(--white);border-radius:16px;border:1px solid var(--light);padding:20px;margin-bottom:16px;box-shadow:0 1px 4px rgba(0,0,0,0.04)}
-.card-title{font-size:15px;font-weight:700;color:var(--navy);margin-bottom:14px}
+.tab.on{color:var(--navy);border-bottom-color:var(--gold)}
+.main{max-width:900px;margin:0 auto;padding:24px 16px}
+.pg{display:none}
+.pg.on{display:block}
+.card{background:var(--white);border-radius:16px;border:1px solid var(--light);padding:24px;margin-bottom:16px;box-shadow:0 1px 3px rgba(0,0,0,0.04)}
+.card h3{font-size:15px;font-weight:700;color:var(--navy);margin-bottom:16px}
 .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
-.kpi{background:var(--white);border-radius:14px;padding:16px;border:1px solid var(--light);text-align:center}
-.kpi-val{font-size:28px;font-weight:800;margin:4px 0}
-.kpi-lb{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
-.kpi-sub{font-size:11px;color:var(--muted);margin-top:2px}
-.search-bar{display:flex;gap:10px;margin-bottom:16px}
-.search-bar input{flex:1;padding:12px 16px;border:2px solid var(--light);border-radius:12px;font-size:14px;font-family:'DM Sans';outline:none}
-.search-bar input:focus{border-color:var(--navy)}
-.search-bar button{padding:12px 24px;background:var(--navy);color:#fff;border:none;border-radius:12px;font-weight:700;font-size:14px;cursor:pointer;font-family:'DM Sans';white-space:nowrap}
-.ch{background:linear-gradient(135deg,var(--navy-d),var(--navy));border-radius:16px;padding:20px;color:#fff;margin-bottom:16px}
-.ch-name{font-family:'Playfair Display',serif;font-size:22px;margin-bottom:4px}
-.ch-info{font-size:12px;color:rgba(255,255,255,0.5)}
-.ch-meta{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap}
-.ch-chip{background:rgba(255,255,255,0.1);padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600}
-.ch-chip.pin{background:var(--gold);color:var(--navy-d)}
-.prog{margin-bottom:16px}
-.prog-info{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:4px}
-.prog-bar{height:10px;background:var(--light);border-radius:5px;overflow:hidden}
-.prog-fill{height:100%;border-radius:5px;transition:width 0.4s}
-.pp{border:1.5px solid var(--light);border-radius:14px;overflow:hidden;margin-bottom:12px}
-.pp-header{background:var(--bg);padding:10px 16px;font-size:11px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:1px;display:flex;justify-content:space-between}
-.pp-row{display:flex;align-items:center;padding:14px 16px;border-top:1px solid var(--light);gap:12px;flex-wrap:wrap}
-.pp-row:hover{background:#fafbfc}
-.pp-name{flex:1;font-size:13px;font-weight:600;min-width:140px}
-.pp-amount{font-size:15px;font-weight:800;min-width:100px;text-align:right}
-.pp-date{font-size:11px;color:var(--muted);min-width:90px;text-align:center}
-.pp-status{min-width:100px;text-align:center}
-.pp-action{min-width:90px;text-align:right}
+.kpi{background:var(--white);border-radius:14px;padding:18px 16px;border:1px solid var(--light);text-align:center}
+.kpi-v{font-size:26px;font-weight:800;margin:6px 0 2px}
+.kpi-l{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
+.kpi-s{font-size:11px;color:var(--muted)}
+.sb{display:flex;gap:10px;margin-bottom:20px}
+.sb input{flex:1;padding:14px 18px;border:2px solid var(--light);border-radius:14px;font-size:15px;font-family:'DM Sans';outline:none;background:var(--white)}
+.sb input:focus{border-color:var(--navy)}
+.sb button{padding:14px 28px;background:var(--navy);color:#fff;border:none;border-radius:14px;font-weight:700;font-size:14px;cursor:pointer;font-family:'DM Sans';white-space:nowrap}
+.sb button:active{transform:scale(0.98)}
+.ch{background:linear-gradient(135deg,var(--navy-d),var(--navy));border-radius:16px;padding:20px 24px;color:#fff;margin-bottom:16px}
+.ch h2{font-family:'Playfair Display',serif;font-size:22px;margin-bottom:4px}
+.ch p{font-size:12px;color:rgba(255,255,255,0.5)}
+.ch-tags{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.ch-tag{background:rgba(255,255,255,0.1);padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600}
+.ch-tag.pin{background:var(--gold);color:var(--navy-d)}
+.prog{margin-bottom:20px}
+.prog-row{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:5px}
+.prog-bar{height:10px;background:var(--light);border-radius:6px;overflow:hidden}
+.prog-fill{height:100%;border-radius:6px;transition:width 0.5s}
+.tbl{width:100%;border-collapse:separate;border-spacing:0;border:1.5px solid var(--light);border-radius:14px;overflow:hidden;margin-bottom:16px}
+.tbl th{background:var(--bg);padding:12px 16px;font-size:11px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:1px;text-align:left;border-bottom:1px solid var(--light)}
+.tbl td{padding:14px 16px;border-bottom:1px solid #f1f5f9;font-size:13px}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr:hover td{background:#fafbfd}
 .pill{display:inline-block;padding:4px 12px;border-radius:16px;font-size:10px;font-weight:700}
 .pill-ok{background:var(--ok-bg);color:var(--ok)}
 .pill-warn{background:var(--warn-bg);color:var(--warn)}
 .pill-info{background:var(--info-bg);color:var(--info)}
-.btn-sm{padding:8px 14px;border:none;border-radius:10px;font-size:11px;font-weight:700;cursor:pointer;font-family:'DM Sans'}
-.btn-confirm{background:var(--ok);color:#fff}
-.btn-confirm:disabled{opacity:0.4;cursor:not-allowed}
-.tl-item{display:flex;gap:14px;padding-bottom:16px}
-.tl-left{display:flex;flex-direction:column;align-items:center;width:24px}
-.tl-dot{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:8px;color:#fff;flex-shrink:0}
-.tl-line{width:2px;flex:1;min-height:12px}
+.btn{padding:8px 16px;border:none;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;font-family:'DM Sans';transition:transform 0.1s}
+.btn:active{transform:scale(0.97)}
+.btn-ok{background:var(--ok);color:#fff}
+.btn-navy{background:var(--navy);color:#fff}
+.btn-gold{background:var(--gold);color:var(--navy-d)}
+.btn-lg{padding:14px 24px;font-size:14px;border-radius:14px;width:100%}
+.tl-item{display:flex;gap:14px;padding-bottom:18px}
+.tl-left{display:flex;flex-direction:column;align-items:center;width:24px;flex-shrink:0}
+.tl-dot{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;color:#fff;flex-shrink:0}
+.tl-line{width:2px;flex:1;min-height:14px}
 .tl-right{flex:1}
-.tl-top{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:4px}
-.tl-name{font-size:13px;font-weight:600}
+.tl-head{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.tl-name{font-size:14px;font-weight:600}
 .tl-date{font-size:11px;color:var(--muted)}
-.tl-desc{font-size:12px;color:var(--muted);margin-top:2px;line-height:1.5}
-.tl-actions{margin-top:8px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-.tl-actions input[type=date],.tl-actions select{padding:7px 10px;border:1.5px solid var(--light);border-radius:8px;font-size:12px;font-family:'DM Sans'}
-.msg{padding:12px 16px;border-radius:12px;font-size:13px;font-weight:600;margin-top:12px;display:none}
-.msg.show{display:block}
+.tl-desc{font-size:12px;color:var(--muted);margin-top:3px;line-height:1.5}
+.tl-form{margin-top:8px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.tl-form select,.tl-form input[type=date]{padding:8px 12px;border:1.5px solid var(--light);border-radius:10px;font-size:13px;font-family:'DM Sans';outline:none}
+.msg{padding:14px 18px;border-radius:14px;font-size:13px;font-weight:600;margin-top:14px;display:none}
+.msg.show{display:flex;align-items:center;gap:8px}
 .msg.ok{background:var(--ok-bg);color:var(--ok)}
 .msg.err{background:var(--err-bg);color:var(--err)}
 .msg.info{background:var(--info-bg);color:var(--info)}
-.log-list{max-height:240px;overflow-y:auto}
-.log-row{padding:8px 0;border-bottom:1px solid var(--light);font-size:12px;display:flex;gap:10px}
-.log-row:last-child{border:none}
-.log-time{font-weight:700;color:var(--navy);white-space:nowrap}
-.log-text{color:var(--muted)}
 .login-wrap{min-height:calc(100vh - 56px);display:flex;align-items:center;justify-content:center;padding:24px}
-.login-card{max-width:380px;width:100%;text-align:center}
-.login-card h2{font-family:'Playfair Display',serif;font-size:24px;color:var(--navy);margin-bottom:6px}
-.login-card p{font-size:13px;color:var(--muted);margin-bottom:24px}
-.login-card input{width:100%;padding:16px;border:2px solid var(--light);border-radius:14px;font-size:16px;text-align:center;font-family:'DM Sans';outline:none;margin-bottom:12px}
+.login-card{max-width:400px;width:100%;text-align:center}
+.login-card h2{font-family:'Playfair Display',serif;font-size:26px;color:var(--navy);margin-bottom:8px}
+.login-card p{font-size:13px;color:var(--muted);margin-bottom:28px}
+.login-card input{width:100%;padding:18px;border:2px solid var(--light);border-radius:16px;font-size:17px;text-align:center;font-family:'DM Sans';outline:none;margin-bottom:14px;letter-spacing:2px}
 .login-card input:focus{border-color:var(--navy)}
 .login-card button{width:100%;padding:16px;border:none;background:var(--navy);color:#fff;font-weight:700;font-size:15px;border-radius:14px;cursor:pointer}
-.hidden{display:none}
-@media(max-width:640px){.kpis{grid-template-columns:1fr 1fr}.pp-date,.pp-action{min-width:auto}}
+.actions-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.log-list{max-height:300px;overflow-y:auto}
+.log-row{padding:10px 0;border-bottom:1px solid #f1f5f9;font-size:12px;display:flex;gap:12px}
+.log-row:last-child{border:none}
+.log-time{font-weight:700;color:var(--navy);white-space:nowrap;min-width:70px}
+.log-text{color:var(--muted);flex:1}
+.hidden{display:none!important}
+@media(max-width:640px){
+  .kpis{grid-template-columns:1fr 1fr}
+  .actions-grid{grid-template-columns:1fr}
+  .tbl th:nth-child(3),.tbl td:nth-child(3){display:none}
+}
 </style>
 </head>
 <body>
-<div class="topbar"><div class="topbar-logo">Colombia Abogados <span>Operaciones</span></div><span class="topbar-user" id="userLabel"></span></div>
-<div id="loginPage"><div class="login-wrap"><div class="login-card"><h2>Panel de Operaciones</h2><p>Ingrese su clave de administrador</p><input type="password" id="keyInput" placeholder="API Key" onkeydown="if(event.key==='Enter')doLogin()"><button onclick="doLogin()">Ingresar</button><div class="msg" id="loginMsg"></div></div></div></div>
-<div id="appPage" class="hidden">
-<div class="tabs"><div class="tab active" onclick="goTab('dashboard')">📊 Dashboard</div><div class="tab" onclick="goTab('pagos')">💰 Pagos</div><div class="tab" onclick="goTab('casos')">📋 Casos</div><div class="tab" onclick="goTab('clientes')">👥 Clientes</div><div class="tab" onclick="goTab('log')">📝 Log</div></div>
-<div class="main">
-<div class="page active" id="pg-dashboard">
-<div class="kpis"><div class="kpi"><div class="kpi-lb">Clientes</div><div class="kpi-val" id="kCli" style="color:var(--navy)">—</div></div><div class="kpi"><div class="kpi-lb">Recaudado</div><div class="kpi-val" id="kRec" style="color:var(--ok);font-size:20px">—</div></div><div class="kpi"><div class="kpi-lb">Por verificar</div><div class="kpi-val" id="kVer" style="color:var(--info)">—</div></div><div class="kpi"><div class="kpi-lb">Pendiente</div><div class="kpi-val" id="kPen" style="color:var(--warn);font-size:20px">—</div></div></div>
-<div class="card"><div class="card-title">Acciones rápidas</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px"><button class="btn-sm" style="padding:14px;background:var(--ok);color:#fff;font-size:13px;border-radius:12px" onclick="goTab('pagos')">✅ Verificar pagos</button><button class="btn-sm" style="padding:14px;background:var(--navy);color:#fff;font-size:13px;border-radius:12px" onclick="goTab('casos')">📋 Gestionar casos</button><button class="btn-sm" style="padding:14px;background:var(--gold);color:var(--navy);font-size:13px;border-radius:12px" onclick="goTab('clientes')">🔍 Buscar cliente</button><button class="btn-sm" style="padding:14px;background:var(--purple);color:#fff;font-size:13px;border-radius:12px" onclick="generarPins()">🔑 Generar PINs</button></div><div class="msg" id="dashMsg"></div></div></div>
-<div class="page" id="pg-pagos"><div class="search-bar"><input type="text" id="pagCed" placeholder="Cédula del cliente" inputmode="numeric" onkeydown="if(event.key==='Enter')buscarPagos()"><button onclick="buscarPagos()">Buscar</button></div><div id="pagResult"></div><div class="msg" id="pagMsg"></div></div>
-<div class="page" id="pg-casos"><div class="search-bar"><input type="text" id="casCed" placeholder="Cédula del cliente" inputmode="numeric" onkeydown="if(event.key==='Enter')buscarCaso()"><button onclick="buscarCaso()">Buscar</button></div><div id="casResult"></div><div class="msg" id="casMsg"></div></div>
-<div class="page" id="pg-clientes"><div class="search-bar"><input type="text" id="cliCed" placeholder="Cédula del cliente" inputmode="numeric" onkeydown="if(event.key==='Enter')buscarCliente()"><button onclick="buscarCliente()">Buscar</button></div><div id="cliResult"></div><div class="msg" id="cliMsg"></div></div>
-<div class="page" id="pg-log"><div class="card"><div class="card-title">Actividad reciente</div><div class="log-list" id="logList"><div class="log-row"><span class="log-text" style="font-style:italic">Sin actividad</span></div></div></div></div>
-</div></div>
-<script>
-var API="https://script.google.com/macros/s/AKfycbwzjo0hWsdkp2TnDf5CJEb5GD6YnhKyRu_qwj72RhSMscPrRYpJ7_O3FqQG2GDheS3TLA/exec";
-var MAKE_WEBHOOK="https://hook.us2.make.com/c0jct73kn7k531b135cxnz1tceqc2hq6";
-var KEY="";
-var fm=function(v){return new Intl.NumberFormat("es-CO",{style:"currency",currency:"COP",maximumFractionDigits:0}).format(v||0);};
-function fD(v){if(!v)return"—";var d=new Date(v);return isNaN(d)?"—":d.toLocaleDateString("es-CO",{day:"numeric",month:"short",year:"numeric"});}
-function fDi(v){if(!v)return"";var d=new Date(v);return isNaN(d)?"":d.toISOString().split("T")[0];}
 
-function doLogin(){
-  KEY=document.getElementById("keyInput").value.trim();
-  if(!KEY){showMsg("loginMsg","Ingrese la API Key","err");return;}
-  showMsg("loginMsg","Verificando...","info");
-  callAPI("action=info_cliente&key="+enc(KEY)+"&cedula=0").then(function(d){
-    if(d.error==="API key inválida"){showMsg("loginMsg","Clave incorrecta","err");KEY="";return;}
+<div class="topbar">
+  <div class="topbar-logo">Colombia Abogados <span>Operaciones</span></div>
+  <span class="topbar-user" id="userBadge"></span>
+</div>
+
+<div id="loginPage">
+  <div class="login-wrap">
+    <div class="login-card">
+      <h2>Panel de Operaciones</h2>
+      <p>Ingrese su clave de administrador</p>
+      <input type="password" id="keyInput" placeholder="API Key" onkeydown="if(event.key==='Enter')doLogin()">
+      <button onclick="doLogin()">Ingresar</button>
+      <div class="msg" id="loginMsg"></div>
+    </div>
+  </div>
+</div>
+
+<div id="appPage" class="hidden">
+  <div class="tabs">
+    <div class="tab on" data-tab="dashboard">Dashboard</div>
+    <div class="tab" data-tab="pagos">Pagos</div>
+    <div class="tab" data-tab="casos">Casos</div>
+    <div class="tab" data-tab="clientes">Clientes</div>
+    <div class="tab" data-tab="log">Log</div>
+  </div>
+  <div class="main">
+
+    <div class="pg on" id="pg-dashboard">
+      <div class="card">
+        <h3>Acciones rápidas</h3>
+        <div class="actions-grid">
+          <button class="btn btn-ok btn-lg" onclick="goTab('pagos')">✅ Verificar pagos</button>
+          <button class="btn btn-navy btn-lg" onclick="goTab('casos')">📋 Gestionar casos</button>
+          <button class="btn btn-gold btn-lg" onclick="goTab('clientes')">🔍 Buscar cliente</button>
+          <button class="btn btn-lg" style="background:#7c3aed;color:#fff" onclick="generarPins()">🔑 Generar PINs</button>
+        </div>
+        <div class="msg" id="dashMsg"></div>
+      </div>
+    </div>
+
+    <div class="pg" id="pg-pagos">
+      <div class="sb">
+        <input type="text" id="pagCed" placeholder="Ingrese cédula del cliente" inputmode="numeric" onkeydown="if(event.key==='Enter')buscarPagos()">
+        <button onclick="buscarPagos()">Buscar</button>
+      </div>
+      <div id="pagOut"></div>
+      <div class="msg" id="pagMsg"></div>
+    </div>
+
+    <div class="pg" id="pg-casos">
+      <div class="sb">
+        <input type="text" id="casCed" placeholder="Ingrese cédula del cliente" inputmode="numeric" onkeydown="if(event.key==='Enter')buscarCaso()">
+        <button onclick="buscarCaso()">Buscar</button>
+      </div>
+      <div id="casOut"></div>
+      <div class="msg" id="casMsg"></div>
+    </div>
+
+    <div class="pg" id="pg-clientes">
+      <div class="sb">
+        <input type="text" id="cliCed" placeholder="Ingrese cédula del cliente" inputmode="numeric" onkeydown="if(event.key==='Enter')buscarCliente()">
+        <button onclick="buscarCliente()">Buscar</button>
+      </div>
+      <div id="cliOut"></div>
+      <div class="msg" id="cliMsg"></div>
+    </div>
+
+    <div class="pg" id="pg-log">
+      <div class="card">
+        <h3>Actividad reciente</h3>
+        <div class="log-list" id="logList">
+          <div class="log-row"><span class="log-text" style="font-style:italic">Sin actividad</span></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ============================================================
+//  CONFIG
+// ============================================================
+var API = "https://script.google.com/macros/s/AKfycbwzjo0hWsdkp2TnDf5CJEb5GD6YnhKyRu_qwj72RhSMscPrRYpJ7_O3FqQG2GDheS3TLA/exec";
+var MAKE_WH = "https://hook.us2.make.com/c0jct73kn7k531b135cxnz1tceqc2hq6";
+var KEY = "";
+var CACHE = {};
+
+var fm = function(v) { return new Intl.NumberFormat("es-CO",{style:"currency",currency:"COP",maximumFractionDigits:0}).format(v||0); };
+function fD(v) { if (!v) return "—"; var d = new Date(v); return isNaN(d.getTime()) ? "—" : d.toLocaleDateString("es-CO",{day:"numeric",month:"short",year:"numeric"}); }
+function fDi(v) { if (!v) return ""; var d = new Date(v); return isNaN(d.getTime()) ? "" : d.toISOString().split("T")[0]; }
+function enc(v) { return encodeURIComponent(v || ""); }
+
+// ============================================================
+//  TABS
+// ============================================================
+document.querySelectorAll(".tab").forEach(function(t) {
+  t.addEventListener("click", function() { goTab(t.dataset.tab); });
+});
+
+function goTab(name) {
+  document.querySelectorAll(".pg").forEach(function(p) { p.classList.remove("on"); });
+  document.querySelectorAll(".tab").forEach(function(t) { t.classList.remove("on"); });
+  var pg = document.getElementById("pg-" + name);
+  if (pg) pg.classList.add("on");
+  document.querySelectorAll(".tab").forEach(function(t) {
+    if (t.dataset.tab === name) t.classList.add("on");
+  });
+}
+
+// ============================================================
+//  LOGIN
+// ============================================================
+function doLogin() {
+  KEY = document.getElementById("keyInput").value.trim();
+  if (!KEY) { showMsg("loginMsg", "Ingrese la API Key", "err"); return; }
+  showMsg("loginMsg", "Verificando...", "info");
+  callAPI("action=info_cliente&key=" + enc(KEY) + "&cedula=0").then(function(d) {
+    if (d.error === "API key inválida") { showMsg("loginMsg", "Clave incorrecta", "err"); KEY = ""; return; }
     document.getElementById("loginPage").classList.add("hidden");
     document.getElementById("appPage").classList.remove("hidden");
-    document.getElementById("userLabel").textContent="ADMIN";
+    document.getElementById("userBadge").textContent = "ADMIN";
     addLog("Sesión iniciada");
-  }).catch(function(){showMsg("loginMsg","Error de conexión","err");});
+  }).catch(function() { showMsg("loginMsg", "Error de conexión", "err"); });
 }
 
-function goTab(n){
-  document.querySelectorAll(".page").forEach(function(p){p.classList.remove("active");});
-  document.querySelectorAll(".tab").forEach(function(t){t.classList.remove("active");});
-  document.getElementById("pg-"+n).classList.add("active");
-  var m={dashboard:0,pagos:1,casos:2,clientes:3,log:4};
-  document.querySelectorAll(".tab")[m[n]].classList.add("active");
+// ============================================================
+//  SMART FETCH — Gets full client data using existing endpoints
+//  Step 1: info_cliente → gets PIN
+//  Step 2: consultar with that PIN → gets full data (payments, stages)
+// ============================================================
+function fetchCliente(ced) {
+  return callAPI("action=info_cliente&key=" + enc(KEY) + "&cedula=" + enc(ced))
+    .then(function(d) {
+      if (!d.ok) throw new Error(d.error);
+      var info = d.data;
+      return callAPI("action=consultar&cedula=" + enc(ced) + "&pin=" + enc(info.pin))
+        .then(function(d2) {
+          if (!d2.ok) throw new Error(d2.error);
+          var c = d2.data;
+          c.pin = info.pin;
+          c.cor = info.correo;
+          CACHE[ced] = c;
+          return c;
+        });
+    });
 }
 
-function buscarPagos(){
-  var ced=document.getElementById("pagCed").value.trim();
-  if(!ced){showMsg("pagMsg","Ingrese la cédula","err");return;}
-  showMsg("pagMsg","Buscando...","info");
-  callAPI("action=admin_consultar&key="+enc(KEY)+"&cedula="+enc(ced)).then(function(d){
-    if(!d.ok){showMsg("pagMsg",d.error,"err");return;}
-    hideMsg("pagMsg");renderPagos(d.data);
-  }).catch(function(){showMsg("pagMsg","Error de conexión","err");});
+// ============================================================
+//  PAGOS
+// ============================================================
+function buscarPagos() {
+  var ced = document.getElementById("pagCed").value.trim();
+  if (!ced) { showMsg("pagMsg", "Ingrese la cédula", "err"); return; }
+  showMsg("pagMsg", "Buscando...", "info");
+  fetchCliente(ced).then(function(c) {
+    hideMsg("pagMsg");
+    renderPagos(c, ced);
+    addLog("Buscó pagos: " + c.nm);
+  }).catch(function(e) { showMsg("pagMsg", e.message, "err"); });
 }
 
-function renderPagos(c){
-  var paid=0,total=0,verif=0;
-  c.pays.forEach(function(p){if(p.est==="PAGADO")paid+=p.mt;if(p.est==="VERIFICANDO")verif+=p.mt;total+=p.mt;});
-  var pct=total?Math.round(paid/total*100):0;
-  var h='<div class="ch"><div class="ch-name">'+c.nm+'</div><div class="ch-info">CC '+c.ced+' · '+(c.cel||"—")+'</div>';
-  h+='<div class="ch-meta"><div class="ch-chip">'+c.mod+'</div><div class="ch-chip">'+c.ab+'</div><div class="ch-chip pin">PIN: '+c.pin+'</div></div></div>';
-  h+='<div class="prog"><div class="prog-info"><span>'+fm(paid)+' recaudado ('+pct+'%)</span><span>'+fm(total)+' total</span></div>';
-  h+='<div class="prog-bar"><div class="prog-fill" style="width:'+pct+'%;background:var(--ok)"></div></div></div>';
-  h+='<div class="pp"><div class="pp-header"><span>Plan de pagos</span><span>Estado</span></div>';
-  c.pays.forEach(function(p,i){
-    var isPd=p.est==="PAGADO",isVer=p.est==="VERIFICANDO";
-    var pill=isPd?'<span class="pill pill-ok">Pagado</span>':isVer?'<span class="pill pill-info">Verificando</span>':'<span class="pill pill-warn">Pendiente</span>';
-    var dt=isPd&&p.fe?"Pagado: "+fD(p.fe):p.fe?"Vence: "+fD(p.fe):"";
-    var btn=isPd?'<span style="color:var(--ok);font-weight:700;font-size:12px">✓</span>':'<button class="btn-sm btn-confirm" onclick="confirmarPago(\''+c.ced+'\','+i+',\''+enc(p.nm)+'\',\''+enc(c.nm)+'\',\''+enc(c.cel||"")+'\')">'+(isVer?"✅ Confirmar":"Marcar pagado")+'</button>';
-    h+='<div class="pp-row" id="ppR'+i+'"><div class="pp-name">'+p.nm+(p.cat==="cen"?' <span style="font-size:9px;color:var(--gold)">CENTRO</span>':'')+'</div><div class="pp-amount" style="color:'+(isPd?"var(--ok)":"var(--navy)")+'">'+fm(p.mt)+'</div><div class="pp-date">'+dt+'</div><div class="pp-status">'+pill+'</div><div class="pp-action">'+btn+'</div></div>';
+function renderPagos(c, ced) {
+  var paid = 0, total = 0, verif = 0;
+  c.pays.forEach(function(p) {
+    if (p.est === "PAGADO") paid += p.mt;
+    if (p.est === "VERIFICANDO") verif += p.mt;
+    total += p.mt;
   });
-  h+='</div>';
-  if(verif>0)h+='<div class="card" style="border-color:var(--info);background:var(--info-bg)"><div style="font-size:13px;color:var(--info);font-weight:700">⏳ '+fm(verif)+' en verificación — revisa comprobantes en WhatsApp</div></div>';
-  document.getElementById("pagResult").innerHTML=h;
-}
+  var pct = total ? Math.round(paid / total * 100) : 0;
 
-function confirmarPago(ced,idx,nmE,nombreE,celE){
-  var concepto=decodeURIComponent(nmE),nombre=decodeURIComponent(nombreE),cel=decodeURIComponent(celE);
-  if(!confirm("¿Confirmar "+concepto+" de "+nombre+"?"))return;
-  showMsg("pagMsg","Procesando...","info");
-  callAPI("action=pago&key="+enc(KEY)+"&cedula="+enc(ced)+"&pago="+idx+"&estado=PAGADO").then(function(d){
-    if(!d.ok){showMsg("pagMsg","Error: "+d.error,"err");return;}
-    showMsg("pagMsg","✅ "+concepto+" confirmado","ok");
-    addLog("💰 "+concepto+" — "+nombre);
-    var row=document.getElementById("ppR"+idx);
-    if(row){row.querySelector(".pp-status").innerHTML='<span class="pill pill-ok">Pagado</span>';row.querySelector(".pp-action").innerHTML='<span style="color:var(--ok);font-weight:700">✓</span>';row.querySelector(".pp-amount").style.color="var(--ok)";}
-    triggerWH({evento:"pago_verificado",cedula:ced,nombre:nombre,celular:cel,concepto:concepto,pagoIndice:idx});
-  }).catch(function(){showMsg("pagMsg","Error de conexión","err");});
-}
+  var h = '<div class="ch"><h2>' + c.nm + '</h2><p>CC ' + c.ced + ' &middot; ' + (c.cel || "—") + '</p>';
+  h += '<div class="ch-tags"><div class="ch-tag">' + c.mod + '</div><div class="ch-tag">' + c.ab + '</div><div class="ch-tag pin">PIN: ' + c.pin + '</div></div></div>';
 
-function buscarCaso(){
-  var ced=document.getElementById("casCed").value.trim();
-  if(!ced){showMsg("casMsg","Ingrese la cédula","err");return;}
-  showMsg("casMsg","Buscando...","info");
-  callAPI("action=admin_consultar&key="+enc(KEY)+"&cedula="+enc(ced)).then(function(d){
-    if(!d.ok){showMsg("casMsg",d.error,"err");return;}
-    hideMsg("casMsg");renderCaso(d.data);
-  }).catch(function(){showMsg("casMsg","Error de conexión","err");});
-}
+  h += '<div class="prog"><div class="prog-row"><span>' + fm(paid) + ' recaudado (' + pct + '%)</span><span>' + fm(total) + ' total</span></div>';
+  h += '<div class="prog-bar"><div class="prog-fill" style="width:' + pct + '%;background:var(--ok)"></div></div></div>';
 
-function renderCaso(c){
-  var vis=c.steps.filter(function(s){return!(s.op&&s.est==="PENDIENTE");});
-  var done=vis.filter(function(s){return s.est==="COMPLETADO";}).length;
-  var total=vis.length;var pct=total?Math.round(done/total*100):0;
-  var h='<div class="ch"><div class="ch-name">'+c.nm+'</div><div class="ch-info">CC '+c.ced+' · '+c.mod+' · '+c.ab+'</div>';
-  h+='<div class="ch-meta"><div class="ch-chip">Progreso: '+pct+'%</div><div class="ch-chip pin">PIN: '+c.pin+'</div></div></div>';
-  h+='<div class="prog"><div class="prog-info"><span>'+done+' completadas</span><span>'+total+' etapas</span></div>';
-  h+='<div class="prog-bar"><div class="prog-fill" style="width:'+pct+'%;background:var(--navy)"></div></div></div>';
-  h+='<div class="card"><div class="card-title">Línea de tiempo</div>';
-  vis.forEach(function(s,i){
-    var isDone=s.est==="COMPLETADO",isAct=s.est==="ACTIVO";
-    var dot=isDone?"var(--ok)":isAct?"var(--navy)":"var(--light)";
-    var isLast=i===vis.length-1;
-    h+='<div class="tl-item"><div class="tl-left"><div class="tl-dot" style="background:'+dot+';border:3px solid '+dot+'">'+(isDone?"✓":"")+'</div>';
-    if(!isLast)h+='<div class="tl-line" style="background:'+(isDone?"var(--ok)":"var(--light)")+'"></div>';
-    h+='</div><div class="tl-right"><div class="tl-top"><span class="tl-name" style="color:'+(isDone||isAct?"var(--navy-d)":"var(--muted)")+'">'+s.n+'</span>';
-    if(s.fecha)h+='<span class="tl-date">'+fD(s.fecha)+'</span>';
-    h+='</div>';
-    if(isDone||isAct)h+='<div class="tl-desc">'+s.cd+'</div>';
-    if(!isDone){
-      h+='<div class="tl-actions"><select id="es_'+s.id+'"><option value="COMPLETADO">Completado</option><option value="ACTIVO"'+(isAct?" selected":"")+'>Activo</option><option value="PENDIENTE">Pendiente</option></select>';
-      h+='<input type="date" id="dt_'+s.id+'" value="'+(fDi(s.fecha)||new Date().toISOString().split("T")[0])+'">';
-      h+='<button class="btn-sm btn-confirm" onclick="moverEtapa(\''+c.ced+'\',\''+s.id+'\',\''+enc(s.n)+'\',\''+enc(c.nm)+'\',\''+enc(c.cel||"")+'\')">Guardar</button></div>';
-    }
-    h+='</div></div>';
-  });
-  h+='</div>';
-  document.getElementById("casResult").innerHTML=h;
-}
-
-function moverEtapa(ced,eid,nmE,nombreE,celE){
-  var estado=document.getElementById("es_"+eid).value;
-  var fecha=document.getElementById("dt_"+eid).value;
-  var etNm=decodeURIComponent(nmE),nombre=decodeURIComponent(nombreE),cel=decodeURIComponent(celE);
-  showMsg("casMsg","Actualizando...","info");
-  var p="action=actualizar&key="+enc(KEY)+"&cedula="+enc(ced)+"&etapa="+eid+"&estado="+estado;
-  if(fecha)p+="&fecha="+fecha;
-  callAPI(p).then(function(d){
-    if(!d.ok){showMsg("casMsg","Error: "+d.error,"err");return;}
-    showMsg("casMsg","✅ "+etNm+" → "+estado+" ("+fD(fecha)+")" ,"ok");
-    addLog("📋 "+etNm+" → "+estado+" — "+nombre);
-    setTimeout(function(){buscarCaso();},600);
-    triggerWH({evento:"etapa_actualizada",cedula:ced,nombre:nombre,celular:cel,etapa:eid,etapaNombre:etNm,estado:estado});
-  }).catch(function(){showMsg("casMsg","Error de conexión","err");});
-}
-
-function buscarCliente(){
-  var ced=document.getElementById("cliCed").value.trim();
-  if(!ced){showMsg("cliMsg","Ingrese la cédula","err");return;}
-  showMsg("cliMsg","Buscando...","info");
-  callAPI("action=admin_consultar&key="+enc(KEY)+"&cedula="+enc(ced)).then(function(d){
-    if(!d.ok){showMsg("cliMsg",d.error,"err");return;}
-    hideMsg("cliMsg");renderCliente(d.data);
-  }).catch(function(){showMsg("cliMsg","Error de conexión","err");});
-}
-
-function renderCliente(c){
-  var done=c.steps.filter(function(s){return s.est==="COMPLETADO";}).length;
-  var total=c.steps.filter(function(s){return!(s.op&&s.est==="PENDIENTE");}).length;
-  var paid=0,tp=0;c.pays.forEach(function(p){if(p.est==="PAGADO")paid+=p.mt;tp+=p.mt;});
-  var h='<div class="ch"><div class="ch-name">'+c.nm+'</div><div class="ch-info">CC '+c.ced+' · '+(c.cel||"—")+' · '+(c.cor||"—")+'</div>';
-  h+='<div class="ch-meta"><div class="ch-chip">'+c.mod+'</div><div class="ch-chip">'+c.ab+'</div><div class="ch-chip pin">PIN: '+c.pin+'</div></div></div>';
-  h+='<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:16px">';
-  h+='<div class="kpi"><div class="kpi-lb">Deuda</div><div class="kpi-val" style="font-size:18px;color:var(--navy)">'+fm(c.deu)+'</div></div>';
-  h+='<div class="kpi"><div class="kpi-lb">Progreso</div><div class="kpi-val" style="font-size:18px;color:var(--navy)">'+done+'/'+total+'</div></div>';
-  h+='<div class="kpi"><div class="kpi-lb">Recaudado</div><div class="kpi-val" style="font-size:18px;color:var(--ok)">'+fm(paid)+'</div><div class="kpi-sub">de '+fm(tp)+'</div></div></div>';
-  if(c.desc||c.est){
-    h+='<div class="card">';
-    if(c.desc)h+='<div style="margin-bottom:12px"><div style="font-size:10px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Descripción</div><div style="font-size:13px;color:var(--muted);line-height:1.6">'+c.desc+'</div></div>';
-    if(c.est)h+='<div><div style="font-size:10px;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Estrategia</div><div style="font-size:13px;color:var(--muted);line-height:1.6">'+c.est+'</div></div>';
-    h+='</div>';
+  if (verif > 0) {
+    h += '<div class="card" style="border-left:4px solid var(--info);background:var(--info-bg);padding:14px 18px;border-radius:12px"><span style="font-size:13px;color:var(--info);font-weight:700">' + fm(verif) + ' en verificación — revisa comprobantes en WhatsApp</span></div>';
   }
-  h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">';
-  h+='<button class="btn-sm" style="padding:14px;background:var(--ok);color:#fff;font-size:13px;border-radius:12px" onclick="document.getElementById(\'pagCed\').value=\''+c.ced+'\';goTab(\'pagos\');buscarPagos()">💰 Ver pagos</button>';
-  h+='<button class="btn-sm" style="padding:14px;background:var(--navy);color:#fff;font-size:13px;border-radius:12px" onclick="document.getElementById(\'casCed\').value=\''+c.ced+'\';goTab(\'casos\');buscarCaso()">📋 Ver caso</button></div>';
-  h+='<div class="card" style="margin-top:12px"><button class="btn-sm" style="background:var(--gold);color:var(--navy);padding:12px 20px;font-size:13px" onclick="copiarPIN(\''+c.pin+'\',\''+enc(c.nm)+'\')">📋 Copiar mensaje PIN para WhatsApp</button></div>';
-  document.getElementById("cliResult").innerHTML=h;
+
+  h += '<table class="tbl"><thead><tr><th>Concepto</th><th>Monto</th><th>Fecha</th><th>Estado</th><th>Acción</th></tr></thead><tbody>';
+  c.pays.forEach(function(p, i) {
+    var isPd = p.est === "PAGADO", isVer = p.est === "VERIFICANDO";
+    var pill = isPd ? '<span class="pill pill-ok">Pagado</span>' : isVer ? '<span class="pill pill-info">Verificando</span>' : '<span class="pill pill-warn">Pendiente</span>';
+    var dt = isPd && p.fe ? fD(p.fe) : p.fe ? "Vence: " + fD(p.fe) : "—";
+    var btn = isPd ? '<span style="color:var(--ok);font-weight:700">✓</span>' : '<button class="btn btn-ok" onclick="confirmarPago(\'' + ced + '\',' + i + ',\'' + enc(p.nm) + '\',\'' + enc(c.nm) + '\',\'' + enc(c.cel || "") + '\')">' + (isVer ? "Confirmar" : "Pagado") + '</button>';
+    var catLabel = p.cat === "cen" ? ' <span style="font-size:9px;color:var(--gold);font-weight:700">CENTRO</span>' : '';
+
+    h += '<tr id="pr' + i + '"><td style="font-weight:600">' + p.nm + catLabel + '</td>';
+    h += '<td style="font-weight:800;color:' + (isPd ? "var(--ok)" : "var(--navy)") + '">' + fm(p.mt) + '</td>';
+    h += '<td style="color:var(--muted);font-size:12px">' + dt + '</td>';
+    h += '<td>' + pill + '</td><td>' + btn + '</td></tr>';
+  });
+  h += '</tbody></table>';
+  document.getElementById("pagOut").innerHTML = h;
 }
 
-function copiarPIN(pin,ne){var nm=decodeURIComponent(ne).split(" ")[0];var m="Hola "+nm+", su PIN para consultar su proceso es: "+pin+"\n\nIngrese aquí: https://clientes-abogadoscolombia.github.io/Portal_Insolvencia/";if(navigator.clipboard)navigator.clipboard.writeText(m);alert("Mensaje copiado");}
-function generarPins(){showMsg("dashMsg","Generando...","info");callAPI("action=generar_pins&key="+enc(KEY)).then(function(d){if(!d.ok){showMsg("dashMsg","Error: "+d.error,"err");return;}showMsg("dashMsg","✅ "+d.mensaje,"ok");addLog("🔑 "+d.mensaje);}).catch(function(){showMsg("dashMsg","Error","err");});}
-function callAPI(p){return fetch(API+"?"+p,{redirect:"follow"}).then(function(r){return r.json();});}
-function enc(v){return encodeURIComponent(v||"");}
-function triggerWH(p){if(MAKE_WEBHOOK.indexOf("TU_WEBHOOK")!==-1){addLog("⚠️ Webhook Make no configurado");return;}fetch(MAKE_WEBHOOK,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(p)}).then(function(){addLog("📲 Webhook: "+p.evento);}).catch(function(){addLog("⚠️ Error webhook");});}
-function showMsg(id,m,t){var e=document.getElementById(id);e.textContent=m;e.className="msg show "+t;}
-function hideMsg(id){document.getElementById(id).className="msg";}
-function addLog(m){var c=document.getElementById("logList");var t=new Date().toLocaleTimeString("es-CO",{hour:"2-digit",minute:"2-digit",second:"2-digit"});var r=document.createElement("div");r.className="log-row";r.innerHTML='<span class="log-time">'+t+'</span><span class="log-text">'+m+'</span>';if(c.querySelector("[style]"))c.innerHTML="";c.insertBefore(r,c.firstChild);}
+function confirmarPago(ced, idx, nmE, nombreE, celE) {
+  var concepto = decodeURIComponent(nmE);
+  var nombre = decodeURIComponent(nombreE);
+  var cel = decodeURIComponent(celE);
+  if (!confirm("¿Confirmar pago de " + concepto + " para " + nombre + "?")) return;
+
+  showMsg("pagMsg", "Procesando...", "info");
+  callAPI("action=pago&key=" + enc(KEY) + "&cedula=" + enc(ced) + "&pago=" + idx + "&estado=PAGADO").then(function(d) {
+    if (!d.ok) { showMsg("pagMsg", "Error: " + d.error, "err"); return; }
+    showMsg("pagMsg", "✅ " + concepto + " confirmado", "ok");
+    addLog("💰 " + concepto + " — " + nombre);
+
+    var row = document.getElementById("pr" + idx);
+    if (row) {
+      row.cells[3].innerHTML = '<span class="pill pill-ok">Pagado</span>';
+      row.cells[4].innerHTML = '<span style="color:var(--ok);font-weight:700">✓</span>';
+      row.cells[1].style.color = "var(--ok)";
+    }
+
+    triggerWH({ evento: "pago_verificado", cedula: ced, nombre: nombre, celular: cel, concepto: concepto, pagoIndice: idx });
+  }).catch(function() { showMsg("pagMsg", "Error de conexión", "err"); });
+}
+
+// ============================================================
+//  CASOS
+// ============================================================
+function buscarCaso() {
+  var ced = document.getElementById("casCed").value.trim();
+  if (!ced) { showMsg("casMsg", "Ingrese la cédula", "err"); return; }
+  showMsg("casMsg", "Buscando...", "info");
+  fetchCliente(ced).then(function(c) {
+    hideMsg("casMsg");
+    renderCaso(c, ced);
+    addLog("Buscó caso: " + c.nm);
+  }).catch(function(e) { showMsg("casMsg", e.message, "err"); });
+}
+
+function renderCaso(c, ced) {
+  var vis = c.steps.filter(function(s) { return !(s.op && s.est === "PENDIENTE"); });
+  var done = vis.filter(function(s) { return s.est === "COMPLETADO"; }).length;
+  var total = vis.length;
+  var pct = total ? Math.round(done / total * 100) : 0;
+
+  var h = '<div class="ch"><h2>' + c.nm + '</h2><p>CC ' + c.ced + ' &middot; ' + c.mod + ' &middot; ' + c.ab + '</p>';
+  h += '<div class="ch-tags"><div class="ch-tag">Progreso: ' + pct + '% (' + done + '/' + total + ')</div><div class="ch-tag pin">PIN: ' + c.pin + '</div></div></div>';
+
+  h += '<div class="prog"><div class="prog-row"><span>' + done + ' completadas</span><span>' + total + ' etapas</span></div>';
+  h += '<div class="prog-bar"><div class="prog-fill" style="width:' + pct + '%;background:var(--navy)"></div></div></div>';
+
+  h += '<div class="card"><h3>Línea de tiempo del caso</h3>';
+  vis.forEach(function(s, i) {
+    var isDone = s.est === "COMPLETADO", isAct = s.est === "ACTIVO";
+    var dotBg = isDone ? "var(--ok)" : isAct ? "var(--navy)" : "var(--light)";
+    var isLast = i === vis.length - 1;
+
+    h += '<div class="tl-item"><div class="tl-left"><div class="tl-dot" style="background:' + dotBg + '">' + (isDone ? "✓" : "") + '</div>';
+    if (!isLast) h += '<div class="tl-line" style="background:' + (isDone ? "var(--ok)" : "var(--light)") + '"></div>';
+    h += '</div><div class="tl-right"><div class="tl-head"><span class="tl-name" style="color:' + (isDone || isAct ? "var(--navy)" : "var(--muted)") + '">' + s.n + '</span>';
+    if (s.fecha) h += '<span class="tl-date">' + fD(s.fecha) + '</span>';
+    h += '</div>';
+    if (isDone || isAct) h += '<div class="tl-desc">' + s.cd + '</div>';
+    if (!isDone) {
+      h += '<div class="tl-form">';
+      h += '<select id="es_' + s.id + '"><option value="COMPLETADO">Completado</option><option value="ACTIVO"' + (isAct ? " selected" : "") + '>Activo</option><option value="PENDIENTE">Pendiente</option></select>';
+      h += '<input type="date" id="dt_' + s.id + '" value="' + (fDi(s.fecha) || new Date().toISOString().split("T")[0]) + '">';
+      h += '<button class="btn btn-ok" onclick="moverEtapa(\'' + ced + '\',\'' + s.id + '\',\'' + enc(s.n) + '\',\'' + enc(c.nm) + '\',\'' + enc(c.cel || "") + '\')">Guardar</button>';
+      h += '</div>';
+    }
+    h += '</div></div>';
+  });
+  h += '</div>';
+  document.getElementById("casOut").innerHTML = h;
+}
+
+function moverEtapa(ced, eid, nmE, nombreE, celE) {
+  var estado = document.getElementById("es_" + eid).value;
+  var fecha = document.getElementById("dt_" + eid).value;
+  var etNm = decodeURIComponent(nmE), nombre = decodeURIComponent(nombreE), cel = decodeURIComponent(celE);
+
+  showMsg("casMsg", "Actualizando...", "info");
+  var params = "action=actualizar&key=" + enc(KEY) + "&cedula=" + enc(ced) + "&etapa=" + eid + "&estado=" + estado;
+  if (fecha) params += "&fecha=" + fecha;
+
+  callAPI(params).then(function(d) {
+    if (!d.ok) { showMsg("casMsg", "Error: " + d.error, "err"); return; }
+    showMsg("casMsg", "✅ " + etNm + " → " + estado, "ok");
+    addLog("📋 " + etNm + " → " + estado + " — " + nombre);
+    delete CACHE[ced];
+    setTimeout(function() { buscarCaso(); }, 600);
+    triggerWH({ evento: "etapa_actualizada", cedula: ced, nombre: nombre, celular: cel, etapa: eid, etapaNombre: etNm, estado: estado });
+  }).catch(function() { showMsg("casMsg", "Error de conexión", "err"); });
+}
+
+// ============================================================
+//  CLIENTES
+// ============================================================
+function buscarCliente() {
+  var ced = document.getElementById("cliCed").value.trim();
+  if (!ced) { showMsg("cliMsg", "Ingrese la cédula", "err"); return; }
+  showMsg("cliMsg", "Buscando...", "info");
+  fetchCliente(ced).then(function(c) {
+    hideMsg("cliMsg");
+    renderCliente(c, ced);
+    addLog("Consultó: " + c.nm + " — PIN: " + c.pin);
+  }).catch(function(e) { showMsg("cliMsg", e.message, "err"); });
+}
+
+function renderCliente(c, ced) {
+  var done = c.steps.filter(function(s) { return s.est === "COMPLETADO"; }).length;
+  var total = c.steps.filter(function(s) { return !(s.op && s.est === "PENDIENTE"); }).length;
+  var paid = 0, tp = 0;
+  c.pays.forEach(function(p) { if (p.est === "PAGADO") paid += p.mt; tp += p.mt; });
+
+  var h = '<div class="ch"><h2>' + c.nm + '</h2><p>CC ' + c.ced + ' &middot; ' + (c.cel || "—") + ' &middot; ' + (c.cor || "—") + '</p>';
+  h += '<div class="ch-tags"><div class="ch-tag">' + c.mod + '</div><div class="ch-tag">' + c.ab + '</div><div class="ch-tag pin">PIN: ' + c.pin + '</div></div></div>';
+
+  h += '<div class="kpis" style="grid-template-columns:1fr 1fr 1fr">';
+  h += '<div class="kpi"><div class="kpi-l">Deuda</div><div class="kpi-v" style="font-size:20px;color:var(--navy)">' + fm(c.deu) + '</div></div>';
+  h += '<div class="kpi"><div class="kpi-l">Progreso</div><div class="kpi-v" style="font-size:20px;color:var(--navy)">' + done + '/' + total + '</div></div>';
+  h += '<div class="kpi"><div class="kpi-l">Recaudado</div><div class="kpi-v" style="font-size:20px;color:var(--ok)">' + fm(paid) + '</div><div class="kpi-s">de ' + fm(tp) + '</div></div></div>';
+
+  if (c.desc || c.est) {
+    h += '<div class="card">';
+    if (c.desc) h += '<div style="margin-bottom:12px"><div style="font-size:10px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Descripción del caso</div><div style="font-size:13px;color:var(--muted);line-height:1.6">' + c.desc + '</div></div>';
+    if (c.est) h += '<div><div style="font-size:10px;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Estrategia jurídica</div><div style="font-size:13px;color:var(--muted);line-height:1.6">' + c.est + '</div></div>';
+    h += '</div>';
+  }
+
+  h += '<div class="actions-grid" style="margin-bottom:12px">';
+  h += '<button class="btn btn-ok btn-lg" onclick="document.getElementById(\'pagCed\').value=\'' + ced + '\';goTab(\'pagos\');buscarPagos()">💰 Ver pagos</button>';
+  h += '<button class="btn btn-navy btn-lg" onclick="document.getElementById(\'casCed\').value=\'' + ced + '\';goTab(\'casos\');buscarCaso()">📋 Ver caso</button></div>';
+
+  h += '<button class="btn btn-gold btn-lg" onclick="copiarPIN(\'' + c.pin + '\',\'' + enc(c.nm) + '\')">📋 Copiar mensaje con PIN para WhatsApp</button>';
+
+  document.getElementById("cliOut").innerHTML = h;
+}
+
+function copiarPIN(pin, ne) {
+  var nm = decodeURIComponent(ne).split(" ")[0];
+  var msg = "Hola " + nm + ", su PIN para consultar su proceso es: " + pin + "\n\nIngrese aquí: https://clientes-abogadoscolombia.github.io/Portal_Insolvencia/";
+  if (navigator.clipboard) navigator.clipboard.writeText(msg);
+  alert("Mensaje copiado al portapapeles");
+}
+
+// ============================================================
+//  UTILS
+// ============================================================
+function generarPins() {
+  showMsg("dashMsg", "Generando...", "info");
+  callAPI("action=generar_pins&key=" + enc(KEY)).then(function(d) {
+    if (!d.ok) { showMsg("dashMsg", "Error: " + d.error, "err"); return; }
+    showMsg("dashMsg", "✅ " + d.mensaje, "ok");
+    addLog("🔑 " + d.mensaje);
+  }).catch(function() { showMsg("dashMsg", "Error", "err"); });
+}
+
+function callAPI(p) { return fetch(API + "?" + p, { redirect: "follow" }).then(function(r) { return r.json(); }); }
+
+function triggerWH(payload) {
+  fetch(MAKE_WH, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) })
+    .then(function() { addLog("📲 Webhook: " + payload.evento); })
+    .catch(function() { addLog("⚠️ Error webhook"); });
+}
+
+function showMsg(id, m, t) { var e = document.getElementById(id); e.textContent = m; e.className = "msg show " + t; }
+function hideMsg(id) { document.getElementById(id).className = "msg"; }
+function addLog(m) {
+  var c = document.getElementById("logList");
+  var t = new Date().toLocaleTimeString("es-CO", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+  var r = document.createElement("div"); r.className = "log-row";
+  r.innerHTML = '<span class="log-time">' + t + '</span><span class="log-text">' + m + '</span>';
+  if (c.querySelector("[style]")) c.innerHTML = "";
+  c.insertBefore(r, c.firstChild);
+}
 </script>
 </body>
 </html>

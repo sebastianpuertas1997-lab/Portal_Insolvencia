@@ -6,7 +6,7 @@
 <title>Seguimiento — Colombia Abogados</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
 <style>
-:root{--navy:#002855;--navy-l:#003d80;--navy-d:#001a3a;--gold:#c9a84c;--gold-l:#f5e6b8;--bg:#f4f6f9;--white:#fff;--muted:#64748b;--light:#e8ecf2;--ok:#16a34a;--ok-bg:#f0fdf4;--warn:#d97706;--warn-bg:#fffbeb;--err:#dc2626}
+:root{--navy:#002855;--navy-l:#003d80;--navy-d:#001a3a;--gold:#c9a84c;--gold-l:#f5e6b8;--bg:#f4f6f9;--white:#fff;--muted:#64748b;--light:#e8ecf2;--ok:#16a34a;--ok-bg:#f0fdf4;--warn:#d97706;--warn-bg:#fffbeb;--err:#dc2626;--info:#2563eb;--info-bg:#eff6ff}
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'DM Sans',sans-serif;background:var(--bg);color:#1a1a2e;min-height:100vh;-webkit-font-smoothing:antialiased}
  
@@ -14,13 +14,18 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:#1a1a2e;min-hei
 .login-box{text-align:center;max-width:380px;width:100%}
 .login-logo{width:72px;height:72px;border-radius:22px;background:linear-gradient(135deg,var(--navy),var(--navy-l));display:flex;align-items:center;justify-content:center;margin:0 auto 24px;font-size:32px;box-shadow:0 12px 40px rgba(0,40,85,0.5)}
 .login-box h1{font-family:'Playfair Display',serif;font-size:26px;color:#fff;margin-bottom:6px}
-.login-box .sub{color:var(--gold);font-size:11px;letter-spacing:3px;text-transform:uppercase;margin-bottom:36px}
-.login-box input{width:100%;padding:18px 20px;border-radius:16px;border:2px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.06);font-size:18px;outline:none;text-align:center;font-family:'DM Sans';font-weight:600;letter-spacing:3px;color:#fff}
+.login-box .sub{color:var(--gold);font-size:11px;letter-spacing:3px;text-transform:uppercase;margin-bottom:28px}
+.login-fields{display:flex;flex-direction:column;gap:12px}
+.login-box input{width:100%;padding:16px 20px;border-radius:14px;border:2px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.06);font-size:17px;outline:none;text-align:center;font-family:'DM Sans';font-weight:600;letter-spacing:2px;color:#fff;transition:border-color 0.2s}
 .login-box input:focus{border-color:var(--gold)}
-.login-box input::placeholder{color:rgba(255,255,255,0.25);letter-spacing:1px;font-size:14px}
-.login-box button{width:100%;margin-top:16px;padding:16px;border-radius:14px;border:none;background:var(--gold);color:var(--navy-d);font-weight:800;font-size:15px;cursor:pointer}
-.login-err{color:#ff6b6b;font-size:13px;margin-top:12px}
-.login-load{color:var(--gold);font-size:13px;margin-top:16px}
+.login-box input::placeholder{color:rgba(255,255,255,0.25);letter-spacing:1px;font-size:13px;font-weight:400}
+.pin-hint{font-size:11px;color:rgba(255,255,255,0.3);margin-top:2px;text-align:center}
+.login-box button{width:100%;margin-top:14px;padding:16px;border-radius:14px;border:none;background:var(--gold);color:var(--navy-d);font-weight:800;font-size:15px;cursor:pointer;transition:transform 0.1s,opacity 0.2s}
+.login-box button:active{transform:scale(0.98)}
+.login-box button:disabled{opacity:0.5;cursor:not-allowed}
+.login-err{color:#ff6b6b;font-size:13px;margin-top:12px;min-height:18px}
+.login-load{color:var(--gold);font-size:13px;margin-top:12px;display:none}
+.login-load.show{display:block}
  
 .portal{display:none}
 .hdr{background:linear-gradient(135deg,var(--navy-d),var(--navy));color:#fff;padding:24px 20px 20px}
@@ -33,7 +38,6 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:#1a1a2e;min-hei
 .ring{width:62px;height:62px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .ring-in{width:48px;height:48px;border-radius:50%;background:var(--navy-d);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800}
  
-/* DEADLINE BANNER */
 .dl{margin-top:20px;border-radius:14px;padding:16px 18px;display:none}
 .dl.show{display:block}
 .dl.ok{background:rgba(201,168,76,0.12);border:1px solid rgba(201,168,76,0.3)}
@@ -46,7 +50,6 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:#1a1a2e;min-hei
 .dl-fill{height:100%;border-radius:4px}
 .dl-nums{display:flex;justify-content:space-between;font-size:12px;margin-top:6px;font-weight:600}
  
-/* MILESTONE BAR */
 .ms{margin-top:24px}
 .ms-wrap{position:relative;height:40px;margin-bottom:4px}
 .ms-line{position:absolute;top:14px;left:8px;right:8px;height:4px;background:rgba(255,255,255,0.1);border-radius:2px}
@@ -103,9 +106,34 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:#1a1a2e;min-hei
 .pi-am{font-size:16px;font-weight:800}
 .pill{display:inline-block;padding:3px 12px;border-radius:20px;font-size:10px;font-weight:700}
 .pi-dt{font-size:10px;color:var(--muted);margin-top:4px}
+
+/* PAYMENT INFO BOX */
+.pay-info{background:linear-gradient(135deg,#f8fafc,#eef2f7);border:1.5px solid var(--light);border-radius:16px;padding:18px;margin-bottom:16px}
+.pay-info-t{font-size:13px;font-weight:700;color:var(--navy);margin-bottom:12px}
+.pay-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid rgba(0,0,0,0.04)}
+.pay-row:last-child{border:none}
+.pay-row-lb{font-size:11px;color:var(--muted);font-weight:600}
+.pay-row-vl{font-size:13px;font-weight:700;color:var(--navy-d);text-align:right}
+.pay-row-vl.copy{cursor:pointer;color:var(--info);text-decoration:underline dotted}
+.pay-nequi{margin-top:12px;padding:12px 14px;background:var(--navy);border-radius:12px;display:flex;align-items:center;gap:10px}
+.pay-nequi-lbl{font-size:11px;color:rgba(255,255,255,0.6)}
+.pay-nequi-num{font-size:16px;font-weight:800;color:#fff;letter-spacing:1px}
+
+/* REPORT PAYMENT BUTTON */
+.pay-report-btn{display:block;width:100%;padding:14px;border-radius:14px;border:none;background:#25D366;color:#fff;font-weight:800;font-size:14px;cursor:pointer;margin-top:8px;font-family:'DM Sans';transition:transform 0.1s}
+.pay-report-btn:active{transform:scale(0.98)}
+.pay-report-btn-sub{font-size:10px;font-weight:400;opacity:0.85;margin-top:2px}
+
+/* VERIFICANDO STATE */
+.pill-verif{background:var(--info-bg);color:var(--info)}
+
 .ftr{text-align:center;padding:16px 0 28px}
 .ftr p{font-size:9px;color:var(--muted);font-weight:600;letter-spacing:2px;text-transform:uppercase}
- 
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;padding:12px 24px;border-radius:12px;font-size:13px;font-weight:600;box-shadow:0 8px 30px rgba(0,0,0,0.2);z-index:999;opacity:0;transition:opacity 0.3s;pointer-events:none}
+.toast.show{opacity:1}
+
 @media(max-width:480px){
   .hdr h1{font-size:20px}
   .crds{grid-template-columns:1fr 1fr}
@@ -124,10 +152,14 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:#1a1a2e;min-hei
     <div class="login-logo">⚖️</div>
     <h1>Consulte su Proceso</h1>
     <p class="sub">Colombia Abogados</p>
-    <input type="text" id="cedInput" placeholder="Número de cédula" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
-    <button onclick="buscar()">Consultar</button>
+    <div class="login-fields">
+      <input type="text" id="cedInput" placeholder="Número de cédula" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+      <input type="text" id="pinInput" placeholder="PIN de seguridad" inputmode="numeric" maxlength="6" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+      <p class="pin-hint">PIN de 6 dígitos proporcionado por su abogado</p>
+    </div>
+    <button id="btnLogin" onclick="buscar()">Consultar</button>
     <p class="login-err" id="errMsg"></p>
-    <p class="login-load" id="loadMsg" style="display:none">Buscando su caso...</p>
+    <p class="login-load" id="loadMsg">Buscando su caso...</p>
   </div>
 </div>
  
@@ -156,86 +188,97 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:#1a1a2e;min-hei
     <div class="ftr"><p>Colombia Abogados · Portal de Seguimiento</p></div>
   </div>
 </div>
+
+<div class="toast" id="toast"></div>
  
 <script>
-var SID="1kYSL702hd5--O6kvMDYNvLU_oUKJmfAI0dziYiwyZwY",SNM="CASOS";
-var STEPS=[
-  {id:"s1",col:17,n:"Envío contrato y poder",cd:"Le enviamos los documentos de contrato y poder para su firma."},
-  {id:"s2",col:19,n:"Documentos firmados",cd:"Recibimos sus documentos firmados correctamente."},
-  {id:"s3",col:21,n:"Anticipo honorarios",cd:"Se registra su pago de anticipo de honorarios."},
-  {id:"s4",col:23,n:"Solicitud documentos",cd:"Le solicitamos la documentación necesaria para radicar su caso."},
-  {id:"s5",col:25,n:"Documentos completos",cd:"Recibimos toda su documentación. A partir de aquí inician 15 días hábiles para la admisión de su caso.",tm:15},
-  {id:"s6",col:27,n:"Solicitud radicada",cd:"Su solicitud fue radicada ante el centro de conciliación."},
-  {id:"s7",col:29,n:"Auto de admisión",cd:"¡Su caso fue admitido por el centro de conciliación!",ms:true},
-  {id:"s8",col:31,n:"Notificación acreedores",cd:"Acreedores notificados. Se congelan embargos, demandas y remates.",tm:60,ms:true},
-  {id:"s9",col:33,n:"Primera audiencia",cd:"Primera audiencia de conciliación con sus acreedores.",ms:true},
-  {id:"a1",col:35,n:"Segunda audiencia",cd:"Segunda audiencia de negociación.",op:true},
-  {id:"a2",col:37,n:"Tercera audiencia",cd:"Audiencia final de negociación.",op:true},
-  {id:"fn",col:39,n:"Resultado final",cd:"Resultado del proceso de insolvencia.",ms:true}
-];
-var PAYS=[{col:41,cat:"hon"},{col:44,cat:"hon"},{col:47,cat:"hon"},{col:50,cat:"cen"},{col:53,cat:"cen"}];
-var PN=["Anticipo honorarios","Cuota 2 honorarios","Cuota 3 honorarios","50% Centro (admisión)","50% Centro (audiencia)"];
- 
+// ============================================================
+//  ⚠️ CONFIGURACIÓN — CAMBIAR DESPUÉS DE DESPLEGAR APPS SCRIPT
+// ============================================================
+var API_URL = "https://script.google.com/macros/s/AKfycbwzjo0hWsdkp2TnDf5CJEb5GD6YnhKyRu_qwj72RhSMscPrRYpJ7_O3FqQG2GDheS3TLA/exec";
+
+// Datos del caso actual (se llenan al consultar)
+var CASO = null;
+var CED_ACTUAL = "";
+var PIN_ACTUAL = "";
+
 var fm=function(v){return new Intl.NumberFormat("es-CO",{style:"currency",currency:"COP",maximumFractionDigits:0}).format(v||0);};
-function pD(v){if(!v)return null;if(typeof v==="string"&&v.indexOf("Date(")===0){var p=v.replace("Date(","").replace(")","").split(",");return new Date(+p[0],+p[1],+p[2]);}var d=new Date(v);return isNaN(d.getTime())?null:d;}
+function pD(v){if(!v)return null;var d=new Date(v);return isNaN(d.getTime())?null:d;}
 function fD(v){var d=pD(v);if(!d)return"—";return d.toLocaleDateString("es-CO",{day:"numeric",month:"short",year:"numeric"});}
 function dBt(a,b){var da=pD(a),db=pD(b);if(!da||!db)return 0;return Math.max(0,Math.round((db-da)/86400000));}
-function nS(v){return v?String(v).toUpperCase().trim():"PENDIENTE";}
- 
-function qSheet(q){return new Promise(function(ok,fail){var cb="cb_"+Math.random().toString(36).slice(2,8);var to=setTimeout(function(){delete window[cb];fail();},12000);window[cb]=function(data){clearTimeout(to);delete window[cb];var el=document.getElementById("jp_"+cb);if(el)el.remove();ok(data);};var s=document.createElement("script");s.id="jp_"+cb;s.src="https://docs.google.com/spreadsheets/d/"+SID+"/gviz/tq?tqx=responseHandler:"+cb+"&sheet="+encodeURIComponent(SNM)+"&headers=2&tq="+encodeURIComponent(q);s.onerror=function(){clearTimeout(to);delete window[cb];s.remove();fail();};document.body.appendChild(s);});}
- 
+
+// ============================================================
+//  BUSCAR — Login con cédula + PIN via API
+// ============================================================
 function buscar(){
   var ced=document.getElementById("cedInput").value.replace(/[^0-9]/g,"");
+  var pin=document.getElementById("pinInput").value.replace(/[^0-9]/g,"");
   if(!ced){document.getElementById("errMsg").textContent="Ingrese su cédula";return;}
-  document.getElementById("errMsg").textContent="";document.getElementById("loadMsg").style.display="block";
-  var qs=["SELECT * WHERE C = "+ced,"SELECT * WHERE C = '"+ced+"'"],idx=0;
-  function tryN(){if(idx>=qs.length){document.getElementById("errMsg").textContent="No se encontró un caso con esa cédula.";document.getElementById("loadMsg").style.display="none";return;}
-  qSheet(qs[idx]).then(function(d){if(d&&d.table&&d.table.rows&&d.table.rows.length>0){document.getElementById("loadMsg").style.display="none";proc(d.table.rows[0].c);}else{idx++;tryN();}}).catch(function(){idx++;tryN();});}
-  tryN();
+  if(!pin){document.getElementById("errMsg").textContent="Ingrese su PIN";return;}
+
+  document.getElementById("errMsg").textContent="";
+  document.getElementById("loadMsg").classList.add("show");
+  document.getElementById("btnLogin").disabled=true;
+
+  var url=API_URL+"?action=consultar&cedula="+encodeURIComponent(ced)+"&pin="+encodeURIComponent(pin);
+
+  fetch(url,{redirect:"follow"})
+    .then(function(r){return r.json();})
+    .then(function(data){
+      document.getElementById("loadMsg").classList.remove("show");
+      document.getElementById("btnLogin").disabled=false;
+      if(data.ok){
+        CED_ACTUAL=ced;
+        PIN_ACTUAL=pin;
+        CASO=data.data;
+        render(data.data);
+      } else {
+        document.getElementById("errMsg").textContent=data.error||"Error al consultar";
+      }
+    })
+    .catch(function(){
+      document.getElementById("loadMsg").classList.remove("show");
+      document.getElementById("btnLogin").disabled=false;
+      document.getElementById("errMsg").textContent="Error de conexión. Verifique su internet.";
+    });
 }
- 
-function proc(row){
-  var g=function(i){return row[i]?(row[i].v!==null?row[i].v:null):null;};
-  var c={nm:g(1),ced:g(2),cel:g(3),cor:g(4),ab:g(5),mod:nS(g(6)),deu:g(7),hon:g(8),cen:g(9),fi:g(10),p1:g(11),p2:g(12),p3:g(13),desc:g(14),est:g(15),fc:g(16),steps:[],pays:[]};
-  STEPS.forEach(function(s){c.steps.push({id:s.id,n:s.n,cd:s.cd,ms:s.ms,op:s.op,tm:s.tm,est:nS(g(s.col)),fecha:g(s.col+1)});});
-  PAYS.forEach(function(p,i){c.pays.push({nm:PN[i],mt:g(p.col)||0,est:nS(g(p.col+1)),fe:g(p.col+2),cat:p.cat});});
-  render(c);
-}
- 
+
+// ============================================================
+//  RENDER — Pintar portal (misma lógica que tu código actual)
+// ============================================================
 function render(c){
   document.getElementById("loginView").style.display="none";
   document.getElementById("portalView").style.display="block";
   document.getElementById("pNom").textContent=c.nm||"—";
   var modT=c.mod==="ACUERDO"?"Acuerdo con Acreedores":c.mod==="LIQUIDACIÓN"||c.mod==="LIQUIDACION"?"Liquidación Patrimonial":c.mod;
   document.getElementById("pInfo").textContent=modT+(c.ab?" · "+c.ab:"");
- 
+
   var vis=c.steps.filter(function(s){return!(s.op&&s.est==="PENDIENTE");});
   var done=vis.filter(function(s){return s.est==="COMPLETADO";}).length;
   var total=vis.length;
   var pct=total?Math.round(done/total*100):0;
   var active=null;
   for(var i=0;i<vis.length;i++){if(vis[i].est==="ACTIVO"){active=vis[i];break;}}
- 
+
   document.getElementById("ring").style.background="conic-gradient(var(--gold) "+pct*3.6+"deg, rgba(255,255,255,0.08) "+pct*3.6+"deg)";
   document.getElementById("ringTxt").textContent=pct+"%";
- 
+
   // Deadline calcs
   var s5=c.steps.filter(function(s){return s.id==="s5";})[0];
   var s7=c.steps.filter(function(s){return s.id==="s7";})[0];
   var s8=c.steps.filter(function(s){return s.id==="s8";})[0];
   var s9=c.steps.filter(function(s){return s.id==="s9";})[0];
- 
-  var dlAct=false,dlDays=0,dlMax=0,dlRest=0,dlTitle="",dlDesc="",dlName="";
- 
+  var dlAct=false,dlDays=0,dlMax=0,dlRest=0,dlTitle="",dlDesc="";
+
   if(s5&&s5.est==="COMPLETADO"&&s5.fecha&&s7&&s7.est!=="COMPLETADO"){
     dlDays=dBt(s5.fecha,new Date().toISOString());dlMax=15;dlRest=Math.max(0,15-dlDays);
-    dlTitle="Plazo para Auto de Admisión";dlDesc="Desde que se completó la documentación, el centro tiene 15 días hábiles para emitir el auto de admisión.";dlAct=true;dlName="auto admisión";
+    dlTitle="Plazo para Auto de Admisión";dlDesc="Desde que se completó la documentación, el centro tiene 15 días hábiles para emitir el auto de admisión.";dlAct=true;
   }
   if(s8&&s8.est==="COMPLETADO"&&s8.fecha&&s9&&s9.est!=="COMPLETADO"){
     dlDays=dBt(s8.fecha,new Date().toISOString());dlMax=60;dlRest=Math.max(0,60-dlDays);
-    dlTitle="Plazo para Primera Audiencia";dlDesc="Desde la notificación a acreedores, hay 60 días hábiles para la primera audiencia de conciliación.";dlAct=true;dlName="1ra audiencia";
+    dlTitle="Plazo para Primera Audiencia";dlDesc="Desde la notificación a acreedores, hay 60 días hábiles para la primera audiencia de conciliación.";dlAct=true;
   }
- 
+
   // Deadline banner
   var dlHTML="";
   if(dlAct){
@@ -246,7 +289,7 @@ function render(c){
     dlHTML='<div class="dl show '+cls+'"><p class="dl-lb" style="color:'+lblCol+'">⏱ Plazo legal activo</p><p class="dl-tt" style="color:#fff">'+dlTitle+'</p><p class="dl-ds">'+dlDesc+'</p><div class="dl-bar"><div class="dl-fill" style="width:'+pctDl+'%;background:'+col+'"></div></div><div class="dl-nums"><span style="color:rgba(255,255,255,0.5)">Día '+dlDays+' de '+dlMax+'</span><span style="color:'+col+';font-weight:800">'+dlRest+' días restantes</span></div></div>';
   }
   document.getElementById("dlBanner").innerHTML=dlHTML;
- 
+
   // Milestone bar
   var milestones=vis.filter(function(s){return s.ms||s.id==="s1"||s.id==="s3"||s.id==="s5";});
   var msHTML='<div class="ms-wrap"><div class="ms-line"></div><div class="ms-prog" style="width:calc('+pct+'% - 16px)"></div><div class="ms-dots">';
@@ -257,21 +300,17 @@ function render(c){
   });
   msHTML+='</div></div>';
   document.getElementById("msBar").innerHTML=msHTML;
- 
+
   // Payments totals
   var paid=0,totalPay=0;
   c.pays.forEach(function(p){if(p.est==="PAGADO")paid+=p.mt;totalPay+=p.mt;});
- 
+
   // === 4 KPI CARDS ===
   var h="";
- 
-  // 1. Deuda aproximada
   var deuTxt=c.deu?fm(c.deu):"No registrada";
   h+=mkC("💳","Deuda aprox.",deuTxt,"","var(--navy)");
- 
-  // 2. Días para auto admisión
-  var docsOk=s5&&s5.est==="COMPLETADO";
-  if(docsOk&&s7&&s7.est!=="COMPLETADO"){
+
+  if(s5&&s5.est==="COMPLETADO"&&s7&&s7.est!=="COMPLETADO"){
     var dlCol=dlRest<=3?"var(--err)":dlRest<=7?"var(--warn)":"var(--navy)";
     h+=mkC("⏱","Auto admisión",dlRest+" días","de 15 días hábiles",dlCol);
   } else if(s7&&s7.est==="COMPLETADO"){
@@ -279,17 +318,14 @@ function render(c){
   } else {
     h+=mkC("📋","Auto admisión","Pendiente","Faltan documentos para radicación","var(--muted)");
   }
- 
-  // 3. Pagado
+
   h+=mkC("💰","Pagado",fm(paid),"de "+fm(totalPay),"var(--ok)");
- 
-  // 4. Abogado (1 nombre + 1 apellido)
+
   var abShort="—";
   if(c.ab){var parts=c.ab.trim().split(/\s+/);abShort=parts.length>=2?parts[0]+" "+parts[parts.length-1]:parts[0];}
   h+=mkC("👤","Abogado",abShort,"","var(--navy)");
- 
   document.getElementById("cards").innerHTML=h;
- 
+
   // Active step
   var aHTML="";
   if(active){
@@ -302,14 +338,14 @@ function render(c){
     aHTML+='</div>';
   }
   document.getElementById("actBox").innerHTML=aHTML;
- 
+
   // Context
   var ctxHTML="";
   if(c.desc){ctxHTML+='<div style="margin-bottom:14px"><p style="font-size:10px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Descripción del caso</p><p style="font-size:13px;color:var(--navy-d);line-height:1.7">'+c.desc+'</p></div>';}
-  if(c.est){ctxHTML+='<div><p style="font-size:10px;font-weight:700;color:var(--gold-d,#a68a3e);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Estrategia jurídica</p><p style="font-size:13px;color:var(--navy-d);line-height:1.7">'+c.est+'</p></div>';}
+  if(c.est){ctxHTML+='<div><p style="font-size:10px;font-weight:700;color:#a68a3e;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Estrategia jurídica</p><p style="font-size:13px;color:var(--navy-d);line-height:1.7">'+c.est+'</p></div>';}
   if(!ctxHTML){ctxHTML='<p style="font-size:13px;color:var(--muted)">Información no disponible aún.</p>';}
   document.getElementById("ctx").innerHTML=ctxHTML;
- 
+
   // Timeline
   var tHTML="";
   vis.forEach(function(s,i){
@@ -322,31 +358,119 @@ function render(c){
     tHTML+='</div>';if(isDone||isAct)tHTML+='<p class="tl-desc">'+s.cd+'</p>';tHTML+='</div></div>';
   });
   document.getElementById("tl").innerHTML=tHTML;
- 
-  // Payments
+
+  // === PAYMENTS (con info bancaria + botón reportar) ===
   var honP=c.pays.filter(function(p){return p.cat==="hon";});
   var cenP=c.pays.filter(function(p){return p.cat==="cen";});
+
   var pHTML='<div class="pb"><div class="pb-info"><span>'+fm(paid)+' pagados</span><span>'+fm(totalPay)+' total</span></div><div class="pb-trk"><div class="pb-fill" style="width:'+(totalPay?paid/totalPay*100:0)+'%"></div></div></div>';
+
+  // Datos bancarios
+  if(c.banco && hasPendiente(c.pays)){
+    pHTML+='<div class="pay-info">';
+    pHTML+='<p class="pay-info-t">💳 Datos para transferencia</p>';
+    pHTML+='<div class="pay-row"><span class="pay-row-lb">Banco</span><span class="pay-row-vl">'+c.banco.nombre+'</span></div>';
+    pHTML+='<div class="pay-row"><span class="pay-row-lb">Tipo</span><span class="pay-row-vl">'+c.banco.tipo+'</span></div>';
+    pHTML+='<div class="pay-row"><span class="pay-row-lb">Cuenta</span><span class="pay-row-vl copy" onclick="copiar(\''+c.banco.cuenta+'\')">'+c.banco.cuenta+' 📋</span></div>';
+    pHTML+='<div class="pay-row"><span class="pay-row-lb">Titular</span><span class="pay-row-vl">'+c.banco.titular+'</span></div>';
+    pHTML+='<div class="pay-row"><span class="pay-row-lb">NIT</span><span class="pay-row-vl">'+c.banco.nit+'</span></div>';
+    if(c.banco.nequi){
+      pHTML+='<div class="pay-nequi"><div><p class="pay-nequi-lbl">Nequi</p><p class="pay-nequi-num" onclick="copiar(\''+c.banco.nequi+'\')">'+c.banco.nequi+' 📋</p></div></div>';
+    }
+    pHTML+='</div>';
+  }
+
+  // Columnas de pagos
   pHTML+='<div class="pc"><div><p class="pc-t" style="border-bottom:2px solid var(--navy)">Honorarios Firma</p>';
-  honP.forEach(function(p){pHTML+=mkP(p);});
+  honP.forEach(function(p,i){pHTML+=mkP(p,i);});
   pHTML+='</div><div><p class="pc-t" style="border-bottom:2px solid var(--gold)">Centro Conciliación</p>';
-  cenP.forEach(function(p){pHTML+=mkP(p);});
+  cenP.forEach(function(p,i){pHTML+=mkP(p,i+honP.length);});
   pHTML+='</div></div>';
+
   document.getElementById("pays").innerHTML=pHTML;
 }
- 
+
+// ============================================================
+//  HELPERS
+// ============================================================
 function mkC(ic,lb,vl,sb,col){return'<div class="crd"><div class="crd-ic">'+ic+'</div><div class="crd-lb">'+lb+'</div><div class="crd-vl" style="color:'+col+'">'+vl+'</div>'+(sb?'<div class="crd-sb">'+sb+'</div>':'')+'</div>';}
- 
-function mkP(p){
-  var isPd=p.est==="PAGADO";var bg=isPd?"var(--ok-bg)":"var(--bg)";var brd=isPd?"#bbf7d0":"var(--light)";
-  var amC=isPd?"var(--ok)":"var(--navy-d)";var pBg=isPd?"var(--ok-bg)":"var(--warn-bg)";var pC=isPd?"var(--ok)":"var(--warn)";var pT=isPd?"✓ Pagado":"Pendiente";
+
+function mkP(p,globalIdx){
+  var isPd=p.est==="PAGADO";
+  var isVer=p.est==="VERIFICANDO";
+  var bg=isPd?"var(--ok-bg)":isVer?"var(--info-bg)":"var(--bg)";
+  var brd=isPd?"#bbf7d0":isVer?"#bfdbfe":"var(--light)";
+  var amC=isPd?"var(--ok)":isVer?"var(--info)":"var(--navy-d)";
+  var pBg=isPd?"var(--ok-bg)":isVer?"var(--info-bg)":"var(--warn-bg)";
+  var pC=isPd?"var(--ok)":isVer?"var(--info)":"var(--warn)";
+  var pT=isPd?"✓ Pagado":isVer?"⏳ En verificación":"Pendiente";
   var dt=isPd&&p.fe?"Pagado: "+fD(p.fe):p.fe?"Vence: "+fD(p.fe):"";
-  return'<div class="pi" style="background:'+bg+';border:1px solid '+brd+'"><div class="pi-nm">'+p.nm+'</div><div class="pi-rw"><span class="pi-am" style="color:'+amC+'">'+fm(p.mt)+'</span><span class="pill" style="color:'+pC+';background:'+pBg+'">'+pT+'</span></div>'+(dt?'<div class="pi-dt">'+dt+'</div>':'')+'</div>';
+
+  var h='<div class="pi" style="background:'+bg+';border:1px solid '+brd+'"><div class="pi-nm">'+p.nm+'</div><div class="pi-rw"><span class="pi-am" style="color:'+amC+'">'+fm(p.mt)+'</span><span class="pill" style="color:'+pC+';background:'+pBg+'">'+pT+'</span></div>';
+  if(dt)h+='<div class="pi-dt">'+dt+'</div>';
+
+  // Botón de reportar pago (solo si pendiente y monto > 0)
+  if(!isPd && !isVer && p.mt > 0){
+    h+='<button class="pay-report-btn" onclick="reportarPago('+globalIdx+',\''+encodeURIComponent(p.nm)+'\','+p.mt+')">📲 Reportar pago por WhatsApp<div class="pay-report-btn-sub">Envíe su comprobante de transferencia</div></button>';
+  }
+  if(isVer){
+    h+='<div style="margin-top:6px;font-size:11px;color:var(--info);font-weight:600">Su comprobante está siendo verificado</div>';
+  }
+
+  return h+'</div>';
 }
- 
+
+function hasPendiente(pays){
+  for(var i=0;i<pays.length;i++){if(pays[i].est!=="PAGADO")return true;}
+  return false;
+}
+
+// ============================================================
+//  REPORTAR PAGO — Abre WhatsApp con mensaje pre-llenado
+// ============================================================
+function reportarPago(pagoIdx, pagoNombre, monto){
+  if(!CASO || !CASO.banco) return;
+
+  var nombre = CASO.nm || "Cliente";
+  var concepto = decodeURIComponent(pagoNombre);
+  var montoTxt = fm(monto);
+
+  var msg = "Hola, soy *" + nombre + "*\n"
+    + "Cédula: " + CED_ACTUAL + "\n\n"
+    + "Reporto pago de: *" + concepto + "*\n"
+    + "Monto: *" + montoTxt + "*\n\n"
+    + "📎 _Adjunto comprobante de transferencia_";
+
+  var waUrl = "https://wa.me/" + CASO.banco.wa + "?text=" + encodeURIComponent(msg);
+  window.open(waUrl, "_blank");
+
+  showToast("Se abrirá WhatsApp para enviar su comprobante");
+}
+
+// ============================================================
+//  COPIAR AL PORTAPAPELES
+// ============================================================
+function copiar(txt){
+  if(navigator.clipboard){
+    navigator.clipboard.writeText(txt).then(function(){showToast("Copiado: "+txt);});
+  } else {
+    var el=document.createElement("textarea");el.value=txt;document.body.appendChild(el);el.select();document.execCommand("copy");document.body.removeChild(el);
+    showToast("Copiado: "+txt);
+  }
+}
+
+function showToast(msg){
+  var t=document.getElementById("toast");t.textContent=msg;t.classList.add("show");
+  setTimeout(function(){t.classList.remove("show");},2500);
+}
+
 function tog(b){var bd=b.nextElementSibling;var a=b.querySelector(".sec-arr");if(bd.style.display==="block"){bd.style.display="none";a.style.transform="rotate(0deg)";}else{bd.style.display="block";a.style.transform="rotate(180deg)";}}
-function volver(){document.getElementById("portalView").style.display="none";document.getElementById("loginView").style.display="flex";document.getElementById("cedInput").value="";}
-document.getElementById("cedInput").addEventListener("keydown",function(e){if(e.key==="Enter")buscar();});
+function volver(){document.getElementById("portalView").style.display="none";document.getElementById("loginView").style.display="flex";document.getElementById("cedInput").value="";document.getElementById("pinInput").value="";document.getElementById("errMsg").textContent="";CASO=null;CED_ACTUAL="";PIN_ACTUAL="";}
+
+// Enter en cédula → focus PIN, Enter en PIN → buscar
+document.getElementById("cedInput").addEventListener("keydown",function(e){if(e.key==="Enter"){e.preventDefault();document.getElementById("pinInput").focus();}});
+document.getElementById("pinInput").addEventListener("keydown",function(e){if(e.key==="Enter")buscar();});
 </script>
 </body>
+</html>
 </html>

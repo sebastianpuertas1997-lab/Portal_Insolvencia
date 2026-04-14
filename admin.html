@@ -275,6 +275,10 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-
 <input type="number" id="modCentro" placeholder="2300000" oninput="previsualizarComision()">
 <label>% Descuento centro</label>
 <input type="number" id="modDescuento" placeholder="0" value="0" oninput="previsualizarComision()">
+<label>Motivo de insolvencia</label>
+<textarea id="modMotivo" placeholder="Ej: Disminución de ingresos que impide atender el servicio de la deuda..." style="width:100%;padding:12px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:13px;font-family:'Outfit';outline:none;resize:vertical;min-height:60px"></textarea>
+<label>Estrategia jurídica</label>
+<textarea id="modEstrategia" placeholder="Ej: Negociación técnica para normalizar pasivos..." style="width:100%;padding:12px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:13px;font-family:'Outfit';outline:none;resize:vertical;min-height:60px"></textarea>
 <label>Asesor comercial</label>
 <select id="modAsesor"><option value="DAYANNA VIDAL">DAYANNA VIDAL</option><option value="SEBASTIAN PUERTAS">SEBASTIAN PUERTAS</option><option value="">Sin asesor</option></select>
 <div class="preview-box" id="modPreview"><div class="preview-title">Resumen</div><div id="modPrevContent"></div></div>
@@ -364,17 +368,24 @@ function renderDashboard(d){
   document.getElementById("clientsGrid").innerHTML=g;
 }
 
-function abrirDetalle(ced,nmEnc){DETALLE_CED=ced;fetchCliente(ced).then(function(c){
-  var done=c.steps.filter(function(s){return s.est==="COMPLETADO";}).length;var total=c.steps.filter(function(s){return!(s.op&&s.est==="PENDIENTE");}).length;
-  var paid=0,tp=0;c.pays.forEach(function(p){if(p.est==="PAGADO")paid+=p.mt;tp+=p.mt;});
-  var h='<div style="margin-bottom:16px"><div style="font-size:20px;font-weight:800;color:var(--navy)">'+c.nm+'</div><div style="font-size:12px;color:var(--text-2);margin-top:2px">CC '+c.ced+' · '+(c.cel||"—")+'</div>';
-  h+='<div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap"><span class="pill pill-info">'+c.mod+'</span><span class="pill" style="background:var(--gold-l);color:var(--navy)">PIN: '+c.pin+'</span></div></div>';
+function abrirDetalle(ced,nmEnc){
+  DETALLE_CED=ced;
+  // Use cached dashboard data — NO API call needed
+  var cl=DASH_CACHE?(DASH_CACHE.clientes||DASH_CACHE):null;
+  var c=null;
+  if(cl&&cl.data){for(var i=0;i<cl.data.length;i++){if(cl.data[i].cedula===ced){c=cl.data[i];break;}}}
+  if(!c){showMsg("casMsg","Cliente no encontrado en cache","err");return;}
+
+  var h='<div style="margin-bottom:16px"><div style="font-size:20px;font-weight:800;color:var(--navy)">'+c.nombre+'</div><div style="font-size:12px;color:var(--text-2);margin-top:2px">CC '+c.cedula+' · '+(c.celular||"—")+'</div>';
+  h+='<div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap"><span class="pill pill-info">'+c.modalidad+'</span></div></div>';
   h+='<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px">';
-  h+='<div style="text-align:center;padding:12px;background:var(--surface-2);border-radius:12px"><div style="font-size:10px;color:var(--text-3);font-weight:700">DEUDA</div><div style="font-size:15px;font-weight:800;color:var(--navy);margin-top:4px">'+fm(c.deu)+'</div></div>';
-  h+='<div style="text-align:center;padding:12px;background:var(--surface-2);border-radius:12px"><div style="font-size:10px;color:var(--text-3);font-weight:700">PROCESO</div><div style="font-size:15px;font-weight:800;color:var(--navy);margin-top:4px">'+done+'/'+total+'</div></div>';
-  h+='<div style="text-align:center;padding:12px;background:var(--surface-2);border-radius:12px"><div style="font-size:10px;color:var(--text-3);font-weight:700">PAGADO</div><div style="font-size:15px;font-weight:800;color:var(--ok);margin-top:4px">'+fm(paid)+'</div></div></div>';
-  h+='<button class="btn btn-gold btn-lg" onclick="copiarPIN(\''+c.pin+'\',\''+enc(c.nm)+'\')">📋 Copiar mensaje PIN</button>';
-  document.getElementById("detalleContent").innerHTML=h;document.getElementById("modalDetalle").classList.add("show");});}
+  h+='<div style="text-align:center;padding:12px;background:var(--surface-2);border-radius:12px"><div style="font-size:10px;color:var(--text-3);font-weight:700">DEUDA</div><div style="font-size:15px;font-weight:800;color:var(--navy);margin-top:4px">'+fm(c.deuda)+'</div></div>';
+  h+='<div style="text-align:center;padding:12px;background:var(--surface-2);border-radius:12px"><div style="font-size:10px;color:var(--text-3);font-weight:700">PROCESO</div><div style="font-size:15px;font-weight:800;color:var(--navy);margin-top:4px">'+c.pctProceso+'%</div></div>';
+  h+='<div style="text-align:center;padding:12px;background:var(--surface-2);border-radius:12px"><div style="font-size:10px;color:var(--text-3);font-weight:700">PAGADO</div><div style="font-size:15px;font-weight:800;color:var(--ok);margin-top:4px">'+fm(c.pagado)+'</div></div></div>';
+  if(c.etapaActiva&&c.etapaActiva!=="—")h+='<div style="padding:10px 14px;background:var(--accent-l);border-radius:10px;font-size:13px;color:var(--accent);font-weight:600;margin-bottom:12px">→ '+c.etapaActiva+'</div>';
+  document.getElementById("detalleContent").innerHTML=h;
+  document.getElementById("modalDetalle").classList.add("show");
+}
 
 function irAPagos(){document.getElementById("modalDetalle").classList.remove("show");document.getElementById("pagCed").value=DETALLE_CED;goTab("pagos");buscarPagos();}
 function irACasos(){document.getElementById("modalDetalle").classList.remove("show");document.getElementById("casCed").value=DETALLE_CED;goTab("casos");buscarCaso();}
@@ -398,12 +409,25 @@ function renderPropuestas(d){
   h+='</tbody></table>';document.getElementById("propOut").innerHTML=h;
 }
 
-function abrirConversion(lead){LEAD_ACTUAL=lead;document.getElementById("modalNombre").textContent=lead.nombre+" — "+lead.celular;document.getElementById("modCedula").value="";document.getElementById("modCorreo").value="";document.getElementById("modHonorarios").value="";document.getElementById("modCentro").value="";document.getElementById("modDescuento").value="0";var s=document.getElementById("modAsesor");for(var i=0;i<s.options.length;i++){if(s.options[i].value===lead.asesor){s.selectedIndex=i;break;}}document.getElementById("modPreview").style.display="none";hideMsg("modMsg");document.getElementById("modalConvertir").classList.add("show");}
+function abrirConversion(lead){LEAD_ACTUAL=lead;document.getElementById("modalNombre").textContent=lead.nombre+" — "+lead.celular;document.getElementById("modCedula").value="";document.getElementById("modCorreo").value="";
+  // Auto-fill from proposal data
+  document.getElementById("modHonorarios").value=lead.honorarios||"";
+  document.getElementById("modCentro").value=lead.centro||"";
+  document.getElementById("modDescuento").value=lead.descuento||"0";
+  document.getElementById("modMotivo").value=lead.contexto||"";
+  document.getElementById("modEstrategia").value="";
+  // Set modalidad
+  var modSel=document.getElementById("modModalidad");
+  if(lead.modalidad){for(var i=0;i<modSel.options.length;i++){if(modSel.options[i].value.indexOf(lead.modalidad)!==-1||lead.modalidad.indexOf(modSel.options[i].value)!==-1){modSel.selectedIndex=i;break;}}}
+  var s=document.getElementById("modAsesor");for(var i=0;i<s.options.length;i++){if(s.options[i].value===lead.asesor){s.selectedIndex=i;break;}}
+  if(lead.honorarios)previsualizarComision();
+  else document.getElementById("modPreview").style.display="none";
+  hideMsg("modMsg");document.getElementById("modalConvertir").classList.add("show");}
 function cerrarModal(){document.getElementById("modalConvertir").classList.remove("show");LEAD_ACTUAL=null;}
 
 function previsualizarComision(){var hon=Number(document.getElementById("modHonorarios").value)||0;var centro=Number(document.getElementById("modCentro").value)||0;var desc=Number(document.getElementById("modDescuento").value)||0;if(!hon){document.getElementById("modPreview").style.display="none";return;}var cf=centro-(centro*desc/100);var com=hon<2000000?100000:Math.round(hon*0.08);var ant=Math.round(hon*0.5);var c2=Math.round(hon*0.25);var c3=hon-ant-c2;var h='Anticipo: '+fm(ant)+' · C2: '+fm(c2)+' · C3: '+fm(c3);h+='<br>Centro: '+fm(Math.round(cf*0.5))+' × 2';if(desc>0)h+=' <span style="color:var(--ok)">(dto '+desc+'%)</span>';h+='<br><strong>Total: '+fm(hon+cf)+'</strong>';h+='<br><span style="color:var(--gold);font-weight:700">Comisión: '+fm(com)+(hon<2000000?' (fija)':' (8%)')+'</span>';document.getElementById("modPrevContent").innerHTML=h;document.getElementById("modPreview").style.display="block";}
 
-function ejecutarConversion(){if(!LEAD_ACTUAL)return;var cedula=document.getElementById("modCedula").value.trim();if(!cedula){showMsg("modMsg","Cédula obligatoria","err");return;}var honorarios=document.getElementById("modHonorarios").value;if(!honorarios){showMsg("modMsg","Honorarios obligatorios","err");return;}showMsg("modMsg","Creando...","info");var params="action=crear_cliente&key="+enc(KEY)+"&cedula="+enc(cedula)+"&celular="+enc(LEAD_ACTUAL.celular)+"&idLead="+enc(LEAD_ACTUAL.idLead)+"&nombre="+enc(LEAD_ACTUAL.nombre)+"&correo="+enc(document.getElementById("modCorreo").value)+"&modalidad="+enc(document.getElementById("modModalidad").value)+"&deuda="+enc(LEAD_ACTUAL.deuda)+"&honorarios="+enc(honorarios)+"&centro="+enc(document.getElementById("modCentro").value)+"&descuento="+enc(document.getElementById("modDescuento").value)+"&asesor="+enc(document.getElementById("modAsesor").value);callAPI(params).then(function(d){if(!d.ok){showMsg("modMsg",d.error,"err");return;}showMsg("modMsg","✅ PIN: "+d.pin+" — Comisión: "+d.comisionTipo,"ok");addLog("🎉 "+d.nombre+" — PIN: "+d.pin);setTimeout(function(){cerrarModal();cargarPropuestas();DASH_CACHE=null;cargarDashboard(true);},2500);}).catch(function(){showMsg("modMsg","Error","err");});}
+function ejecutarConversion(){if(!LEAD_ACTUAL)return;var cedula=document.getElementById("modCedula").value.trim();if(!cedula){showMsg("modMsg","Cédula obligatoria","err");return;}var honorarios=document.getElementById("modHonorarios").value;if(!honorarios){showMsg("modMsg","Honorarios obligatorios","err");return;}showMsg("modMsg","Creando...","info");var params="action=crear_cliente&key="+enc(KEY)+"&cedula="+enc(cedula)+"&celular="+enc(LEAD_ACTUAL.celular)+"&idLead="+enc(LEAD_ACTUAL.idLead)+"&nombre="+enc(LEAD_ACTUAL.nombre)+"&correo="+enc(document.getElementById("modCorreo").value)+"&modalidad="+enc(document.getElementById("modModalidad").value)+"&deuda="+enc(LEAD_ACTUAL.deuda)+"&honorarios="+enc(honorarios)+"&centro="+enc(document.getElementById("modCentro").value)+"&descuento="+enc(document.getElementById("modDescuento").value)+"&asesor="+enc(document.getElementById("modAsesor").value)+"&descripcion="+enc(document.getElementById("modMotivo").value)+"&estrategia="+enc(document.getElementById("modEstrategia").value);callAPI(params).then(function(d){if(!d.ok){showMsg("modMsg",d.error,"err");return;}showMsg("modMsg","✅ PIN: "+d.pin+" — Comisión: "+d.comisionTipo,"ok");addLog("🎉 "+d.nombre+" — PIN: "+d.pin);setTimeout(function(){cerrarModal();cargarPropuestas();DASH_CACHE=null;cargarDashboard(true);},2500);}).catch(function(){showMsg("modMsg","Error","err");});}
 
 // === PAGOS ===
 function buscarPagos(){var ced=document.getElementById("pagCed").value.trim();if(!ced){showMsg("pagMsg","Ingrese la cédula","err");return;}showMsg("pagMsg","Buscando...","info");fetchCliente(ced).then(function(c){hideMsg("pagMsg");renderPagos(c,ced);}).catch(function(e){showMsg("pagMsg",e.message,"err");});}

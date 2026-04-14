@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Propuesta Económica V17 - Colombia Abogados</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f1f5f9; margin: 0; padding: 0; overflow: hidden; }
+        
+        #proposal-content {
+            width: 794px; 
+            min-width: 794px; 
+            height: 1123px; 
+            min-height: 1123px;
+            padding: 35px 45px; 
+            background: white; 
+            display: flex; 
+            flex-direction: column;
+            color: #1e293b; 
+            box-sizing: border-box; 
+            position: relative;
+            overflow: hidden;
+        }
+
+        .brand-navy { color: #002855; }
+        .bg-brand-navy { background-color: #002855; }
+        .section-marker { width: 12px; height: 12px; background-color: #002855; display: inline-block; margin-right: 10px; border-radius: 2px; }
+
+        @media print {
+            .no-print { display: none !important; }
+            #preview-panel { padding: 0 !important; background: white !important; }
+            #proposal-content { box-shadow: none !important; }
+        }
+
+        .custom-scroll::-webkit-scrollbar { width: 6px; }
+        .custom-scroll::-webkit-scrollbar-track { background: #f1f5f9; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+    </style>
+</head>
+<body class="flex h-screen w-full">
+
+    <!-- CONFIGURACIÓN LATERAL -->
+    <div class="w-[400px] shrink-0 bg-white border-r border-slate-200 overflow-y-auto p-5 flex flex-col gap-4 no-print shadow-xl z-10 text-[11px] custom-scroll">
+        <div>
+            <h2 class="text-xl font-black text-[#002855]">Configuración V17</h2>
+            <p class="text-slate-500 font-medium italic">Versión con F1 Dominante y Hook de Cierre.</p>
+        </div>
+
+        <div class="space-y-1">
+            <label class="font-bold text-slate-700 uppercase">Modo de Presentación</label>
+            <select id="in-modo-presentacion" onchange="actualizarVista()" class="w-full bg-[#002855] text-white rounded-lg px-3 py-2.5 font-bold outline-none cursor-pointer">
+                <option value="ambas">Mostrar Ambas Modalidades</option>
+                <option value="acuerdo">Solo Acuerdo con Acreedores</option>
+                <option value="liquidacion">Solo Liquidación Patrimonial</option>
+            </select>
+        </div>
+
+        <div class="space-y-1">
+            <label class="font-bold text-slate-700 uppercase">Logo Circular</label>
+            <input type="file" id="in-logo" accept="image/*" onchange="previewImage(event)" class="w-full text-[10px] file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:bg-blue-50 file:text-blue-700 cursor-pointer">
+        </div>
+
+        <div class="grid grid-cols-1 gap-2">
+            <input type="text" id="in-cliente" oninput="actualizarVista()" placeholder="Nombre del Cliente" class="w-full bg-slate-50 border border-slate-200 rounded px-3 py-2">
+            <div class="grid grid-cols-2 gap-2">
+                <input type="text" id="in-id-cliente" oninput="actualizarVista()" placeholder="Cédula / ID" class="bg-slate-50 border border-slate-200 rounded px-3 py-2">
+                <input type="text" id="in-celular" oninput="actualizarVista()" placeholder="Celular" class="bg-slate-50 border border-slate-200 rounded px-3 py-2">
+            </div>
+            <select id="in-asesor" onchange="actualizarVista()" class="bg-slate-50 border border-slate-200 rounded px-3 py-2 font-bold uppercase">
+                <option value="DAYANNA VIDAL">DAYANNA VIDAL</option>
+                <option value="SEBASTIAN PUERTAS">SEBASTIAN PUERTAS</option>
+            </select>
+        </div>
+
+        <div class="space-y-2 p-3 bg-slate-50 rounded-lg border border-slate-100">
+            <label class="font-bold text-slate-700 uppercase">Pasivos Principales</label>
+            <div class="grid grid-cols-3 gap-1"><input type="text" id="in-ac-1" oninput="actualizarVista()" placeholder="Acreedor 1" class="col-span-2 border rounded px-2 py-1"><input type="number" id="in-mt-1" oninput="actualizarVista()" placeholder="Monto" class="border rounded px-2 py-1 font-bold"></div>
+            <div class="grid grid-cols-3 gap-1"><input type="text" id="in-ac-2" oninput="actualizarVista()" placeholder="Acreedor 2" class="col-span-2 border rounded px-2 py-1"><input type="number" id="in-mt-2" oninput="actualizarVista()" placeholder="Monto" class="border rounded px-2 py-1 font-bold"></div>
+            <div class="grid grid-cols-3 gap-1"><input type="text" id="in-ac-otros" oninput="actualizarVista()" placeholder="Otros" class="col-span-2 border rounded px-2 py-1"><input type="number" id="in-mt-otros" oninput="actualizarVista()" placeholder="Monto" class="border rounded px-2 py-1 font-bold"></div>
+        </div>
+
+        <div class="space-y-2">
+            <label class="font-bold text-slate-700 uppercase">Contexto del Supuesto</label>
+            <textarea id="in-contexto" oninput="actualizarVista()" rows="2" class="w-full border rounded px-3 py-2 text-[10px]">El cliente se encuentra en supuesto de insolvencia debido a una disminución drástica de sus ingresos mensuales, lo que le impide atender el servicio de la deuda sin afectar su mínimo vital.</textarea>
+
+            <label class="font-bold text-slate-700 uppercase">Estrategia: Acuerdo</label>
+            <textarea id="in-est-acu" oninput="actualizarVista()" rows="2" class="w-full border rounded px-3 py-2 text-[10px]">Negociación técnica para normalizar pasivos con quitas superiores al 60% de intereses y plazos de pago ajustados a su capacidad real.</textarea>
+            
+            <label class="font-bold text-slate-700 uppercase">Estrategia: Liquidación</label>
+            <textarea id="in-est-liq" oninput="actualizarVista()" rows="2" class="w-full border rounded px-3 py-2 text-[10px]">Procedimiento de descarga total de obligaciones mediante la adjudicación de activos o saldos insolutos, logrando la rehabilitación financiera inmediata.</textarea>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+            <div class="space-y-1">
+                <label class="font-bold text-[9px] uppercase">Honorarios Acuerdo</label>
+                <input type="number" id="in-hon-acuerdo" oninput="actualizarVista()" class="w-full border rounded px-2 py-2">
+            </div>
+            <div class="space-y-1">
+                <label class="font-bold text-[9px] uppercase">Hon. Liquidación</label>
+                <input type="number" id="in-hon-liquidacion" oninput="actualizarVista()" class="w-full border rounded px-2 py-2">
+            </div>
+            <div class="space-y-1">
+                <label class="font-bold text-[9px] uppercase">Gasto Centro</label>
+                <input type="number" id="in-conciliacion" oninput="actualizarVista()" class="w-full border rounded px-2 py-2">
+            </div>
+            <div class="space-y-1">
+                <label class="font-bold text-[9px] uppercase">% Dcto Centro</label>
+                <input type="number" id="in-descuento-pct" oninput="actualizarVista()" class="w-full border border-emerald-200 bg-emerald-50 rounded px-2 py-2 font-bold">
+            </div>
+        </div>
+
+        <button onclick="procesarYDescargar()" class="w-full bg-[#002855] text-white py-4 rounded-xl font-black tracking-widest hover:bg-slate-800 transition-all shadow-lg">
+            GENERAR PDF FINAL
+        </button>
+
+        <div class="mt-2">
+            <button onclick="enviarATracking()" class="w-full bg-amber-500 text-white py-3 rounded-xl font-bold text-[11px] tracking-wider hover:bg-amber-600 transition-all">
+                📊 GUARDAR EN TRACKING (Propuesta Enviada)
+            </button>
+        </div>
+        <p id="crm-msg" class="text-[10px] text-center mt-2 font-bold hidden"></p>
+    </div>
+
+    <!-- PREVISUALIZACIÓN -->
+    <div id="preview-panel" class="flex-1 overflow-y-auto p-8 flex justify-center bg-slate-300">
+        <div id="proposal-content" class="shadow-2xl">
+            
+            <!-- HEADER -->
+            <div class="border-b-2 border-slate-100 pb-3 mb-4 flex justify-between items-center">
+                <div class="w-24 h-24 flex items-center justify-start overflow-hidden">
+                    <img id="pdf-logo" src="" alt="Firma Logo" class="max-h-full max-w-full object-contain hidden rounded-full border border-slate-100 shadow-sm">
+                    <div id="logo-placeholder" class="w-20 h-20 bg-slate-50 rounded-full border-2 border-dashed border-slate-100 flex items-center justify-center text-[8px] text-slate-300 font-bold uppercase p-2 text-center leading-tight">Subir Logo</div>
+                </div>
+                <div class="text-right">
+                    <div class="flex justify-end gap-3 mb-1 text-[9px] font-bold text-slate-400 uppercase">
+                        <p>FECHA: <span id="pdf-fecha" class="text-slate-800">--/--/----</span></p>
+                        <p>ASESOR: <span id="pdf-asesor" class="text-slate-800">--</span></p>
+                    </div>
+                    <h1 class="text-3xl font-black brand-navy uppercase tracking-tighter leading-none">Propuesta Económica</h1>
+                    <p id="pdf-cliente" class="text-slate-400 font-bold text-xl mt-0.5 uppercase tracking-wider">[NOMBRE DEL CLIENTE]</p>
+                    <div class="flex justify-end gap-3 mt-1 text-[9px] font-bold text-slate-400 uppercase">
+                        <p>ID: <span id="pdf-id" class="text-slate-600">--</span></p>
+                        <p>CEL: <span id="pdf-cel" class="text-slate-600">--</span></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FASE 1: PASIVOS (AGRANDADA) -->
+            <section class="mb-6">
+                <div class="flex items-center mb-3">
+                    <span class="section-marker"></span>
+                    <h2 class="font-black text-slate-800 text-[12px] uppercase tracking-wider">Fase 1: Diagnóstico de Pasivos en Riesgo (<span id="pdf-total-deudas" class="text-blue-600">$0</span>)</h2>
+                </div>
+                <div class="grid grid-cols-3 gap-4 mb-4">
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 relative overflow-hidden shadow-sm">
+                        <div id="bar-1" class="absolute bottom-0 left-0 h-1.5 bg-blue-500" style="width: 0%"></div>
+                        <p class="text-[9px] font-black text-slate-400 uppercase truncate mb-1" id="pdf-ac-1">Acreedor 1</p>
+                        <div class="flex justify-between items-end">
+                            <p id="pdf-mt-1" class="text-lg font-black brand-navy">$0</p>
+                            <p id="pdf-pct-1" class="text-[10px] font-black text-blue-600">0%</p>
+                        </div>
+                    </div>
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 relative overflow-hidden shadow-sm">
+                        <div id="bar-2" class="absolute bottom-0 left-0 h-1.5 bg-blue-500" style="width: 0%"></div>
+                        <p class="text-[9px] font-black text-slate-400 uppercase truncate mb-1" id="pdf-ac-2">Acreedor 2</p>
+                        <div class="flex justify-between items-end">
+                            <p id="pdf-mt-2" class="text-lg font-black brand-navy">$0</p>
+                            <p id="pdf-pct-2" class="text-[10px] font-black text-blue-600">0%</p>
+                        </div>
+                    </div>
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 relative overflow-hidden shadow-sm">
+                        <div id="bar-otros" class="absolute bottom-0 left-0 h-1.5 bg-slate-300" style="width: 0%"></div>
+                        <p class="text-[9px] font-black text-slate-400 uppercase truncate mb-1" id="pdf-ac-otros">Otros</p>
+                        <div class="flex justify-between items-end">
+                            <p id="pdf-mt-otros" class="text-lg font-black brand-navy">$0</p>
+                            <p id="pdf-pct-otros" class="text-[10px] font-black text-slate-500">0%</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 border-l-4 border-l-blue-600">
+                    <p class="text-[9px] font-black text-slate-400 uppercase mb-1">MOTIVO DE INSOLVENCIA:</p>
+                    <p id="pdf-contexto" class="text-[11px] text-slate-600 leading-normal italic text-justify"></p>
+                </div>
+            </section>
+
+            <!-- FASE 2: ESTRATEGIAS -->
+            <section class="mb-4">
+                <div class="flex items-center mb-2.5">
+                    <span class="section-marker"></span>
+                    <h2 class="font-black text-slate-800 text-[10px] uppercase tracking-wider">Fase 2: ESTRATEGIA JURIDICA </h2>
+                </div>
+                <div id="grid-estrategia" class="grid grid-cols-2 gap-3">
+                    <div id="box-est-acu" class="p-3.5 rounded-xl border border-slate-200 bg-white shadow-sm">
+                        <h3 class="font-black brand-navy text-[9px] uppercase mb-1 border-b pb-1">Modalidad: Acuerdo</h3>
+                        <p id="pdf-est-acu" class="text-[9px] text-slate-600 leading-snug text-justify"></p>
+                    </div>
+                    <div id="box-est-liq" class="p-3.5 rounded-xl border border-slate-200 bg-white shadow-sm">
+                        <h3 class="font-black brand-navy text-[9px] uppercase mb-1 border-b pb-1">Modalidad: Liquidación</h3>
+                        <p id="pdf-est-liq" class="text-[9px] text-slate-600 leading-snug text-justify"></p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- FASE 3: INVERSIÓN -->
+            <section class="bg-brand-navy p-4 rounded-xl text-white shadow-lg mb-4">
+                <div class="flex items-center mb-2.5 border-b border-white/10 pb-1.5">
+                    <h2 class="font-bold uppercase tracking-widest text-[9px]">Fase 3: Presupuesto de Inversión Profesional</h2>
+                </div>
+                <div id="grid-inversion" class="grid grid-cols-2 gap-6">
+                    <div id="col-inv-liq">
+                        <h4 class="text-[8px] font-black uppercase text-blue-300 mb-1.5">Opción: Liquidación</h4>
+                        <div class="space-y-1.5">
+                            <div class="flex justify-between text-[10px] opacity-80"><span>Honorarios Firma:</span><span id="val-hon-liq">$0</span></div>
+                            <div class="flex justify-between text-[10px] opacity-80"><span>Centro Conciliación:</span><span id="val-con-liq">$0</span></div>
+                            <div id="row-desc-liq" class="flex justify-between text-[9px] text-emerald-400 font-bold hidden"><span>Bono Descuento:</span><span id="val-desc-liq">-$0</span></div>
+                            <div class="flex justify-between items-end border-t border-white/10 pt-1.5 mt-1"><span class="text-[8px] font-bold uppercase opacity-50">Total Inversión:</span><span id="tot-inv-liq" class="text-xl font-black text-emerald-400 leading-none">$0</span></div>
+                        </div>
+                    </div>
+                    <div id="col-inv-acu" class="border-l border-white/10 pl-6">
+                        <h4 class="text-[8px] font-black uppercase text-blue-300 mb-1.5">Opción: Acuerdo</h4>
+                        <div class="space-y-1.5">
+                            <div class="flex justify-between text-[10px] opacity-80"><span>Honorarios Firma:</span><span id="val-hon-acu">$0</span></div>
+                            <div class="flex justify-between text-[10px] opacity-80"><span>Centro Conciliación:</span><span id="val-con-acu">$0</span></div>
+                            <div id="row-desc-acu" class="flex justify-between text-[9px] text-emerald-400 font-bold hidden"><span>Bono Descuento:</span><span id="val-desc-acu">-$0</span></div>
+                            <div class="flex justify-between items-end border-t border-white/10 pt-1.5 mt-1"><span class="text-[8px] font-bold uppercase opacity-50">Total Inversión:</span><span id="tot-inv-acu" class="text-xl font-black text-emerald-400 leading-none">$0</span></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- FASE 4: CRONOGRAMA -->
+            <section class="mb-4">
+                <div class="flex items-center mb-2.5">
+                    <span class="section-marker"></span>
+                    <h2 class="font-black text-slate-800 text-[10px] uppercase tracking-wider">Fase 4: Cronograma de Pagos Diferido (50% - 25% - 25%)</h2>
+                </div>
+                <div class="grid grid-cols-2 gap-3.5">
+                    <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
+                        <p class="text-[9px] font-black text-slate-400 uppercase mb-2.5 border-b pb-1">Honorarios de la Firma</p>
+                        <div id="cron-firma-acu" class="space-y-2 mb-3">
+                            <p class="text-[7px] font-bold text-blue-600 uppercase">Modalidad Acuerdo:</p>
+                            <div class="flex justify-between text-[11px] font-medium"><span>Apertura (50%):</span><span id="hon-acu-p1" class="brand-navy">$0</span></div>
+                            <div class="flex justify-between text-[10px] opacity-60"><span>Mes 1 y 2 (25% c/u):</span><span id="hon-acu-p23">$0</span></div>
+                        </div>
+                        <div id="cron-firma-liq" class="space-y-2">
+                            <p class="text-[7px] font-bold text-emerald-600 uppercase">Modalidad Liquidación:</p>
+                            <div class="flex justify-between text-[11px] font-medium"><span>Apertura (50%):</span><span id="hon-liq-p1" class="brand-navy">$0</span></div>
+                            <div class="flex justify-between text-[10px] opacity-60"><span>Mes 1 y 2 (25% c/u):</span><span id="hon-liq-p23">$0</span></div>
+                        </div>
+                    </div>
+                    <div class="bg-slate-50 border border-slate-200 rounded-xl p-4">
+                        <p class="text-[9px] font-black text-slate-400 uppercase mb-2.5 border-b pb-1">Gastos Centro de Conciliación</p>
+                        <div class="space-y-2">
+                            <div class="flex justify-between text-[11px] font-bold text-blue-700"><span>Previo Admisión:</span><span id="con-p1">$0</span></div>
+                            <div class="flex justify-between text-[11px] font-bold text-blue-700"><span>Previo Audiencia:</span><span id="con-p2">$0</span></div>
+                            <p class="text-[8px] text-slate-400 italic mt-5 leading-tight">Pagos requeridos por Ley para avanzar el proceso. Valores no reembolsables por el Centro.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- HOOK FINAL PORCENTUAL (OPTIMIZADO COMO CLOSER) -->
+            <div id="hook-section" class="mt-auto p-5 bg-blue-50 border-2 border-blue-200 rounded-2xl shadow-sm">
+                <div class="flex items-center gap-6">
+                    <div class="flex-1">
+                        <h3 class="text-blue-900 font-black text-[13px] uppercase mb-1.5 flex items-center">
+                            <svg class="w-4 h-4 mr-2 text-blue-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd"></path></svg>
+                            Blindaje Patrimonial de Alta Especialidad
+                        </h3>
+                        <p class="text-[10.5px] text-blue-900 leading-snug">
+                            Su pasivo de <span id="hook-total" class="font-bold text-slate-800">$0</span> representa un riesgo inminente de embargo sobre su mínimo vital. Esta inversión de solo el <span id="hook-pct" class="font-black text-blue-600 text-lg">0%</span> es el único vehículo legal técnico para congelar sus deudas y recuperar su libertad financiera hoy. <span class="font-bold underline">Cualquier día de demora incrementa el riesgo de pérdida definitiva de sus activos.</span>
+                        </p>
+                    </div>
+                    <div class="text-right border-l-2 border-blue-200 pl-6 min-w-[170px]">
+                        <p class="text-[9px] font-bold text-blue-400 uppercase mb-0.5">Inversión Final Sugerida</p>
+                        <p id="hook-inv-total" class="text-2xl font-black brand-navy leading-none mt-1">$0</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FOOTER -->
+            <div class="mt-4 text-center">
+                <p class="text-[8px] font-black brand-navy uppercase tracking-[0.8em] opacity-30">Colombia Abogados • Especialistas en Insolvencia Técnica</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const formatMoney = (val) => new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(val || 0);
+
+        function previewImage(event) {
+            const reader = new FileReader();
+            reader.onload = function() {
+                const output = document.getElementById('pdf-logo');
+                output.src = reader.result;
+                output.classList.remove('hidden');
+                document.getElementById('logo-placeholder').classList.add('hidden');
+            }
+            reader.readAsDataURL(event.target.files[0]);
+        }
+
+        function actualizarVista() {
+            const modo = document.getElementById('in-modo-presentacion').value;
+            
+            const m1 = Number(document.getElementById('in-mt-1').value) || 0;
+            const m2 = Number(document.getElementById('in-mt-2').value) || 0;
+            const mO = Number(document.getElementById('in-mt-otros').value) || 0;
+            const total = m1 + m2 + mO;
+
+            document.getElementById('pdf-cliente').innerText = (document.getElementById('in-cliente').value || '[NOMBRE CLIENTE]').toUpperCase();
+            document.getElementById('pdf-id').innerText = document.getElementById('in-id-cliente').value || '--';
+            document.getElementById('pdf-cel').innerText = document.getElementById('in-celular').value || '--';
+            document.getElementById('pdf-asesor').innerText = document.getElementById('in-asesor').value;
+            
+            document.getElementById('pdf-total-deudas').innerText = formatMoney(total);
+            document.getElementById('hook-total').innerText = formatMoney(total);
+            document.getElementById('pdf-contexto').innerText = document.getElementById('in-contexto').value;
+            
+            document.getElementById('pdf-ac-1').innerText = (document.getElementById('in-ac-1').value || 'Acreedor 1').toUpperCase();
+            document.getElementById('pdf-mt-1').innerText = formatMoney(m1);
+            document.getElementById('pdf-pct-1').innerText = (total > 0 ? (m1/total*100).toFixed(1) : 0) + '%';
+            document.getElementById('bar-1').style.width = (total > 0 ? (m1/total*100) : 0) + '%';
+
+            document.getElementById('pdf-ac-2').innerText = (document.getElementById('in-ac-2').value || 'Acreedor 2').toUpperCase();
+            document.getElementById('pdf-mt-2').innerText = formatMoney(m2);
+            document.getElementById('pdf-pct-2').innerText = (total > 0 ? (m2/total*100).toFixed(1) : 0) + '%';
+            document.getElementById('bar-2').style.width = (total > 0 ? (m2/total*100) : 0) + '%';
+
+            document.getElementById('pdf-ac-otros').innerText = (document.getElementById('in-ac-otros').value || 'Otros').toUpperCase();
+            document.getElementById('pdf-mt-otros').innerText = formatMoney(mO);
+            document.getElementById('pdf-pct-otros').innerText = (total > 0 ? (mO/total*100).toFixed(1) : 0) + '%';
+            document.getElementById('bar-otros').style.width = (total > 0 ? (mO/total*100) : 0) + '%';
+
+            document.getElementById('pdf-est-acu').innerText = document.getElementById('in-est-acu').value;
+            document.getElementById('pdf-est-liq').innerText = document.getElementById('in-est-liq').value;
+
+            const boxA = document.getElementById('box-est-acu');
+            const boxL = document.getElementById('box-est-liq');
+            const invA = document.getElementById('col-inv-acu');
+            const invL = document.getElementById('col-inv-liq');
+            const cronA = document.getElementById('cron-firma-acu');
+            const cronL = document.getElementById('cron-firma-liq');
+
+            [boxA, boxL, invA, invL, cronA, cronL].forEach(el => el.style.display = 'block');
+
+            if (modo === 'acuerdo') {
+                boxL.style.display = 'none'; boxA.className = "col-span-2 p-3.5 rounded-xl border border-slate-200 bg-white shadow-sm";
+                invL.style.display = 'none'; invA.className = "col-span-2 space-y-2 border-l-0 pl-0";
+                cronL.style.display = 'none';
+            } else if (modo === 'liquidacion') {
+                boxA.style.display = 'none'; boxL.className = "col-span-2 p-3.5 rounded-xl border border-slate-200 bg-white shadow-sm";
+                invA.style.display = 'none'; invL.className = "col-span-2 space-y-2";
+                cronA.style.display = 'none';
+            } else {
+                invL.className = "";
+                invA.className = "border-l border-white/10 pl-6";
+            }
+
+            const hAcu = Number(document.getElementById('in-hon-acuerdo').value) || 0;
+            const hLiq = Number(document.getElementById('in-hon-liquidacion').value) || 0;
+            const cBase = Number(document.getElementById('in-conciliacion').value) || 0;
+            const dPct = Number(document.getElementById('in-descuento-pct').value) || 0;
+            const cFinal = cBase - (cBase * (dPct / 100));
+
+            document.getElementById('val-hon-acu').innerText = formatMoney(hAcu);
+            document.getElementById('val-hon-liq').innerText = formatMoney(hLiq);
+            document.getElementById('val-con-acu').innerText = formatMoney(cBase);
+            document.getElementById('val-con-liq').innerText = formatMoney(cBase);
+            
+            if(dPct > 0) {
+                document.getElementById('row-desc-acu').classList.remove('hidden');
+                document.getElementById('row-desc-liq').classList.remove('hidden');
+                const valDesc = cBase * (dPct/100);
+                document.getElementById('val-desc-acu').innerText = `-${formatMoney(valDesc)}`;
+                document.getElementById('val-desc-liq').innerText = `-${formatMoney(valDesc)}`;
+            } else {
+                document.getElementById('row-desc-acu').classList.add('hidden');
+                document.getElementById('row-desc-liq').classList.add('hidden');
+            }
+
+            const totalInvAcu = hAcu + cFinal;
+            const totalInvLiq = hLiq + cFinal;
+            document.getElementById('tot-inv-acu').innerText = formatMoney(totalInvAcu);
+            document.getElementById('tot-inv-liq').innerText = formatMoney(totalInvLiq);
+
+            document.getElementById('hon-acu-p1').innerText = formatMoney(hAcu * 0.5);
+            document.getElementById('hon-acu-p23').innerText = formatMoney(hAcu * 0.25) + " x 2";
+            document.getElementById('hon-liq-p1').innerText = formatMoney(hLiq * 0.5);
+            document.getElementById('hon-liq-p23').innerText = formatMoney(hLiq * 0.25) + " x 2";
+
+            document.getElementById('con-p1').innerText = formatMoney(cFinal * 0.5);
+            document.getElementById('con-p2').innerText = formatMoney(cFinal * 0.5);
+
+            const activeInv = (modo === 'liquidacion') ? totalInvLiq : totalInvAcu;
+            document.getElementById('hook-inv-total').innerText = formatMoney(activeInv);
+            if(total > 0) {
+                const pct = (activeInv / total) * 100;
+                document.getElementById('hook-pct').innerText = pct.toFixed(1) + "%";
+            } else {
+                document.getElementById('hook-pct').innerText = "0%";
+            }
+        }
+
+        function procesarYDescargar() {
+            const cliente = document.getElementById('in-cliente').value || 'Propuesta';
+            const element = document.getElementById('proposal-content');
+            const opt = {
+                margin: 0,
+                filename: `Insolvencia_${cliente.replace(/\s+/g, '_')}.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 3, useCORS: true, letterRendering: true },
+                jsPDF: { unit: 'px', format: [794, 1123], orientation: 'portrait' }
+            };
+            html2pdf().set(opt).from(element).save();
+        }
+
+        // ============================================================
+        //  CRM INTEGRATION — Connects to Google Apps Script
+        // ============================================================
+        const API_URL = "https://script.google.com/macros/s/AKfycbyQNNLwNBSneokx7xBDaNOvyfYltTzD2u0X5-osbyQm5-kncz0NjQKzTVzIOKspbOMeuQ/exec";
+        const API_KEY = "ARVID_1421*";
+
+        function recogerDatos() {
+            const modo = document.getElementById('in-modo-presentacion').value;
+            const hAcu = Number(document.getElementById('in-hon-acuerdo').value) || 0;
+            const hLiq = Number(document.getElementById('in-hon-liquidacion').value) || 0;
+            const cBase = Number(document.getElementById('in-conciliacion').value) || 0;
+            const dPct = Number(document.getElementById('in-descuento-pct').value) || 0;
+            const m1 = Number(document.getElementById('in-mt-1').value) || 0;
+            const m2 = Number(document.getElementById('in-mt-2').value) || 0;
+            const mO = Number(document.getElementById('in-mt-otros').value) || 0;
+
+            // Determinar modalidad y honorarios según modo
+            let modalidad = "LIQUIDACIÓN";
+            let honorarios = hLiq;
+            if (modo === "acuerdo") { modalidad = "ACUERDO"; honorarios = hAcu; }
+            else if (modo === "ambas") { modalidad = "LIQUIDACIÓN"; honorarios = hLiq; }
+
+            return {
+                nombre: (document.getElementById('in-cliente').value || '').toUpperCase(),
+                cedula: document.getElementById('in-id-cliente').value || '',
+                celular: document.getElementById('in-celular').value || '',
+                asesor: document.getElementById('in-asesor').value || '',
+                modalidad: modalidad,
+                deuda: m1 + m2 + mO,
+                honorarios: honorarios,
+                centro: cBase,
+                descuento: dPct,
+                contexto: document.getElementById('in-contexto').value || '',
+                estrategia: modo === "acuerdo" 
+                    ? document.getElementById('in-est-acu').value 
+                    : document.getElementById('in-est-liq').value,
+                acreedor1: document.getElementById('in-ac-1').value || '',
+                monto1: m1,
+                acreedor2: document.getElementById('in-ac-2').value || '',
+                monto2: m2,
+                otros: document.getElementById('in-ac-otros').value || '',
+                montoOtros: mO
+            };
+        }
+
+        function showCrmMsg(msg, color) {
+            const el = document.getElementById('crm-msg');
+            el.textContent = msg;
+            el.style.color = color;
+            el.classList.remove('hidden');
+            setTimeout(() => el.classList.add('hidden'), 5000);
+        }
+
+        function enviarATracking() {
+            const d = recogerDatos();
+            if (!d.nombre || !d.celular) { showCrmMsg('⚠️ Complete nombre y celular', '#d97706'); return; }
+
+            showCrmMsg('📊 Guardando en tracking...', '#2563eb');
+
+            // Llama a Apps Script para guardar en MA_TRACKING
+            const params = new URLSearchParams({
+                action: 'guardar_tracking',
+                key: API_KEY,
+                nombre: d.nombre,
+                cedula: d.cedula,
+                celular: d.celular,
+                deuda: d.deuda,
+                ciudad: '',
+                red: 'PROPUESTA_HTML',
+                contexto: d.contexto,
+                honorarios: d.honorarios,
+                centro: d.centro,
+                descuento: d.descuento,
+                modalidad: d.modalidad,
+                asesor: d.asesor
+            });
+
+            fetch(API_URL + '?' + params.toString(), { redirect: 'follow' })
+                .then(r => r.json())
+                .then(data => {
+                    if (data.ok) {
+                        showCrmMsg('✅ Guardado en tracking — Etapa: PROPUESTA ENVIADA', '#16a34a');
+                    } else {
+                        showCrmMsg('⚠️ ' + (data.error || 'Error al guardar'), '#dc2626');
+                    }
+                })
+                .catch(() => showCrmMsg('❌ Error de conexión', '#dc2626'));
+        }
+
+        window.onload = () => {
+            document.getElementById('pdf-fecha').innerText = new Date().toLocaleDateString('es-CO');
+            actualizarVista();
+        };
+    </script>
+</body>
+</html>

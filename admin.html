@@ -321,8 +321,19 @@ function doLogin(){
 // DASHBOARD
 // ============================================================
 function cargarDashboard(){
+  document.getElementById("clientsGrid").innerHTML='<p style="color:var(--muted);font-style:italic">Cargando clientes...</p>';
+  
+  // Use a timeout to prevent hanging
+  var timeout = setTimeout(function(){
+    document.getElementById("clientsGrid").innerHTML='<p style="color:var(--muted)">La carga tardó demasiado. <button class="btn btn-navy" onclick="cargarDashboard()">Reintentar</button></p>';
+  }, 15000);
+
   callAPI("action=listar_clientes&key="+enc(KEY)).then(function(d){
-    if(!d.ok){return;}
+    clearTimeout(timeout);
+    if(!d.ok){
+      document.getElementById("clientsGrid").innerHTML='<p style="color:var(--err)">'+d.error+' <button class="btn btn-navy" onclick="cargarDashboard()" style="margin-left:8px">Reintentar</button></p>';
+      return;
+    }
     // KPIs
     var h='<div class="kpi kpi-1"><div class="kpi-label">Clientes</div><div class="kpi-val" style="color:var(--navy)">'+d.total+'</div></div>';
     h+='<div class="kpi kpi-2"><div class="kpi-label">Recaudado</div><div class="kpi-val" style="color:var(--ok);font-size:20px">'+fm(d.totRecaudado)+'</div></div>';
@@ -355,7 +366,10 @@ function cargarDashboard(){
     callAPI("action=listar_propuestas&key="+enc(KEY)).then(function(dp){
       if(dp.ok){document.querySelector(".kpi-4 .kpi-val").textContent=dp.total;}
     });
-  }).catch(function(){});
+  }).catch(function(err){
+    clearTimeout(timeout);
+    document.getElementById("clientsGrid").innerHTML='<p style="color:var(--muted)">Error al cargar. <button class="btn btn-navy" onclick="cargarDashboard()">Reintentar</button></p>';
+  });
 
   // Load comisiones
   cargarComisiones();

@@ -316,22 +316,41 @@ function doLogin(){KEY=document.getElementById("keyInput").value.trim();if(!KEY)
 // === DASHBOARD ===
 function cargarDashboard(force){
   if(DASH_CACHE&&!force){renderDashboard(DASH_CACHE);return;}
-  // Skeleton
   var sk='';for(var i=0;i<4;i++)sk+='<div class="skel-card"><div class="skel skel-line" style="width:60%"></div><div class="skel skel-line" style="width:40%;height:24px"></div></div>';
   document.getElementById("clientsGrid").innerHTML=sk;
   var to=setTimeout(function(){document.getElementById("clientsGrid").innerHTML='<p style="color:var(--text-3)">Timeout. <button class="btn btn-navy" onclick="cargarDashboard(true)">Reintentar</button></p>';},15000);
-  callAPI("action=listar_clientes&key="+enc(KEY)).then(function(d){clearTimeout(to);if(!d.ok){document.getElementById("clientsGrid").innerHTML='<p style="color:var(--err)">'+d.error+'</p>';return;}DASH_CACHE=d;renderDashboard(d);}).catch(function(){clearTimeout(to);document.getElementById("clientsGrid").innerHTML='<p style="color:var(--text-3)">Error. <button class="btn btn-navy" onclick="cargarDashboard(true)">Reintentar</button></p>';});
-  cargarComisiones();
+
+  // UNA SOLA LLAMADA trae clientes + comisiones + propuestas
+  callAPI("action=dashboard&key="+enc(KEY)).then(function(d){
+    clearTimeout(to);
+    if(!d.ok){
+      // Fallback: si el endpoint no existe, usar llamadas separadas
+      if(d.error&&d.error.indexOf("no válida")!==-1){
+        callAPI("action=listar_clientes&key="+enc(KEY)).then(function(d2){
+          if(d2.ok){DASH_CACHE=d2;renderDashboard(d2);}
+          else{document.getElementById("clientsGrid").innerHTML='<p style="color:var(--err)">'+d2.error+'</p>';}
+        });
+        callAPI("action=listar_comisiones&key="+enc(KEY)).then(function(dc){if(dc.ok)renderComisiones(dc);});
+        return;
+      }
+      document.getElementById("clientsGrid").innerHTML='<p style="color:var(--err)">'+d.error+' <button class="btn btn-navy" onclick="cargarDashboard(true)">Reintentar</button></p>';return;
+    }
+    DASH_CACHE=d;
+    renderDashboard(d);
+    renderComisiones(d.comisiones);
+  }).catch(function(){clearTimeout(to);document.getElementById("clientsGrid").innerHTML='<p style="color:var(--text-3)">Error. <button class="btn btn-navy" onclick="cargarDashboard(true)">Reintentar</button></p>';});
 }
 
 function renderDashboard(d){
-  var h='<div class="kpi"><div class="kpi-stripe" style="background:var(--accent)"></div><div class="kpi-label">Clientes</div><div class="kpi-val" style="color:var(--accent)">'+d.total+'</div></div>';
-  h+='<div class="kpi"><div class="kpi-stripe" style="background:var(--ok)"></div><div class="kpi-label">Recaudado</div><div class="kpi-val" style="color:var(--ok);font-size:18px">'+fm(d.totRecaudado)+'</div></div>';
-  h+='<div class="kpi"><div class="kpi-stripe" style="background:var(--warn)"></div><div class="kpi-label">Por cobrar</div><div class="kpi-val" style="color:var(--warn);font-size:18px">'+fm(d.totPorCobrar)+'</div></div>';
-  h+='<div class="kpi"><div class="kpi-stripe" style="background:var(--purple)"></div><div class="kpi-label">Propuestas</div><div class="kpi-val" style="color:var(--purple)">—</div></div>';
+  var cl=d.clientes||d; // Support both old and new format
+  var h='<div class="kpi"><div class="kpi-stripe" style="background:var(--accent)"></div><div class="kpi-label">Clientes</div><div class="kpi-val" style="color:var(--accent)">'+cl.total+'</div></div>';
+  h+='<div class="kpi"><div class="kpi-stripe" style="background:var(--ok)"></div><div class="kpi-label">Recaudado</div><div class="kpi-val" style="color:var(--ok);font-size:18px">'+fm(cl.totRecaudado)+'</div></div>';
+  h+='<div class="kpi"><div class="kpi-stripe" style="background:var(--warn)"></div><div class="kpi-label">Por cobrar</div><div class="kpi-val" style="color:var(--warn);font-size:18px">'+fm(cl.totPorCobrar)+'</div></div>';
+  h+='<div class="kpi"><div class="kpi-stripe" style="background:var(--purple)"></div><div class="kpi-label">Propuestas</div><div class="kpi-val" style="color:var(--purple)">'+(d.propuestas?d.propuestas.total:"—")+'</div></div>';
   document.getElementById("kpiBar").innerHTML=h;
-  if(!d.data.length){document.getElementById("clientsGrid").innerHTML='<p style="color:var(--text-3)">No hay clientes</p>';return;}
-  var g="";d.data.forEach(function(c){
+  var data=cl.data||[];
+  if(!data.length){document.getElementById("clientsGrid").innerHTML='<p style="color:var(--text-3)">No hay clientes</p>';return;}
+  var g="";data.forEach(function(c){
     var col=c.pctProceso<30?"var(--err)":c.pctProceso<70?"var(--warn)":"var(--ok)";
     var ring="conic-gradient("+col+" "+c.pctProceso*3.6+"deg, var(--surface-2) "+c.pctProceso*3.6+"deg)";
     g+='<div class="cc" onclick="abrirDetalle(\''+c.cedula+'\',\''+enc(c.nombre)+'\')">';
@@ -343,7 +362,6 @@ function renderDashboard(d){
     if(c.verificando>0)g+='<div class="cc-badge"><span class="pill pill-info">'+fm(c.verificando)+'</span></div>';
     g+='</div>';});
   document.getElementById("clientsGrid").innerHTML=g;
-  callAPI("action=listar_propuestas&key="+enc(KEY)).then(function(dp){if(dp.ok){var el=document.querySelector(".kpi-4 .kpi-val, .kpi:nth-child(4) .kpi-val");if(el)el.textContent=dp.total;}});
 }
 
 function abrirDetalle(ced,nmEnc){DETALLE_CED=ced;fetchCliente(ced).then(function(c){
@@ -365,10 +383,20 @@ function irACasos(){document.getElementById("modalDetalle").classList.remove("sh
 function fetchCliente(ced){return callAPI("action=info_cliente&key="+enc(KEY)+"&cedula="+enc(ced)).then(function(d){if(!d.ok)throw new Error(d.error);return callAPI("action=consultar&cedula="+enc(ced)+"&pin="+enc(d.data.pin)).then(function(d2){if(!d2.ok)throw new Error(d2.error);d2.data.pin=d.data.pin;d2.data.cor=d.data.correo;return d2.data;});});}
 
 // === PROPUESTAS ===
-function cargarPropuestas(){showMsg("propMsg","Cargando...","info");callAPI("action=listar_propuestas&key="+enc(KEY)).then(function(d){if(!d.ok){showMsg("propMsg",d.error,"err");return;}hideMsg("propMsg");if(!d.data.length){document.getElementById("propOut").innerHTML='<p style="color:var(--text-3)">Sin propuestas</p>';return;}
+function cargarPropuestas(){
+  // Use cached propuestas from dashboard if available
+  if(DASH_CACHE&&DASH_CACHE.propuestas&&DASH_CACHE.propuestas.data.length>0){
+    renderPropuestas(DASH_CACHE.propuestas);return;
+  }
+  showMsg("propMsg","Cargando...","info");callAPI("action=listar_propuestas&key="+enc(KEY)).then(function(d){if(!d.ok){showMsg("propMsg",d.error,"err");return;}hideMsg("propMsg");renderPropuestas(d);}).catch(function(){showMsg("propMsg","Error","err");});
+}
+function renderPropuestas(d){
+  hideMsg("propMsg");
+  if(!d.data.length){document.getElementById("propOut").innerHTML='<p style="color:var(--text-3)">Sin propuestas</p>';return;}
   var h='<table class="tbl"><thead><tr><th>ID</th><th>Nombre</th><th>Celular</th><th>Deuda</th><th>Días</th><th>Asesor</th><th></th></tr></thead><tbody>';
   d.data.forEach(function(p){var pc=p.dias>=5?"pill-hot":p.dias>=3?"pill-warn":"pill-info";h+='<tr><td style="font-weight:700;color:var(--accent)">#'+p.idLead+'</td><td style="font-weight:600">'+p.nombre+'</td><td>'+p.celular+'</td><td style="font-weight:700">'+fm(p.deuda)+'</td><td><span class="pill '+pc+'">'+p.dias+'d</span></td><td style="font-size:11px;color:var(--text-3)">'+p.asesor+'</td><td><button class="btn btn-ok" onclick=\'abrirConversion('+JSON.stringify(p).replace(/'/g,"\\'")+')\'> Convertir</button></td></tr>';});
-  h+='</tbody></table>';document.getElementById("propOut").innerHTML=h;addLog("Cargó "+d.total+" propuestas");}).catch(function(){showMsg("propMsg","Error","err");});}
+  h+='</tbody></table>';document.getElementById("propOut").innerHTML=h;
+}
 
 function abrirConversion(lead){LEAD_ACTUAL=lead;document.getElementById("modalNombre").textContent=lead.nombre+" — "+lead.celular;document.getElementById("modCedula").value="";document.getElementById("modCorreo").value="";document.getElementById("modHonorarios").value="";document.getElementById("modCentro").value="";document.getElementById("modDescuento").value="0";var s=document.getElementById("modAsesor");for(var i=0;i<s.options.length;i++){if(s.options[i].value===lead.asesor){s.selectedIndex=i;break;}}document.getElementById("modPreview").style.display="none";hideMsg("modMsg");document.getElementById("modalConvertir").classList.add("show");}
 function cerrarModal(){document.getElementById("modalConvertir").classList.remove("show");LEAD_ACTUAL=null;}
@@ -404,7 +432,13 @@ function renderCaso(c,ced){var vis=c.steps.filter(function(s){return!(s.op&&s.es
 function moverEtapa(ced,eid,nmE,nombreE,celE){var estado=document.getElementById("es_"+eid).value;var fecha=document.getElementById("dt_"+eid).value;var etNm=decodeURIComponent(nmE),nombre=decodeURIComponent(nombreE),cel=decodeURIComponent(celE);showMsg("casMsg","Actualizando...","info");var params="action=actualizar&key="+enc(KEY)+"&cedula="+enc(ced)+"&etapa="+eid+"&estado="+estado;if(fecha)params+="&fecha="+fecha;callAPI(params).then(function(d){if(!d.ok){showMsg("casMsg",d.error,"err");return;}showMsg("casMsg","✅ "+etNm+" → "+estado,"ok");addLog("📋 "+etNm+" → "+estado+" — "+nombre);DASH_CACHE=null;setTimeout(function(){buscarCaso();},600);var HITOS=["s7","s8","s9","fn"];if(HITOS.indexOf(eid)!==-1&&estado==="COMPLETADO"){triggerWH({evento:"hito_alcanzado",cedula:ced,nombre:nombre,celular:cel,etapa:eid,etapaNombre:etNm});}}).catch(function(){showMsg("casMsg","Error","err");});}
 
 // === COMISIONES ===
-function cargarComisiones(){callAPI("action=listar_comisiones&key="+enc(KEY)).then(function(d){if(!d.ok)return;
+function cargarComisiones(){
+  // If we have dashboard cache, use it
+  if(DASH_CACHE&&DASH_CACHE.comisiones){renderComisiones(DASH_CACHE.comisiones);return;}
+  callAPI("action=listar_comisiones&key="+enc(KEY)).then(function(d){if(!d.ok)return;renderComisiones(d);}).catch(function(){});
+}
+
+function renderComisiones(d){
   var h='<div class="kpi"><div class="kpi-stripe" style="background:var(--warn)"></div><div class="kpi-label">Pendiente</div><div class="kpi-val" style="color:var(--warn);font-size:20px">'+fm(d.totalPendiente)+'</div></div>';
   h+='<div class="kpi"><div class="kpi-stripe" style="background:var(--ok)"></div><div class="kpi-label">Pagada</div><div class="kpi-val" style="color:var(--ok);font-size:20px">'+fm(d.totalPagada)+'</div></div>';
   h+='<div class="kpi"><div class="kpi-stripe" style="background:var(--accent)"></div><div class="kpi-label">Ventas</div><div class="kpi-val" style="color:var(--accent)">'+d.total+'</div></div>';
@@ -412,7 +446,7 @@ function cargarComisiones(){callAPI("action=listar_comisiones&key="+enc(KEY)).th
   if(!d.data.length){document.getElementById("comOut").innerHTML='<p style="color:var(--text-3)">Sin comisiones</p>';return;}
   var t='<table class="tbl"><thead><tr><th>Cliente</th><th>Asesor</th><th>Honorarios</th><th>Comisión</th><th>P1</th><th>Estado</th></tr></thead><tbody>';
   d.data.forEach(function(c){var pc=(c.estado==="PAGADA"||c.estado==="PAGADO")?"pill-ok":c.estado==="POR PAGAR"?"pill-warn":"pill-info";t+='<tr><td style="font-weight:600">'+c.nombre+'</td><td style="font-size:12px">'+c.asesor+'</td><td>'+fm(c.honorarios)+'</td><td style="font-weight:800">'+fm(c.comision)+'</td><td><span class="pill '+(c.p1Estado==="PAGADO"?"pill-ok":"pill-warn")+'">'+(c.p1Estado==="PAGADO"?"Pagado":"Pend.")+'</span></td><td><span class="pill '+pc+'">'+c.estado+'</span></td></tr>';});
-  t+='</tbody></table>';document.getElementById("comOut").innerHTML=t;}).catch(function(){});}
+  t+='</tbody></table>';document.getElementById("comOut").innerHTML=t;}
 
 // === UTILS ===
 function copiarPIN(pin,ne){var nm=decodeURIComponent(ne).split(" ")[0];var m="Hola "+nm+", su PIN para consultar su proceso es: "+pin+"\n\nIngrese aquí: https://clientes-abogadoscolombia.github.io/Portal_Insolvencia/";if(navigator.clipboard)navigator.clipboard.writeText(m);alert("Mensaje copiado");}

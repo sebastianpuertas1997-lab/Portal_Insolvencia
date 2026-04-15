@@ -491,7 +491,18 @@ document.getElementById("pinInput").addEventListener("keydown",function(e){if(e.
 var REFRESH_INTERVAL=null,LAST_REFRESH=null;
 function startAutoRefresh(){if(REFRESH_INTERVAL)clearInterval(REFRESH_INTERVAL);REFRESH_INTERVAL=setInterval(function(){if(CED_ACTUAL&&PIN_ACTUAL)refrescar();},60000);}
 function updateRefreshTime(){var el=document.getElementById("refreshTime");if(el&&LAST_REFRESH)el.textContent="Actualizado: "+LAST_REFRESH.toLocaleTimeString("es-CO",{hour:"2-digit",minute:"2-digit"});}
-function refrescar(){var btn=document.getElementById("refreshBtn");if(btn)btn.classList.add("loading");fetch(API_URL+"?action=consultar&cedula="+encodeURIComponent(CED_ACTUAL)+"&pin="+encodeURIComponent(PIN_ACTUAL),{redirect:"follow"}).then(function(r){return r.json();}).then(function(d){if(btn)btn.classList.remove("loading");if(d.ok){CASO=d.data;render(d.data);LAST_REFRESH=new Date();updateRefreshTime();}}).catch(function(){if(btn)btn.classList.remove("loading");});}
+function refrescar(){
+  var btn=document.getElementById("refreshBtn");
+  if(!btn||btn.disabled)return;
+  btn.disabled=true;btn.style.opacity="0.5";
+  var sp=btn.querySelector(".refresh-spin");if(sp)sp.style.animation="spin 0.6s linear infinite";
+  var oldTxt=btn.innerHTML;btn.innerHTML='<span class="refresh-spin" style="animation:spin 0.6s linear infinite">↻</span> Actualizando...';
+  fetch(API_URL+"?action=consultar&cedula="+encodeURIComponent(CED_ACTUAL)+"&pin="+encodeURIComponent(PIN_ACTUAL),{redirect:"follow"}).then(function(r){return r.json();}).then(function(d){
+    btn.disabled=false;btn.style.opacity="1";
+    if(d.ok){CASO=d.data;render(d.data);checkFormulario(d.data);LAST_REFRESH=new Date();updateRefreshTime();btn.innerHTML='<span class="refresh-spin">✓</span> Actualizado';setTimeout(function(){btn.innerHTML='<span class="refresh-spin">↻</span> Actualizar';},1500);}
+    else{btn.innerHTML='<span class="refresh-spin">↻</span> Actualizar';}
+  }).catch(function(){btn.disabled=false;btn.style.opacity="1";btn.innerHTML='<span class="refresh-spin">↻</span> Actualizar';showToast("Error de conexión");});
+}
 
 function checkFormulario(c){
   var el=document.getElementById("formSection");

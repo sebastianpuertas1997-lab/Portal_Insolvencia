@@ -180,7 +180,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:#1a1a2e;min-heig
       <div class="hdr-top">
         <div>
           <p class="hdr-brand">Colombia Abogados</p>
-          <h1 id="pNom">—</h1>
+          <div style="display:flex;align-items:center;gap:10px"><h1 id="pNom">—</h1><button id="refreshBtn" onclick="refrescar()" style="background:none;border:none;color:rgba(255,255,255,0.4);font-size:18px;cursor:pointer;padding:4px;transition:all 0.2s" title="Actualizar"><span class="refresh-spin">↻</span></button></div><div id="refreshTime" style="font-size:10px;color:rgba(255,255,255,0.25);margin-top:2px"></div>
           <p class="hdr-sub" id="pInfo">—</p>
         </div>
         <div class="ring" id="ring"><div class="ring-in" id="ringTxt">0%</div></div>
@@ -191,7 +191,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:#1a1a2e;min-heig
   </div>
   <div class="cnt">
     <div class="crds" id="cards"></div>
-    <div class="refresh-bar"><button class="refresh-btn" id="refreshBtn" onclick="refrescar()"><span class="refresh-spin">↻</span> Actualizar</button><span class="refresh-time" id="refreshTime"></span></div><div id="actBox"></div>
+    <div id="actBox"></div>
     <div class="sec"><button class="sec-btn" onclick="tog(this)"><span class="sec-t">📌 Contexto del caso</span><span class="sec-arr">▾</span></button><div class="sec-body" id="ctx"></div></div>
     <div class="sec"><button class="sec-btn" onclick="tog(this)"><span class="sec-t">📋 Detalle del proceso</span><span class="sec-arr">▾</span></button><div class="sec-body" id="tl"></div></div>
     <div class="sec"><button class="sec-btn" onclick="tog(this)"><span class="sec-t">💰 Detalle de pagos</span><span class="sec-arr">▾</span></button><div class="sec-body" id="pays"></div></div>
@@ -497,12 +497,11 @@ function checkFormulario(c){
   var el=document.getElementById("formSection");
   if(!el)return;
   if(c.formCompleto){
-    // Show submitted data (read-only)
     var eg={};
     if(c.form&&c.form.egresos_json){try{eg=JSON.parse(c.form.egresos_json);}catch(e){}}
     var totalEg=(eg.arriendo||0)+(eg.alimentacion||0)+(eg.servicios||0)+(eg.transporte||0)+(eg.otros||0);
-    var h='<div style="display:flex;flex-direction:column;gap:12px">';
-    h+='<div style="padding:12px;background:var(--ok-bg);border-radius:10px;font-size:12px;color:var(--ok);font-weight:600">✅ Información completada</div>';
+    var h='<div style="display:flex;flex-direction:column;gap:10px">';
+    h+='<div style="padding:10px 14px;background:var(--ok-bg);border-radius:10px;font-size:12px;color:var(--ok);font-weight:600">✅ Información completada</div>';
     h+=dRow("Dirección",c.form.direccion||"—");
     h+=dRow("Ingresos mensuales",fm(c.form.ingresos||0));
     h+='<div style="font-size:10px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:1.5px;margin-top:4px">Egresos mensuales</div>';
@@ -519,38 +518,39 @@ function checkFormulario(c){
     el.style.display="block";
     el.parentElement.querySelector(".sec-arr").style.transform="rotate(180deg)";
   } else {
-    // Show editable form
     var h='<div style="margin-bottom:12px;padding:12px;background:var(--warn-bg);border-radius:10px;font-size:12px;color:var(--warn);font-weight:600">⚠️ Complete esta información para avanzar con su proceso</div>';
     h+='<div style="background:var(--bg);border-radius:10px;padding:12px 14px;margin-bottom:14px"><div style="font-size:10px;color:var(--muted);font-weight:600">NOMBRE</div><div style="font-size:15px;font-weight:700;color:var(--navy)">'+(c.nm||"—")+'</div><div style="font-size:10px;color:var(--muted);font-weight:600;margin-top:6px">CÉDULA</div><div style="font-size:15px;font-weight:700;color:var(--navy)">'+(c.ced||"—")+'</div></div>';
     h+='<label class="fl">Dirección de residencia *</label><input type="text" id="fDireccion" class="fi" placeholder="Cra 50 #30-20, Apto 301" value="'+esc(c.form?c.form.direccion:"")+'">';
-    h+='<label class="fl">Ingresos mensuales estimados *</label><input type="number" id="fIngresos" class="fi" placeholder="2500000" inputmode="numeric" value="'+(c.form&&c.form.ingresos?c.form.ingresos:"")+'">';
+    h+='<label class="fl">Ingresos mensuales estimados *</label><input type="text" id="fIngresos" class="fi fmoney" placeholder="2.500.000" inputmode="numeric" value="'+(c.form&&c.form.ingresos?fNum(c.form.ingresos):"")+'" oninput="fmtInput(this)">';
     h+='<label class="fl" style="margin-top:16px">Egresos mensuales (desglose) *</label>';
     h+='<div style="background:var(--bg);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:8px">';
-    h+=eRow("Arriendo","eArriendo",800000);
-    h+=eRow("Alimentación","eAlimentacion",400000);
-    h+=eRow("Servicios","eServicios",200000);
-    h+=eRow("Transporte","eTransporte",150000);
-    h+=eRow("Otros","eOtros",100000);
+    h+=eRow("Arriendo","eArriendo","800.000");
+    h+=eRow("Alimentación","eAlimentacion","400.000");
+    h+=eRow("Servicios","eServicios","200.000");
+    h+=eRow("Transporte","eTransporte","150.000");
+    h+=eRow("Otros","eOtros","100.000");
     h+='<div id="eOtrosDetalle" style="display:none"><input type="text" id="eOtrosDesc" class="fi" style="margin:0" placeholder="Describa otros gastos..."></div>';
     h+='<div style="text-align:right;font-size:12px;font-weight:800;color:var(--navy);padding-top:4px;border-top:1px solid var(--light)">Total egresos: <span id="eTotalEgr">$0</span></div></div>';
-    h+='<label class="fl">Monto estimado para pago mensual de deudas *</label><input type="number" id="fMontoPago" class="fi" placeholder="500000" inputmode="numeric" value="'+(c.form&&c.form.montoPago?c.form.montoPago:"")+'">';
+    h+='<label class="fl">Monto estimado para pago mensual de deudas *</label><input type="text" id="fMontoPago" class="fi fmoney" placeholder="500.000" inputmode="numeric" value="'+(c.form&&c.form.montoPago?fNum(c.form.montoPago):"")+'" oninput="fmtInput(this)">';
     h+='<label class="fl">Motivo de insolvencia *</label><textarea id="fMotivo" class="fi" style="min-height:70px;resize:vertical" placeholder="Ej: Disminución de ingresos por pérdida de empleo...">'+esc(c.form?c.form.motivo:"")+'</textarea>';
     h+='<div id="formMsg" style="display:none;padding:10px;border-radius:10px;font-size:12px;font-weight:600;margin-top:12px;text-align:center"></div>';
     h+='<button onclick="enviarFormulario()" style="width:100%;margin-top:16px;padding:16px;border-radius:12px;border:none;background:var(--navy);color:#fff;font-weight:800;font-size:15px;cursor:pointer;font-family:inherit">Guardar información</button>';
     el.innerHTML=h;
     el.style.display="block";
     el.parentElement.querySelector(".sec-arr").style.transform="rotate(180deg)";
-    // Pre-fill egresos if exists
-    if(c.form&&c.form.egresos_json){try{var eg=JSON.parse(c.form.egresos_json);if(eg.arriendo)document.getElementById("eArriendo").value=eg.arriendo;if(eg.alimentacion)document.getElementById("eAlimentacion").value=eg.alimentacion;if(eg.servicios)document.getElementById("eServicios").value=eg.servicios;if(eg.transporte)document.getElementById("eTransporte").value=eg.transporte;if(eg.otros)document.getElementById("eOtros").value=eg.otros;if(eg.otrosDesc){document.getElementById("eOtrosDetalle").style.display="block";document.getElementById("eOtrosDesc").value=eg.otrosDesc;}calcEgresos();}catch(e){}}
+    if(c.form&&c.form.egresos_json){try{var eg=JSON.parse(c.form.egresos_json);if(eg.arriendo)document.getElementById("eArriendo").value=fNum(eg.arriendo);if(eg.alimentacion)document.getElementById("eAlimentacion").value=fNum(eg.alimentacion);if(eg.servicios)document.getElementById("eServicios").value=fNum(eg.servicios);if(eg.transporte)document.getElementById("eTransporte").value=fNum(eg.transporte);if(eg.otros)document.getElementById("eOtros").value=fNum(eg.otros);if(eg.otrosDesc){document.getElementById("eOtrosDetalle").style.display="block";document.getElementById("eOtrosDesc").value=eg.otrosDesc;}calcEgresos();}catch(e){}}
   }
 }
 function dRow(lb,vl){return'<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(0,0,0,0.04)"><span style="font-size:12px;color:var(--muted);font-weight:600">'+lb+'</span><span style="font-size:13px;font-weight:700;color:var(--navy-d)">'+vl+'</span></div>';}
-function eRow(lb,id,ph){return'<div style="display:flex;align-items:center;gap:8px"><span style="font-size:11px;font-weight:600;color:var(--muted);min-width:90px">'+lb+'</span><input type="number" id="'+id+'" class="fi" style="margin:0" placeholder="'+ph+'" inputmode="numeric" oninput="calcEgresos()"></div>';}
+function eRow(lb,id,ph){return'<div style="display:flex;align-items:center;gap:8px"><span style="font-size:11px;font-weight:600;color:var(--muted);min-width:90px">'+lb+'</span><input type="text" id="'+id+'" class="fi fmoney" style="margin:0" placeholder="'+ph+'" inputmode="numeric" oninput="fmtInput(this);calcEgresos()"></div>';}
+function fNum(v){return v?Number(v).toLocaleString("es-CO"):"";}
+function rawNum(el){return Number(String(el.value||"").replace(/\./g,"").replace(/,/g,""))||0;}
+function fmtInput(el){var v=el.value.replace(/[^0-9]/g,"");if(!v){el.value="";return;}el.value=Number(v).toLocaleString("es-CO");}
 function esc(v){return v?String(v).replace(/"/g,"&quot;"):"";}
 
 function calcEgresos(){
   var ids=["eArriendo","eAlimentacion","eServicios","eTransporte","eOtros"];
-  var t=0;ids.forEach(function(id){var el=document.getElementById(id);if(el)t+=Number(el.value)||0;});
+  var t=0;ids.forEach(function(id){var el=document.getElementById(id);if(el)t+=rawNum(el);});
   var te=document.getElementById("eTotalEgr");if(te)te.textContent=fm(t);
   var ov=document.getElementById("eOtros");var od=document.getElementById("eOtrosDetalle");
   if(ov&&od)od.style.display=(Number(ov.value)||0)>0?"block":"none";
@@ -558,13 +558,13 @@ function calcEgresos(){
 
 function enviarFormulario(){
   var dir=document.getElementById("fDireccion").value.trim();
-  var ing=document.getElementById("fIngresos").value;
-  var monto=document.getElementById("fMontoPago").value;
+  var ing=rawNum(document.getElementById("fIngresos"));
+  var monto=rawNum(document.getElementById("fMontoPago"));
   var motivo=document.getElementById("fMotivo").value.trim();
   if(!dir||!ing||!motivo||!monto){
     var f2=document.getElementById("formMsg");if(f2){f2.textContent="Complete los campos marcados con *";f2.style.display="block";f2.style.background="var(--warn-bg)";f2.style.color="var(--warn)";}return;
   }
-  var egresos={arriendo:Number(document.getElementById("eArriendo").value)||0,alimentacion:Number(document.getElementById("eAlimentacion").value)||0,servicios:Number(document.getElementById("eServicios").value)||0,transporte:Number(document.getElementById("eTransporte").value)||0,otros:Number(document.getElementById("eOtros").value)||0,otrosDesc:(document.getElementById("eOtrosDesc")?document.getElementById("eOtrosDesc").value:"")};
+  var egresos={arriendo:rawNum(document.getElementById("eArriendo")),alimentacion:rawNum(document.getElementById("eAlimentacion")),servicios:rawNum(document.getElementById("eServicios")),transporte:rawNum(document.getElementById("eTransporte")),otros:rawNum(document.getElementById("eOtros")),otrosDesc:(document.getElementById("eOtrosDesc")?document.getElementById("eOtrosDesc").value:"")};
   var f2=document.getElementById("formMsg");if(f2){f2.textContent="Guardando...";f2.style.display="block";f2.style.background="var(--info-bg)";f2.style.color="var(--info)";}
   var params="action=completar_datos&cedula="+encodeURIComponent(CED_ACTUAL)+"&pin="+encodeURIComponent(PIN_ACTUAL);
   params+="&direccion="+encodeURIComponent(dir);

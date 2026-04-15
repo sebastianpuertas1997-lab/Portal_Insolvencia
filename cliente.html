@@ -180,7 +180,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:#1a1a2e;min-heig
       <div class="hdr-top">
         <div>
           <p class="hdr-brand">Colombia Abogados</p>
-          <div style="display:flex;align-items:center;gap:10px"><h1 id="pNom">—</h1><button id="refreshBtn" onclick="refrescar()" style="background:none;border:none;color:rgba(255,255,255,0.4);font-size:18px;cursor:pointer;padding:4px;transition:all 0.2s" title="Actualizar"><span class="refresh-spin">↻</span></button></div><div id="refreshTime" style="font-size:10px;color:rgba(255,255,255,0.25);margin-top:2px"></div>
+          <h1 id="pNom">—</h1><div style="display:flex;align-items:center;gap:10px;margin-top:8px"><button id="refreshBtn" onclick="refrescar()" style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.7);font-size:12px;font-weight:600;cursor:pointer;padding:6px 14px;border-radius:8px;font-family:inherit;display:flex;align-items:center;gap:6px;transition:all 0.2s"><span class="refresh-spin">↻</span> Actualizar</button><span id="refreshTime" style="font-size:10px;color:rgba(255,255,255,0.3)"></span></div>
           <p class="hdr-sub" id="pInfo">—</p>
         </div>
         <div class="ring" id="ring"><div class="ring-in" id="ringTxt">0%</div></div>
@@ -573,7 +573,7 @@ function enviarFormulario(){
   params+="&monto_pago="+encodeURIComponent(monto);
   params+="&motivo="+encodeURIComponent(motivo);
   fetch(API_URL+"?"+params,{redirect:"follow"}).then(function(r){return r.json();}).then(function(d){
-    if(d.ok){if(f2){f2.textContent="\u2705 Información guardada correctamente";f2.style.background="var(--ok-bg)";f2.style.color="var(--ok)";}if(CASO)CASO.formCompleto=true;showToast("Datos guardados");setTimeout(function(){refrescar();},1500);}
+    if(d.ok){if(f2){f2.textContent="\u2705 Información guardada correctamente";f2.style.background="var(--ok-bg)";f2.style.color="var(--ok)";}if(CASO){CASO.formCompleto=true;CASO.form={direccion:dir,ingresos:ing,egresos_json:JSON.stringify(egresos),montoPago:monto,motivo:motivo};}showToast("Datos guardados");checkFormulario(CASO);}
     else{if(f2){f2.textContent=d.error||"Error";f2.style.background="var(--warn-bg)";f2.style.color="var(--warn)";}}
   }).catch(function(){if(f2){f2.textContent="Error de conexión";f2.style.background="var(--warn-bg)";f2.style.color="var(--warn)";}});
 }

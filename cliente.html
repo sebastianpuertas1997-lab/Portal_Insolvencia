@@ -286,7 +286,7 @@ function buscar(){
         PIN_ACTUAL=pin;
         CASO=data.data;
         render(data.data);
-        LAST_REFRESH=new Date();updateRefreshTime();startAutoRefresh();checkFormulario(data.data);
+        checkFormulario(data.data);try{LAST_REFRESH=new Date();updateRefreshTime();startAutoRefresh();}catch(e){}
       } else {
         document.getElementById("errMsg").textContent=data.error||"Error al consultar";
       }
@@ -525,6 +525,12 @@ function volver(){document.getElementById("portalView").style.display="none";doc
 // Enter en cédula → focus PIN, Enter en PIN → buscar
 document.getElementById("cedInput").addEventListener("keydown",function(e){if(e.key==="Enter"){e.preventDefault();document.getElementById("pinInput").focus();}});
 document.getElementById("pinInput").addEventListener("keydown",function(e){if(e.key==="Enter")buscar();});
+
+// Auto-refresh
+var REFRESH_INTERVAL=null,LAST_REFRESH=null;
+function startAutoRefresh(){if(REFRESH_INTERVAL)clearInterval(REFRESH_INTERVAL);REFRESH_INTERVAL=setInterval(function(){if(CED_ACTUAL&&PIN_ACTUAL)refrescar();},60000);}
+function updateRefreshTime(){var el=document.getElementById("refreshTime");if(el&&LAST_REFRESH)el.textContent="Actualizado: "+LAST_REFRESH.toLocaleTimeString("es-CO",{hour:"2-digit",minute:"2-digit"});}
+function refrescar(){var btn=document.getElementById("refreshBtn");if(btn)btn.classList.add("loading");fetch(API_URL+"?action=consultar&cedula="+encodeURIComponent(CED_ACTUAL)+"&pin="+encodeURIComponent(PIN_ACTUAL),{redirect:"follow"}).then(function(r){return r.json();}).then(function(d){if(btn)btn.classList.remove("loading");if(d.ok){CASO=d.data;render(d.data);LAST_REFRESH=new Date();updateRefreshTime();}}).catch(function(){if(btn)btn.classList.remove("loading");});}
 
 function checkFormulario(c){
   if(!c.formCompleto){

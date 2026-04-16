@@ -351,7 +351,7 @@ function drawTable(d){
 function enviarPINwa(){
   var btn=document.getElementById("btnWaPIN");
   var cel=btn.dataset.cel.replace(/[^0-9]/g,"");if(cel.length===10)cel="57"+cel;
-  var msg="Hola *"+btn.dataset.nombre+"*, le saluda *Colombia Abogados*.%0A%0ASu proceso ha sido registrado. Para consultar el estado de su caso 24/7:%0A%0A🔗 https://clientes-abogadoscolombia.github.io/Portal_Insolvencia/cliente.html%0A%0A📋 Cédula: *"+btn.dataset.cedula+"*%0A🔐 PIN: *"+btn.dataset.pin+"*%0A%0AGuarde este mensaje.";
+  var msg="Hola *"+btn.dataset.nombre+"*, le saluda *Colombia Abogados*.%0A%0ASu proceso ha sido registrado. Para consultar el estado de su caso 24/7:%0A%0A🔗 https://abogadodecolombia.com/abogados/%0A%0A📋 Cédula: *"+btn.dataset.cedula+"*%0A🔐 PIN: *"+btn.dataset.pin+"*%0A%0AGuarde este mensaje.";
   window.open("https://wa.me/"+cel+"?text="+msg,"_blank");
 }
 

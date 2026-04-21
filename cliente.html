@@ -220,7 +220,139 @@ var PIN_ACTUAL = "";
 var fm=function(v){return new Intl.NumberFormat("es-CO",{style:"currency",currency:"COP",maximumFractionDigits:0}).format(v||0);};
 function pD(v){if(!v)return null;var d=new Date(v);return isNaN(d.getTime())?null:d;}
 function fD(v){var d=pD(v);if(!d)return"—";return d.toLocaleDateString("es-CO",{day:"numeric",month:"short",year:"numeric"});}
-function dBt(a,b){var da=pD(a),db=pD(b);if(!da||!db)return 0;return Math.max(0,Math.round((db-da)/86400000));}
+// ============================================================
+//  DÍAS HÁBILES COLOMBIA — Cálculo automático de festivos
+//  Incluye festivos fijos + móviles (Gauss/Pascua) + Ley Emiliani
+// ============================================================
+var FESTIVOS_CACHE = {};
+
+// Algoritmo de Gauss/Meeus para calcular el Domingo de Pascua (gregoriano)
+function pascuaCO(year){
+  var a = year % 19;
+  var b = Math.floor(year / 100);
+  var c = year % 100;
+  var d = Math.floor(b / 4);
+  var e = b % 4;
+  var f = Math.floor((b + 8) / 25);
+  var g = Math.floor((b - f + 1) / 3);
+  var h = (19*a + b - d - g + 15) % 30;
+  var i = Math.floor(c / 4);
+  var k = c % 4;
+  var l = (32 + 2*e + 2*i - h - k) % 7;
+  var m = Math.floor((a + 11*h + 22*l) / 451);
+  var month = Math.floor((h + l - 7*m + 114) / 31);
+  var day = ((h + l - 7*m + 114) % 31) + 1;
+  return new Date(year, month - 1, day);
+}
+
+// Suma días a una fecha (sin mutar la original)
+function addDays(d, days){
+  var r = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  r.setDate(r.getDate() + days);
+  return r;
+}
+
+// Traslada al lunes siguiente (Ley Emiliani) — si ya es lunes, queda igual
+function moverLunes(d){
+  var r = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  var dow = r.getDay(); // 0=Dom, 1=Lun, 2=Mar, ..., 6=Sáb
+  if(dow === 1) return r;
+  var add = (8 - dow) % 7;
+  if(add === 0) add = 7;
+  r.setDate(r.getDate() + add);
+  return r;
+}
+
+// Convierte Date a "YYYY-MM-DD" (clave de comparación)
+function isoDate(d){
+  var y = d.getFullYear();
+  var m = String(d.getMonth()+1).padStart(2,"0");
+  var dd = String(d.getDate()).padStart(2,"0");
+  return y+"-"+m+"-"+dd;
+}
+
+// Construye el set de festivos colombianos para un año dado
+function festivosCO(year){
+  if(FESTIVOS_CACHE[year]) return FESTIVOS_CACHE[year];
+  var set = {};
+  var add = function(d){ set[isoDate(d)] = true; };
+
+  // ---- Fijos NO trasladables ----
+  add(new Date(year, 0, 1));    // Año Nuevo
+  add(new Date(year, 4, 1));    // Día del Trabajo
+  add(new Date(year, 6, 20));   // Independencia
+  add(new Date(year, 7, 7));    // Batalla de Boyacá
+  add(new Date(year, 11, 8));   // Inmaculada Concepción
+  add(new Date(year, 11, 25));  // Navidad
+
+  // ---- Trasladables al lunes (Ley Emiliani) ----
+  add(moverLunes(new Date(year, 0, 6)));    // Reyes Magos
+  add(moverLunes(new Date(year, 2, 19)));   // San José
+  add(moverLunes(new Date(year, 5, 29)));   // San Pedro y San Pablo
+  add(moverLunes(new Date(year, 7, 15)));   // Asunción de la Virgen
+  add(moverLunes(new Date(year, 9, 12)));   // Día de la Raza
+  add(moverLunes(new Date(year, 10, 1)));   // Todos los Santos
+  add(moverLunes(new Date(year, 10, 11)));  // Independencia de Cartagena
+
+  // ---- Móviles basados en Pascua ----
+  var pascua = pascuaCO(year);
+  add(addDays(pascua, -3));                 // Jueves Santo (NO trasladable)
+  add(addDays(pascua, -2));                 // Viernes Santo (NO trasladable)
+  add(moverLunes(addDays(pascua, 43)));     // Ascensión del Señor
+  add(moverLunes(addDays(pascua, 64)));     // Corpus Christi
+  add(moverLunes(addDays(pascua, 71)));     // Sagrado Corazón
+
+  FESTIVOS_CACHE[year] = set;
+  return set;
+}
+
+// Determina si una fecha es día hábil en Colombia
+function esHabilCO(d){
+  var dow = d.getDay();
+  if(dow === 0 || dow === 6) return false; // Domingo o Sábado
+  var fest = festivosCO(d.getFullYear());
+  return !fest[isoDate(d)];
+}
+
+// Cuenta días HÁBILES transcurridos entre fecha `a` (inicio) y `b` (fin)
+// No cuenta el día inicial, cuenta cada día hábil hasta el día final inclusive
+function dBt(a,b){
+  var da = pD(a), db = pD(b);
+  if(!da || !db) return 0;
+  var curr = new Date(da.getFullYear(), da.getMonth(), da.getDate());
+  var end  = new Date(db.getFullYear(), db.getMonth(), db.getDate());
+  if(end <= curr) return 0;
+  var count = 0;
+  while(curr < end){
+    curr.setDate(curr.getDate() + 1);
+    if(esHabilCO(curr)) count++;
+  }
+  return count;
+}
+
+// ============================================================
+//  TEXTOS POR ESTADO — ACTIVO vs COMPLETADO
+//  El backend envía una sola descripción por step (s.cd) que
+//  está escrita en pasado ("ya ocurrió"). Cuando un paso está
+//  ACTIVO (en curso, esperando acción de un tercero), la
+//  descripción debe comunicar que aún NO ha ocurrido.
+//  Si un step no tiene override aquí, se usa su descripción base.
+// ============================================================
+var DESC_ACTIVO = {
+  "s1": "Le enviamos los documentos de contrato y poder. Estamos a la espera de su firma.",
+  "s3": "Estamos a la espera del pago del anticipo de honorarios.",
+  "s4": "Le solicitamos la documentación necesaria para radicar su caso. Estamos a la espera de recibirla.",
+  "s6": "Estamos radicando su solicitud ante el centro de conciliación. Contamos con 10 días hábiles internos para esta etapa.",
+  "s7": "Su solicitud ya fue radicada. El centro de conciliación tiene hasta 5 días hábiles para emitir el auto de admisión.",
+  "s8": "El centro de conciliación está notificando a sus acreedores.",
+  "s9": "Su primera audiencia de conciliación está programada o en curso.",
+  "s10": "Su caso está en deliberación final."
+};
+
+function descStep(s){
+  if(s && s.est === "ACTIVO" && DESC_ACTIVO[s.id]) return DESC_ACTIVO[s.id];
+  return (s && s.cd) || "";
+}
 
 // ============================================================
 //  BUSCAR — Login con cédula + PIN via API
@@ -281,26 +413,44 @@ function render(c){
 
   // Deadline calcs
   var s5=c.steps.filter(function(s){return s.id==="s5";})[0];
+  var s6=c.steps.filter(function(s){return s.id==="s6";})[0];
   var s7=c.steps.filter(function(s){return s.id==="s7";})[0];
   var s8=c.steps.filter(function(s){return s.id==="s8";})[0];
   var s9=c.steps.filter(function(s){return s.id==="s9";})[0];
-  var dlAct=false,dlDays=0,dlMax=0,dlRest=0,dlTitle="",dlDesc="";
+  var dlAct=false,dlDays=0,dlMax=0,dlRest=0,dlTitle="",dlDesc="",dlFase="";
 
-  if(s5&&s5.est==="COMPLETADO"&&s5.fecha&&s7&&s7.est!=="COMPLETADO"){
-    dlDays=dBt(s5.fecha,new Date().toISOString());dlMax=15;dlRest=Math.max(0,15-dlDays);
-    dlTitle="Plazo para Auto de Admisión";dlDesc="Desde que se completó la documentación, el centro tiene 15 días hábiles para emitir el auto de admisión.";dlAct=true;
+  // FASE A — Plazo interno de radicación: 10 días hábiles desde s5 (Documentos completos)
+  if(s5&&s5.est==="COMPLETADO"&&s5.fecha&&s6&&s6.est!=="COMPLETADO"){
+    dlDays=dBt(s5.fecha,new Date().toISOString());
+    dlMax=10;dlRest=Math.max(0,10-dlDays);
+    dlTitle="Plazo para radicación";
+    dlDesc="Desde que se completó la documentación, contamos con 10 días hábiles para radicar su solicitud ante el centro de conciliación.";
+    dlFase="radicacion";dlAct=true;
   }
+  // FASE B — Plazo del centro para auto de admisión: 5 días hábiles desde s6 (Solicitud radicada)
+  else if(s6&&s6.est==="COMPLETADO"&&s6.fecha&&s7&&s7.est!=="COMPLETADO"){
+    dlDays=dBt(s6.fecha,new Date().toISOString());
+    dlMax=5;dlRest=Math.max(0,5-dlDays);
+    dlTitle="Plazo para Auto de Admisión";
+    dlDesc="Desde que se radicó su solicitud, el centro de conciliación tiene hasta 5 días hábiles para emitir el auto de admisión.";
+    dlFase="admision";dlAct=true;
+  }
+  // Plazo posterior — Primera audiencia: 60 días hábiles desde s8 (Notificación acreedores)
   if(s8&&s8.est==="COMPLETADO"&&s8.fecha&&s9&&s9.est!=="COMPLETADO"){
-    dlDays=dBt(s8.fecha,new Date().toISOString());dlMax=60;dlRest=Math.max(0,60-dlDays);
-    dlTitle="Plazo para Primera Audiencia";dlDesc="Desde la notificación a acreedores, hay 60 días hábiles para la primera audiencia de conciliación.";dlAct=true;
+    dlDays=dBt(s8.fecha,new Date().toISOString());
+    dlMax=60;dlRest=Math.max(0,60-dlDays);
+    dlTitle="Plazo para Primera Audiencia";
+    dlDesc="Desde la notificación a acreedores, hay 60 días hábiles para la primera audiencia de conciliación.";
+    dlFase="audiencia";dlAct=true;
   }
 
   // Deadline banner
   var dlHTML="";
   if(dlAct){
-    var cls=dlRest<=3?"danger":dlRest<=7?"warn":"ok";
-    var col=dlRest<=3?"var(--err)":dlRest<=7?"var(--warn)":"var(--gold)";
-    var lblCol=dlRest<=3?"#ff6b6b":dlRest<=7?"#fbbf24":"var(--gold)";
+    var pctRest=dlMax?dlRest/dlMax:0;
+    var cls=pctRest<=0.25?"danger":pctRest<=0.5?"warn":"ok";
+    var col=pctRest<=0.25?"var(--err)":pctRest<=0.5?"var(--warn)":"var(--gold)";
+    var lblCol=pctRest<=0.25?"#ff6b6b":pctRest<=0.5?"#fbbf24":"var(--gold)";
     var pctDl=Math.min(100,dlDays/dlMax*100);
     dlHTML='<div class="dl show '+cls+'"><p class="dl-lb" style="color:'+lblCol+'">⏱ Plazo legal activo</p><p class="dl-tt" style="color:#fff">'+dlTitle+'</p><p class="dl-ds">'+dlDesc+'</p><div class="dl-bar"><div class="dl-fill" style="width:'+pctDl+'%;background:'+col+'"></div></div><div class="dl-nums"><span style="color:rgba(255,255,255,0.5)">Día '+dlDays+' de '+dlMax+'</span><span style="color:'+col+';font-weight:800">'+dlRest+' días restantes</span></div></div>';
   }
@@ -326,9 +476,14 @@ function render(c){
   var deuTxt=c.deu?fm(c.deu):"No registrada";
   h+=mkC("💳","Deuda aprox.",deuTxt,"","var(--navy)");
 
-  if(s5&&s5.est==="COMPLETADO"&&s7&&s7.est!=="COMPLETADO"){
-    var dlCol=dlRest<=3?"var(--err)":dlRest<=7?"var(--warn)":"var(--navy)";
-    h+=mkC("⏱","Auto admisión",dlRest+" días","de 15 días hábiles",dlCol);
+  if(dlFase==="radicacion"){
+    var pctR=dlMax?dlRest/dlMax:0;
+    var dlCol=pctR<=0.25?"var(--err)":pctR<=0.5?"var(--warn)":"var(--navy)";
+    h+=mkC("📤","Radicación",dlRest+" días","de 10 días hábiles",dlCol);
+  } else if(dlFase==="admision"){
+    var pctR=dlMax?dlRest/dlMax:0;
+    var dlCol=pctR<=0.25?"var(--err)":pctR<=0.5?"var(--warn)":"var(--navy)";
+    h+=mkC("⏱","Auto admisión",dlRest+" días","de 5 días hábiles",dlCol);
   } else if(s7&&s7.est==="COMPLETADO"){
     h+=mkC("✅","Auto admisión","Admitido",fD(s7.fecha),"var(--ok)");
   } else {
@@ -345,10 +500,11 @@ function render(c){
   // Active step
   var aHTML="";
   if(active){
-    aHTML='<div class="act-box"><p class="act-lb">Etapa actual</p><p class="act-nm">'+active.n+'</p><p class="act-ds">'+active.cd+'</p>';
+    aHTML='<div class="act-box"><p class="act-lb">Etapa actual</p><p class="act-nm">'+active.n+'</p><p class="act-ds">'+descStep(active)+'</p>';
     if(dlAct){
       var pctA=Math.min(100,dlDays/dlMax*100);
-      var dlC=dlRest<=3?"var(--err)":dlRest<=7?"var(--warn)":"var(--navy)";
+      var pctR2=dlMax?dlRest/dlMax:0;
+      var dlC=pctR2<=0.25?"var(--err)":pctR2<=0.5?"var(--warn)":"var(--navy)";
       aHTML+='<div style="margin-top:12px"><div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:4px"><span>Día '+dlDays+' de '+dlMax+'</span><span style="font-weight:800;color:'+dlC+'">'+dlRest+' días restantes</span></div><div style="height:8px;background:#e8e0c8;border-radius:4px"><div style="width:'+pctA+'%;height:100%;background:'+dlC+';border-radius:4px"></div></div></div>';
     }
     aHTML+='</div>';
@@ -371,7 +527,7 @@ function render(c){
     if(!isL)tHTML+='<div class="tl-cn" style="background:'+(isDone?"var(--ok)":"var(--light)")+'"></div>';
     tHTML+='</div><div class="tl-r"><div class="tl-rw"><span class="tl-nm" style="font-weight:'+(isAct?800:600)+';color:'+(!isDone&&!isAct?"var(--muted)":"var(--navy-d)")+'">'+s.n+'</span>';
     if(s.fecha)tHTML+='<span class="tl-dt">'+fD(s.fecha)+'</span>';
-    tHTML+='</div>';if(isDone||isAct)tHTML+='<p class="tl-desc">'+s.cd+'</p>';tHTML+='</div></div>';
+    tHTML+='</div>';if(isDone||isAct)tHTML+='<p class="tl-desc">'+descStep(s)+'</p>';tHTML+='</div></div>';
   });
   document.getElementById("tl").innerHTML=tHTML;
 

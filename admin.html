@@ -452,14 +452,14 @@ function renderExpanded(c){
   var h='<div class="com-exp-panel">';
 
   // ━━━━━━ BANNER SUPERIOR: Progreso global tipo Rappi ━━━━━━
-  h+='<div style="grid-column:1/-1;background:linear-gradient(135deg,var(--nv),var(--nv2));color:white;padding:18px 20px;border-radius:12px;margin-bottom:4px">';
+  h+='<div style="grid-column:1/-1;background:var(--sf);border:1.5px solid var(--bd);padding:16px 18px;border-radius:12px;margin-bottom:4px;box-shadow:0 2px 6px rgba(10,22,40,0.04)">';
   h+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:10px">';
-  h+='<div><div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.6);text-transform:uppercase;letter-spacing:1.5px">Comisión total del caso</div>';
-  h+='<div style="font-size:22px;font-weight:800;margin-top:2px">'+fm(T.liquidado)+' <span style="color:rgba(255,255,255,0.4);font-size:16px;font-weight:500">/ '+fm(T.teorico)+'</span></div></div>';
-  h+='<div style="text-align:right"><div style="font-size:32px;font-weight:800;color:var(--ac);line-height:1">'+pctT+'%</div><div style="font-size:10px;color:rgba(255,255,255,0.6);font-weight:600">liquidado</div></div></div>';
+  h+='<div><div style="font-size:10px;font-weight:800;color:var(--tx3);text-transform:uppercase;letter-spacing:1.5px">Comisión total del caso</div>';
+  h+='<div style="font-size:22px;font-weight:800;margin-top:2px;color:var(--nv)">'+fm(T.liquidado)+' <span style="color:var(--tx3);font-size:16px;font-weight:600">/ '+fm(T.teorico)+'</span></div></div>';
+  h+='<div style="text-align:right"><div style="font-size:32px;font-weight:800;color:var(--ac);line-height:1">'+pctT+'%</div><div style="font-size:10px;color:var(--tx3);font-weight:700;letter-spacing:0.5px;text-transform:uppercase">liquidado</div></div></div>';
   // Barra de progreso
-  h+='<div style="height:10px;background:rgba(255,255,255,0.1);border-radius:6px;overflow:hidden;margin-top:6px"><div style="height:100%;width:'+pctT+'%;background:linear-gradient(90deg,#16a34a,#c9a449);border-radius:6px;transition:width 0.5s"></div></div>';
-  h+='<div style="display:flex;justify-content:space-between;margin-top:8px;font-size:11px"><span style="color:#86efac">✓ Liquidado '+fm(T.liquidado)+'</span><span style="color:#fbbf24">⏳ Pendiente '+fm(T.pendiente)+'</span></div>';
+  h+='<div style="height:10px;background:var(--sf2);border-radius:6px;overflow:hidden;margin-top:6px;border:1px solid var(--bd)"><div style="height:100%;width:'+pctT+'%;background:linear-gradient(90deg,var(--ok),var(--ac));border-radius:6px;transition:width 0.5s"></div></div>';
+  h+='<div style="display:flex;justify-content:space-between;margin-top:8px;font-size:11px;font-weight:700"><span style="color:var(--ok)">✓ Liquidado '+fm(T.liquidado)+'</span><span style="color:var(--warn)">⏳ Pendiente '+fm(T.pendiente)+'</span></div>';
   h+='</div>';
 
   // ━━━━━━ PANEL IZQUIERDO: Datos económicos ━━━━━━

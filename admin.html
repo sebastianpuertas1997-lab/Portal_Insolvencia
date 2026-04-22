@@ -8,22 +8,20 @@
 <style>
 :root{--bg:#f5f6f9;--sf:#fff;--sf2:#f1f3f8;--bd:#e4e8f1;--nv:#0a1628;--nvl:#162240;--nv2:#14244a;--ac:#3b5bdb;--acl:#edf2ff;--gold:#c9a449;--goldl:#e6d49a;--goldh:#d4b563;--ok:#2b8a3e;--okb:#ebfbee;--warn:#e67700;--warnb:#fff4e6;--err:#c92a2a;--errb:#fff5f5;--info:#1971c2;--infob:#e7f5ff;--purple:#7048e8;--purpleb:#f3f0ff;--tx:#1a1f36;--tx2:#5e6687;--tx3:#9ba3bf;--r:16px;--rs:10px;--sh:0 1px 3px rgba(10,22,40,0.04),0 4px 12px rgba(10,22,40,0.03);--shl:0 8px 32px rgba(10,22,40,0.08);--tr:0.2s cubic-bezier(0.4,0,0.2,1)}
 *{margin:0;padding:0;box-sizing:border-box}body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;-webkit-font-smoothing:antialiased}
-.top{height:56px;background:var(--nv);display:flex;align-items:center;padding:0 16px;position:sticky;top:0;z-index:50}.ham{background:none;border:none;color:#fff;font-size:22px;cursor:pointer;padding:4px 8px;display:none;margin-right:8px}.top-brand{display:flex;align-items:center}
-.top-crumb{font-family:'Outfit',sans-serif;font-size:11px;font-weight:600;color:rgba(255,255,255,0.5);letter-spacing:1px;text-transform:uppercase;padding-left:6px;border-left:2px solid var(--gold)}.top-nav{margin-left:auto;display:flex;gap:2px}.tn{color:rgba(255,255,255,0.4);font-size:12px;font-weight:600;padding:7px 14px;border-radius:8px;cursor:pointer;transition:var(--tr);user-select:none}.tn:hover{color:rgba(255,255,255,0.8);background:rgba(255,255,255,0.06)}.tn.on{color:var(--gold);background:rgba(245,159,0,0.1)}
-.top-web-btn{color:rgba(255,255,255,0.75);font-size:11px;font-weight:600;padding:6px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.2);text-decoration:none;margin-left:8px;transition:all 0.2s;display:inline-flex;align-items:center;gap:5px}
-.top-web-btn:hover{background:var(--gold);color:var(--nv);border-color:var(--gold)}
+.top{height:56px;background:var(--nv);display:flex;align-items:center;padding:0 16px;position:sticky;top:0;z-index:50}.ham{background:none;border:none;color:#fff;font-size:22px;cursor:pointer;padding:4px 8px;display:none;margin-right:8px}.top-nav{margin-left:auto;display:flex;gap:2px}.tn{color:rgba(255,255,255,0.4);font-size:12px;font-weight:600;padding:7px 14px;border-radius:8px;cursor:pointer;transition:var(--tr);user-select:none}.tn:hover{color:rgba(255,255,255,0.8);background:rgba(255,255,255,0.06)}.tn.on{color:var(--gold);background:rgba(245,159,0,0.1)}
+.top-web-btn{display:none}
 .web-back-link{display:inline-block;color:rgba(255,255,255,0.45);font-size:11px;font-weight:600;letter-spacing:0.5px;text-decoration:none;margin-bottom:20px;padding:6px 14px;border:1px solid rgba(255,255,255,0.15);border-radius:20px;transition:all 0.2s}
-.web-back-link:hover{color:var(--gold);border-color:var(--gold);background:rgba(245,159,0,0.08)}
-/* Barra web superior (estilo WordPress) */
-.web-strip{background:#0a1628;border-bottom:1px solid rgba(201,164,73,0.2);padding:9px 20px;display:flex;align-items:center;gap:24px;position:sticky;top:0;z-index:60;transition:transform 0.3s}
+.web-back-link:hover{color:var(--gold);border-color:var(--gold);background:rgba(201,164,73,0.08)}
+/* Barra web superior simplificada */
+.web-strip{background:linear-gradient(180deg,#050a14 0%,#0a1628 100%);border-bottom:1px solid rgba(201,164,73,0.25);padding:11px 24px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:60;transition:transform 0.3s}
 .web-strip.hidden-scroll{transform:translateY(-100%)}
-.web-strip-brand{font-family:'Belleza',serif;color:#fff;font-size:16px;letter-spacing:3px;text-transform:uppercase;text-decoration:none;font-weight:400}
-.web-strip-brand i{font-style:normal;color:var(--gold);margin-left:6px;font-size:10px;letter-spacing:2px}
-.web-strip-nav{display:flex;gap:2px;margin-left:auto}
-.web-strip-nav a{color:rgba(255,255,255,0.6);font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:1.5px;padding:6px 12px;border-radius:6px;text-decoration:none;transition:all 0.2s;font-family:'Belleza',serif}
-.web-strip-nav a:hover{color:var(--gold);background:rgba(245,159,0,0.08)}
-.web-strip-nav a.current{color:var(--gold);background:rgba(245,159,0,0.1)}
-@media(max-width:640px){.web-strip{padding:8px 12px;gap:10px}.web-strip-brand{font-size:13px;letter-spacing:2px}.web-strip-brand i{display:none}.web-strip-nav a{font-size:10px;padding:5px 8px;letter-spacing:1px}}
+.web-strip-brand-wrap{display:flex;align-items:center;gap:14px;min-width:0;flex:1}
+.web-strip-brand{font-family:'Belleza',serif;color:#fff;font-size:17px;letter-spacing:4px;text-transform:uppercase;font-weight:400;white-space:nowrap}
+.web-strip-sep{width:1px;height:18px;background:rgba(255,255,255,0.15)}
+.web-strip-current{font-family:'Belleza',serif;color:var(--gold);font-size:11px;letter-spacing:3px;text-transform:uppercase;font-weight:400;padding:5px 12px;border:1px solid rgba(201,164,73,0.4);border-radius:4px;background:rgba(201,164,73,0.06);white-space:nowrap}
+.web-strip-back{color:rgba(255,255,255,0.55);font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:2px;padding:7px 14px;border-radius:20px;text-decoration:none;transition:all 0.2s;font-family:'Belleza',serif;border:1px solid rgba(255,255,255,0.15);white-space:nowrap}
+.web-strip-back:hover{color:var(--nv);background:var(--gold);border-color:var(--gold)}
+@media(max-width:640px){.web-strip{padding:9px 12px;gap:10px}.web-strip-brand{font-size:12px;letter-spacing:2px}.web-strip-sep{height:14px}.web-strip-current{font-size:9px;letter-spacing:2px;padding:4px 8px}.web-strip-back{font-size:9px;padding:5px 10px;letter-spacing:1.5px}}
 /* Top existente: ajustar sticky para que no tape el web-strip */
 .top{top:42px !important}
 /* Footer web-style */
@@ -214,16 +212,14 @@
 </div></div></div>
 <div id="appPage" class="hidden">
 <div class="web-strip" id="webStrip">
-  <a href="https://abogadodecolombia.com/abogados/" class="web-strip-brand">Colombia Abogados<i>ley 2445</i></a>
-  <nav class="web-strip-nav">
-    <a href="https://abogadodecolombia.com/abogados/">Inicio</a>
-    <a href="https://abogadodecolombia.com/abogados/">Servicios</a>
-    <a href="https://abogadodecolombia.com/abogados/">Nosotros</a>
-    <a href="https://abogadodecolombia.com/abogados/">Contacto</a>
-    <a href="#" class="current">Portal Ops</a>
-  </nav>
+  <div class="web-strip-brand-wrap">
+    <span class="web-strip-brand">Colombia Abogados</span>
+    <span class="web-strip-sep"></span>
+    <span class="web-strip-current">Portal de Operaciones</span>
+  </div>
+  <a href="https://abogadodecolombia.com/abogados/" class="web-strip-back">← Volver al sitio web</a>
 </div>
-<div class="top"><button class="ham" onclick="toggleSidebar()">☰</button><div class="top-brand"><span class="top-crumb">Portal de operaciones</span></div><div class="top-nav" id="navTabs"></div><a href="https://abogadodecolombia.com/abogados/" class="top-web-btn" title="Volver al sitio web">🏠 Sitio web</a><button onclick="cerrarSesion()" style="background:none;border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.5);padding:6px 12px;border-radius:8px;font-size:11px;font-weight:600;cursor:pointer;font-family:Outfit;margin-left:8px">Salir</button></div>
+<div class="top"><button class="ham" onclick="toggleSidebar()">☰</button><div class="top-nav" id="navTabs"></div><button onclick="cerrarSesion()" style="background:none;border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.5);padding:6px 12px;border-radius:8px;font-size:11px;font-weight:600;cursor:pointer;font-family:Outfit;margin-left:auto">Salir</button></div>
 <div class="wrap">
 <div class="sidebar-overlay" id="sideOverlay" onclick="toggleSidebar()"></div>
 <div class="sidebar" id="sidebar"><button class="sidebar-close" onclick="toggleSidebar()">✕</button><h3>Navegación</h3><div id="sideNav"></div><button onclick="cerrarSesion()" style="margin-top:auto;width:100%;padding:12px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.5);border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:Outfit">Cerrar sesión</button></div>

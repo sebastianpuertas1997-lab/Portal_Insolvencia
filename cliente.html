@@ -40,17 +40,16 @@ body{font-family:'Outfit',sans-serif;background:linear-gradient(180deg,var(--bg)
 .cliweb-top:hover{color:var(--navy);border-color:var(--gold);background:var(--gold)}
 .cliweb-back{display:inline-block;color:rgba(255,255,255,0.45);font-size:11px;font-weight:600;letter-spacing:0.5px;text-decoration:none;margin-bottom:20px;padding:6px 14px;border:1px solid rgba(255,255,255,0.15);border-radius:20px;transition:all 0.2s}
 .cliweb-back:hover{color:var(--gold);border-color:var(--gold);background:rgba(201,164,73,0.08)}
-/* Barra web superior (estética web real) */
-.web-strip{background:linear-gradient(180deg,var(--navy-d) 0%,var(--navy) 100%);border-bottom:1px solid rgba(201,164,73,0.25);padding:11px 24px;display:flex;align-items:center;gap:24px;position:sticky;top:0;z-index:60;transition:transform 0.3s}
+/* Barra web superior simplificada */
+.web-strip{background:linear-gradient(180deg,var(--navy-d) 0%,var(--navy) 100%);border-bottom:1px solid rgba(201,164,73,0.25);padding:11px 24px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:60;transition:transform 0.3s}
 .web-strip.hidden-scroll{transform:translateY(-100%)}
-.web-strip-brand{font-family:'Belleza',serif;color:#fff;font-size:17px;letter-spacing:4px;text-transform:uppercase;text-decoration:none;font-weight:400;transition:color 0.2s}
-.web-strip-brand:hover{color:var(--gold)}
-.web-strip-brand i{font-style:normal;color:var(--gold);margin-left:8px;font-size:9px;letter-spacing:2px;font-family:'Outfit',sans-serif;font-weight:700;opacity:0.8}
-.web-strip-nav{display:flex;gap:4px;margin-left:auto;align-items:center}
-.web-strip-nav a{color:rgba(255,255,255,0.55);font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:2.5px;padding:7px 14px;border-radius:4px;text-decoration:none;transition:all 0.2s;font-family:'Belleza',serif}
-.web-strip-nav a:hover{color:#fff}
-.web-strip-nav a.current{color:var(--gold);background:rgba(201,164,73,0.08);border:1px solid rgba(201,164,73,0.3)}
-@media(max-width:640px){.web-strip{padding:10px 14px;gap:10px}.web-strip-brand{font-size:13px;letter-spacing:2px}.web-strip-brand i{display:none}.web-strip-nav{gap:1px}.web-strip-nav a{font-size:9px;padding:5px 6px;letter-spacing:1px}}
+.web-strip-brand-wrap{display:flex;align-items:center;gap:14px;min-width:0;flex:1}
+.web-strip-brand{font-family:'Belleza',serif;color:#fff;font-size:17px;letter-spacing:4px;text-transform:uppercase;font-weight:400;white-space:nowrap}
+.web-strip-sep{width:1px;height:18px;background:rgba(255,255,255,0.15)}
+.web-strip-current{font-family:'Belleza',serif;color:var(--gold);font-size:11px;letter-spacing:3px;text-transform:uppercase;font-weight:400;padding:5px 12px;border:1px solid rgba(201,164,73,0.4);border-radius:4px;background:rgba(201,164,73,0.06);white-space:nowrap}
+.web-strip-back{color:rgba(255,255,255,0.55);font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:2px;padding:7px 14px;border-radius:20px;text-decoration:none;transition:all 0.2s;font-family:'Belleza',serif;border:1px solid rgba(255,255,255,0.15);white-space:nowrap}
+.web-strip-back:hover{color:var(--navy);background:var(--gold);border-color:var(--gold)}
+@media(max-width:640px){.web-strip{padding:9px 12px;gap:10px}.web-strip-brand{font-size:12px;letter-spacing:2px}.web-strip-sep{height:14px}.web-strip-current{font-size:9px;letter-spacing:2px;padding:4px 8px}.web-strip-back{font-size:9px;padding:5px 10px;letter-spacing:1.5px}}
 /* Footer */
 .web-footer{background:var(--navy-d);color:rgba(255,255,255,0.7);padding:40px 24px 24px;margin-top:48px;border-top:3px solid var(--gold);position:relative}
 .web-footer::before{content:"";position:absolute;top:-3px;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent 0%,var(--gold) 50%,transparent 100%)}
@@ -61,6 +60,8 @@ body{font-family:'Outfit',sans-serif;background:linear-gradient(180deg,var(--bg)
 .web-footer-brand{font-family:'Belleza',serif;font-size:19px;letter-spacing:4px;text-transform:uppercase;color:#fff;margin-bottom:10px;font-weight:400}
 .web-footer-tag{font-size:12px;color:rgba(255,255,255,0.4);line-height:1.7;max-width:320px}
 .web-footer-bottom{max-width:1200px;margin:0 auto;padding-top:20px;border-top:1px solid rgba(255,255,255,0.08);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;font-size:11px;color:rgba(255,255,255,0.3)}
+.intranet-link{color:rgba(255,255,255,0.25);text-decoration:none;font-size:10px;letter-spacing:2px;text-transform:uppercase;padding:4px 10px;border:1px solid rgba(255,255,255,0.08);border-radius:12px;transition:all 0.2s}
+.intranet-link:hover{color:var(--gold);border-color:rgba(201,164,73,0.3);background:rgba(201,164,73,0.05)}
 @media(max-width:768px){.web-footer-grid{grid-template-columns:1fr 1fr;gap:24px}.web-footer{padding:28px 16px 20px;margin-top:28px}}
 @media(max-width:480px){.web-footer-grid{grid-template-columns:1fr}}
 .hdr-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px;gap:16px}
@@ -195,14 +196,12 @@ body{font-family:'Outfit',sans-serif;background:linear-gradient(180deg,var(--bg)
 </head>
 <body>
 <div class="web-strip" id="webStrip">
-  <a href="https://abogadodecolombia.com/abogados/" class="web-strip-brand">Colombia Abogados<i>ley 2445</i></a>
-  <nav class="web-strip-nav">
-    <a href="https://abogadodecolombia.com/abogados/">Inicio</a>
-    <a href="https://abogadodecolombia.com/abogados/">Servicios</a>
-    <a href="https://abogadodecolombia.com/abogados/">Nosotros</a>
-    <a href="https://abogadodecolombia.com/abogados/">Contacto</a>
-    <a href="#" class="current">Mi Proceso</a>
-  </nav>
+  <div class="web-strip-brand-wrap">
+    <span class="web-strip-brand">Colombia Abogados</span>
+    <span class="web-strip-sep"></span>
+    <span class="web-strip-current">Mi Proceso</span>
+  </div>
+  <a href="https://abogadodecolombia.com/abogados/" class="web-strip-back">← Volver al sitio web</a>
 </div>
 
 <div class="login-wrap" id="loginView">
@@ -226,7 +225,6 @@ body{font-family:'Outfit',sans-serif;background:linear-gradient(180deg,var(--bg)
     <div class="hdr-in">
       <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
         <button class="back" onclick="volver()">← Volver</button>
-        <a href="https://abogadodecolombia.com/abogados/" class="cliweb-top" title="Volver al sitio web">🏠 Sitio web</a>
       </div>
       <div class="hdr-top">
         <div>
@@ -841,7 +839,7 @@ function abrirAyuda(){
   </div>
   <div class="web-footer-bottom">
     <div>© <span id="footerYear"></span> Colombia Abogados · Todos los derechos reservados</div>
-    <div>Portal cliente</div>
+    <div><a href="admin.html" class="intranet-link">Intranet</a></div>
   </div>
 </footer>
 </body>

@@ -4,11 +4,38 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Colombia Abogados — Ops</title>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Belleza&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#f7f8fb;--sf:#fff;--sf2:#f1f3f8;--bd:#e4e8f1;--nv:#0a1628;--nvl:#162240;--ac:#3b5bdb;--acl:#edf2ff;--gold:#f59f00;--goldl:#fff9db;--ok:#2b8a3e;--okb:#ebfbee;--warn:#e67700;--warnb:#fff4e6;--err:#c92a2a;--errb:#fff5f5;--info:#1971c2;--infob:#e7f5ff;--purple:#7048e8;--purpleb:#f3f0ff;--tx:#1a1f36;--tx2:#5e6687;--tx3:#9ba3bf;--r:16px;--rs:10px;--sh:0 1px 3px rgba(10,22,40,0.04),0 4px 12px rgba(10,22,40,0.03);--shl:0 8px 32px rgba(10,22,40,0.08);--tr:0.2s cubic-bezier(0.4,0,0.2,1)}
 *{margin:0;padding:0;box-sizing:border-box}body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;-webkit-font-smoothing:antialiased}
-.top{height:56px;background:var(--nv);display:flex;align-items:center;padding:0 16px;position:sticky;top:0;z-index:50}.ham{background:none;border:none;color:#fff;font-size:22px;cursor:pointer;padding:4px 8px;display:none;margin-right:8px}.top-brand{font-size:17px;font-weight:800;color:#fff;letter-spacing:-0.5px}.top-brand i{color:var(--gold);font-style:normal;font-weight:600;font-size:10px;letter-spacing:2px;text-transform:uppercase;margin-left:10px;opacity:0.7}.top-nav{margin-left:auto;display:flex;gap:2px}.tn{color:rgba(255,255,255,0.4);font-size:12px;font-weight:600;padding:7px 14px;border-radius:8px;cursor:pointer;transition:var(--tr);user-select:none}.tn:hover{color:rgba(255,255,255,0.8);background:rgba(255,255,255,0.06)}.tn.on{color:var(--gold);background:rgba(245,159,0,0.1)}
+.top{height:56px;background:var(--nv);display:flex;align-items:center;padding:0 16px;position:sticky;top:0;z-index:50}.ham{background:none;border:none;color:#fff;font-size:22px;cursor:pointer;padding:4px 8px;display:none;margin-right:8px}.top-brand{font-family:'Belleza',serif;font-size:18px;font-weight:400;color:#fff;letter-spacing:2px;text-transform:uppercase}.top-brand i{color:var(--gold);font-style:normal;font-weight:600;font-size:10px;letter-spacing:2px;text-transform:uppercase;margin-left:10px;opacity:0.7;font-family:'Outfit',sans-serif}.top-nav{margin-left:auto;display:flex;gap:2px}.tn{color:rgba(255,255,255,0.4);font-size:12px;font-weight:600;padding:7px 14px;border-radius:8px;cursor:pointer;transition:var(--tr);user-select:none}.tn:hover{color:rgba(255,255,255,0.8);background:rgba(255,255,255,0.06)}.tn.on{color:var(--gold);background:rgba(245,159,0,0.1)}
+.top-web-btn{color:rgba(255,255,255,0.75);font-size:11px;font-weight:600;padding:6px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.2);text-decoration:none;margin-left:8px;transition:all 0.2s;display:inline-flex;align-items:center;gap:5px}
+.top-web-btn:hover{background:var(--gold);color:var(--nv);border-color:var(--gold)}
+.web-back-link{display:inline-block;color:rgba(255,255,255,0.45);font-size:11px;font-weight:600;letter-spacing:0.5px;text-decoration:none;margin-bottom:20px;padding:6px 14px;border:1px solid rgba(255,255,255,0.15);border-radius:20px;transition:all 0.2s}
+.web-back-link:hover{color:var(--gold);border-color:var(--gold);background:rgba(245,159,0,0.08)}
+/* Barra web superior (estilo WordPress) */
+.web-strip{background:#0a1628;border-bottom:1px solid rgba(201,164,73,0.2);padding:9px 20px;display:flex;align-items:center;gap:24px;position:sticky;top:0;z-index:60;transition:transform 0.3s}
+.web-strip.hidden-scroll{transform:translateY(-100%)}
+.web-strip-brand{font-family:'Belleza',serif;color:#fff;font-size:16px;letter-spacing:3px;text-transform:uppercase;text-decoration:none;font-weight:400}
+.web-strip-brand i{font-style:normal;color:var(--gold);margin-left:6px;font-size:10px;letter-spacing:2px}
+.web-strip-nav{display:flex;gap:2px;margin-left:auto}
+.web-strip-nav a{color:rgba(255,255,255,0.6);font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:1.5px;padding:6px 12px;border-radius:6px;text-decoration:none;transition:all 0.2s;font-family:'Belleza',serif}
+.web-strip-nav a:hover{color:var(--gold);background:rgba(245,159,0,0.08)}
+.web-strip-nav a.current{color:var(--gold);background:rgba(245,159,0,0.1)}
+@media(max-width:640px){.web-strip{padding:8px 12px;gap:10px}.web-strip-brand{font-size:13px;letter-spacing:2px}.web-strip-brand i{display:none}.web-strip-nav a{font-size:10px;padding:5px 8px;letter-spacing:1px}}
+/* Top existente: ajustar sticky para que no tape el web-strip */
+.top{top:42px !important}
+/* Footer web-style */
+.web-footer{background:#0a1628;color:rgba(255,255,255,0.7);padding:32px 24px 22px;margin-top:40px;border-top:3px solid var(--gold)}
+.web-footer-grid{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:30px;margin-bottom:22px}
+.web-footer h4{font-family:'Belleza',serif;font-size:14px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:10px;font-weight:400}
+.web-footer-col p,.web-footer-col a{font-size:12px;color:rgba(255,255,255,0.6);text-decoration:none;line-height:1.9;display:block;transition:color 0.2s}
+.web-footer-col a:hover{color:var(--gold)}
+.web-footer-brand{font-family:'Belleza',serif;font-size:18px;letter-spacing:3px;text-transform:uppercase;color:#fff;margin-bottom:8px;font-weight:400}
+.web-footer-tag{font-size:11px;color:rgba(255,255,255,0.4);line-height:1.6;max-width:300px}
+.web-footer-bottom{max-width:1200px;margin:0 auto;padding-top:18px;border-top:1px solid rgba(255,255,255,0.08);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;font-size:11px;color:rgba(255,255,255,0.35)}
+@media(max-width:768px){.web-footer-grid{grid-template-columns:1fr 1fr;gap:20px}.web-footer{padding:24px 16px 18px;margin-top:24px}}
+@media(max-width:480px){.web-footer-grid{grid-template-columns:1fr}}
 .sidebar{position:fixed;top:0;left:-280px;width:270px;height:100vh;background:var(--nv);z-index:200;transition:left 0.3s;padding:20px;display:flex;flex-direction:column}.sidebar.open{left:0}.sidebar-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:199;display:none}.sidebar-overlay.show{display:block}.sidebar h3{color:#fff;font-size:18px;margin-bottom:24px;font-weight:800}.sidebar-close{position:absolute;top:16px;right:16px;background:none;border:none;color:rgba(255,255,255,0.5);font-size:24px;cursor:pointer}.sn{display:block;padding:12px 16px;color:rgba(255,255,255,0.5);font-size:14px;font-weight:600;border-radius:10px;cursor:pointer;transition:var(--tr);margin-bottom:4px}.sn:hover{color:#fff;background:rgba(255,255,255,0.06)}.sn.on{color:var(--gold);background:rgba(245,159,0,0.1)}
 .wrap{max-width:920px;margin:0 auto;padding:20px 16px 40px}.pg{display:none;animation:fadeUp 0.3s ease}.pg.on{display:block}@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}.kpi{background:var(--sf);border-radius:var(--r);padding:14px 16px;border:1px solid var(--bd);position:relative;overflow:hidden}.kpi-stripe{position:absolute;top:0;left:0;right:0;height:3px}.kpi-label{font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:1.5px}.kpi-val{font-size:22px;font-weight:800;margin-top:4px;letter-spacing:-0.5px}
@@ -26,7 +53,7 @@
 .tl-item{display:flex;gap:12px;padding-bottom:14px}.tl-left{display:flex;flex-direction:column;align-items:center;width:22px;flex-shrink:0}.tl-dot{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:8px;color:#fff;flex-shrink:0}.tl-line{width:2px;flex:1;min-height:12px}.tl-right{flex:1}.tl-head{display:flex;justify-content:space-between;align-items:center;gap:6px;flex-wrap:wrap}.tl-name{font-size:13px;font-weight:600}.tl-date{font-size:10px;color:var(--tx3)}.tl-desc{font-size:11px;color:var(--tx2);margin-top:2px;line-height:1.5}.tl-form{margin-top:6px;display:flex;gap:6px;align-items:center;flex-wrap:wrap}.tl-form select,.tl-form input[type=date]{padding:7px 10px;border:1.5px solid var(--bd);border-radius:8px;font-size:12px;font-family:'Outfit';outline:none}
 .skel{background:linear-gradient(90deg,var(--sf2) 25%,#e8ecf4 50%,var(--sf2) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:6px}@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}.skel-card{background:var(--sf);border-radius:var(--r);padding:16px;border:1px solid var(--bd)}.skel-line{height:12px;margin-bottom:8px;border-radius:4px}
 .modal-bg{position:fixed;inset:0;background:rgba(10,22,40,0.5);display:none;align-items:center;justify-content:center;z-index:100;backdrop-filter:blur(6px)}.modal-bg.show{display:flex}.modal{background:var(--sf);border-radius:20px;padding:24px;max-width:460px;width:92%;box-shadow:var(--shl);max-height:90vh;overflow-y:auto;animation:modalIn 0.25s ease}@keyframes modalIn{from{opacity:0;transform:scale(0.95) translateY(10px)}to{opacity:1;transform:scale(1) translateY(0)}}.modal h3{font-size:17px;font-weight:800;color:var(--nv);margin-bottom:4px}.modal p{font-size:12px;color:var(--tx2);margin-bottom:12px}.modal label{font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:1.5px;display:block;margin-bottom:3px;margin-top:12px}.modal input,.modal select,.modal textarea{width:100%;padding:10px 12px;border:1.5px solid var(--bd);border-radius:var(--rs);font-size:13px;font-family:'Outfit';outline:none;transition:var(--tr)}.modal textarea{resize:vertical;min-height:50px}.modal input:focus,.modal select:focus,.modal textarea:focus{border-color:var(--ac)}.modal-btns{display:flex;gap:8px;margin-top:16px}.modal-btns button{flex:1}.preview-box{margin-top:12px;padding:12px;background:var(--sf2);border-radius:var(--rs);font-size:11px;color:var(--tx2);display:none;border:1px solid var(--bd)}.preview-box .preview-title{font-weight:700;color:var(--nv);margin-bottom:4px}
-.login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--nv);padding:24px}.login-card{max-width:360px;width:100%;text-align:center}.login-card h2{font-size:26px;font-weight:900;color:#fff;letter-spacing:-1px;margin-bottom:4px}.login-card .login-sub{color:var(--gold);font-size:10px;letter-spacing:3px;text-transform:uppercase;margin-bottom:28px;font-weight:600}.login-card input{width:100%;padding:14px;border:1.5px solid rgba(255,255,255,0.1);border-radius:var(--rs);font-size:15px;text-align:center;font-family:'Outfit';outline:none;margin-bottom:10px;letter-spacing:2px;background:rgba(255,255,255,0.04);color:#fff}.login-card input:focus{border-color:var(--gold)}.login-card input::placeholder{color:rgba(255,255,255,0.2)}.login-card button{width:100%;padding:14px;border:none;background:var(--gold);color:var(--nv);font-weight:800;font-size:14px;border-radius:var(--rs);cursor:pointer;margin-top:6px}
+.login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--nv);padding:24px}.login-card{max-width:360px;width:100%;text-align:center}.login-card h2{font-family:'Belleza',serif;font-size:32px;font-weight:400;color:#fff;letter-spacing:4px;text-transform:uppercase;margin-bottom:4px}.login-card .login-sub{color:var(--gold);font-size:10px;letter-spacing:3px;text-transform:uppercase;margin-bottom:28px;font-weight:600}.login-card input{width:100%;padding:14px;border:1.5px solid rgba(255,255,255,0.1);border-radius:var(--rs);font-size:15px;text-align:center;font-family:'Outfit';outline:none;margin-bottom:10px;letter-spacing:2px;background:rgba(255,255,255,0.04);color:#fff}.login-card input:focus{border-color:var(--gold)}.login-card input::placeholder{color:rgba(255,255,255,0.2)}.login-card button{width:100%;padding:14px;border:none;background:var(--gold);color:var(--nv);font-weight:800;font-size:14px;border-radius:var(--rs);cursor:pointer;margin-top:6px}
 .hidden{display:none!important}.log-list{max-height:250px;overflow-y:auto}.log-row{padding:8px 0;border-bottom:1px solid var(--bd);font-size:11px;display:flex;gap:10px}.log-row:last-child{border:none}.log-time{font-weight:700;color:var(--nv);min-width:60px}.log-text{color:var(--tx2);flex:1}
 .an-wrap{padding:0}
 .an-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px}
@@ -172,11 +199,33 @@
 </style>
 </head>
 <body>
-<div class="top"><button class="ham" onclick="toggleSidebar()">☰</button><div class="top-brand">Colombia Abogados <i>ops</i></div><div class="top-nav" id="navTabs"></div><button onclick="cerrarSesion()" style="background:none;border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.5);padding:6px 12px;border-radius:8px;font-size:11px;font-weight:600;cursor:pointer;font-family:Outfit;margin-left:8px">Salir</button></div>
+<div id="loginPage">
+<div class="login-wrap">
+<div class="login-card">
+<a href="https://abogadodecolombia.com" class="web-back-link" title="Volver al sitio web">← abogadodecolombia.com</a>
+<h2>Operaciones</h2>
+<p class="login-sub">Panel administrativo</p>
+<input type="password" id="keyInput" placeholder="API Key" onkeydown="if(event.key==='Enter')doLogin()">
+<button type="button" onclick="togglePw()" style="background:none;border:none;color:rgba(255,255,255,0.3);cursor:pointer;font-size:13px;margin-bottom:10px" id="pwToggle">👁 Mostrar clave</button>
+<button onclick="doLogin()">Ingresar</button>
+<label style="display:block;margin-top:16px;cursor:pointer;color:rgba(255,255,255,0.2);font-size:11px;font-weight:500"><input type="checkbox" id="rememberMe" checked style="display:none"><span id="remToggle">🔒 Recordar sesión</span></label>
+<div class="msg" id="loginMsg"></div>
+</div></div></div>
+<div id="appPage" class="hidden">
+<div class="web-strip" id="webStrip">
+  <a href="https://abogadodecolombia.com" class="web-strip-brand">Colombia Abogados<i>ley 2445</i></a>
+  <nav class="web-strip-nav">
+    <a href="https://abogadodecolombia.com">Inicio</a>
+    <a href="https://abogadodecolombia.com/#servicios">Servicios</a>
+    <a href="https://abogadodecolombia.com/#nosotros">Nosotros</a>
+    <a href="https://abogadodecolombia.com/#contacto">Contacto</a>
+    <a href="#" class="current">Portal Ops</a>
+  </nav>
+</div>
+<div class="top"><button class="ham" onclick="toggleSidebar()">☰</button><div class="top-brand">Colombia Abogados <i>ops</i></div><div class="top-nav" id="navTabs"></div><a href="https://abogadodecolombia.com" class="top-web-btn" title="Volver al sitio web">🏠 Sitio web</a><button onclick="cerrarSesion()" style="background:none;border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.5);padding:6px 12px;border-radius:8px;font-size:11px;font-weight:600;cursor:pointer;font-family:Outfit;margin-left:8px">Salir</button></div>
+<div class="wrap">
 <div class="sidebar-overlay" id="sideOverlay" onclick="toggleSidebar()"></div>
 <div class="sidebar" id="sidebar"><button class="sidebar-close" onclick="toggleSidebar()">✕</button><h3>Navegación</h3><div id="sideNav"></div><button onclick="cerrarSesion()" style="margin-top:auto;width:100%;padding:12px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.5);border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:Outfit">Cerrar sesión</button></div>
-<div id="loginPage"><div class="login-wrap"><div class="login-card"><h2>Operaciones</h2><p class="login-sub">Panel administrativo</p><input type="password" id="keyInput" placeholder="API Key" onkeydown="if(event.key==='Enter')doLogin()"><button type="button" onclick="togglePw()" style="background:none;border:none;color:rgba(255,255,255,0.3);cursor:pointer;font-size:13px;margin-bottom:10px" id="pwToggle">👁 Mostrar clave</button><button onclick="doLogin()">Ingresar</button><label style="display:block;margin-top:16px;cursor:pointer;color:rgba(255,255,255,0.2);font-size:11px;font-weight:500"><input type="checkbox" id="rememberMe" checked style="display:none"><span id="remToggle">🔒 Recordar sesión</span></label><div class="msg" id="loginMsg"></div></div></div></div>
-<div id="appPage" class="hidden"><div class="wrap">
 <div class="pg on" id="pg-dash"><div class="kpis" id="kpiBar"></div><div class="acts"><div class="act" onclick="goTab('pagos')"><div class="act-icon">💰</div><div class="act-title">Gestión de pagos</div><div class="act-sub">Verificar transferencias</div></div><div class="act" onclick="goTab('casos')"><div class="act-icon">📋</div><div class="act-title">Gestión de procesos</div><div class="act-sub">Mover etapas</div></div></div><div style="margin-bottom:16px"><button onclick="window.open('Propuesta_CRM.html','_blank')" style="width:100%;padding:14px;background:var(--sf);border:1.5px dashed var(--bd);border-radius:16px;cursor:pointer;font-family:Outfit;font-size:13px;font-weight:700;color:var(--ac);transition:all 0.2s" onmouseover="this.style.borderColor='var(--ac)'" onmouseout="this.style.borderColor='var(--bd)'">📝 Crear propuesta económica</button></div><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><h3 style="font-size:14px;font-weight:800;color:var(--nv)">Clientes activos</h3><button class="btn btn-ghost" onclick="DASH_CACHE=null;cargarDashboard(true)" style="font-size:10px;padding:5px 10px">↻ Refresh</button></div><div class="grid" id="clientsGrid"></div></div>
 <div class="pg" id="pg-prop"><div class="card"><h3>Pipeline de propuestas</h3><button class="btn btn-nv" onclick="cargarPropuestas()" style="margin-bottom:12px">Actualizar</button><div id="propOut"></div></div><div class="msg" id="propMsg"></div></div>
 <div class="pg" id="pg-pagos"><div class="sb"><input type="text" id="pagCed" placeholder="Cédula" inputmode="numeric" onkeydown="if(event.key==='Enter')buscarPagos()"><button onclick="buscarPagos()">Buscar</button></div><div id="pagOut"></div><div class="msg" id="pagMsg"></div></div>
@@ -293,7 +342,38 @@
 <div class="msg" id="anMsg"></div>
 </div>
 <div class="pg" id="pg-log"><div class="card"><h3>Actividad</h3><div class="log-list" id="logList"><div class="log-row"><span class="log-text" style="font-style:italic">Sin actividad</span></div></div></div></div>
-</div></div>
+</div>
+<footer class="web-footer">
+  <div class="web-footer-grid">
+    <div class="web-footer-col">
+      <div class="web-footer-brand">Colombia Abogados</div>
+      <p class="web-footer-tag">Firma especializada en insolvencia de persona natural no comerciante bajo la Ley 1564 de 2012 y Ley 2445 de 2025.</p>
+    </div>
+    <div class="web-footer-col">
+      <h4>Servicios</h4>
+      <a href="https://abogadodecolombia.com/#servicios">Acuerdo de pago</a>
+      <a href="https://abogadodecolombia.com/#servicios">Liquidación patrimonial</a>
+      <a href="https://abogadodecolombia.com/#servicios">Asesoría legal</a>
+    </div>
+    <div class="web-footer-col">
+      <h4>Enlaces</h4>
+      <a href="https://abogadodecolombia.com">Inicio</a>
+      <a href="https://abogadodecolombia.com/#nosotros">Nosotros</a>
+      <a href="https://abogadodecolombia.com/#contacto">Contacto</a>
+    </div>
+    <div class="web-footer-col">
+      <h4>Contacto</h4>
+      <a href="https://wa.me/573042426920">WhatsApp</a>
+      <a href="mailto:info@abogadodecolombia.com">info@abogadodecolombia.com</a>
+      <p>Medellín, Colombia</p>
+    </div>
+  </div>
+  <div class="web-footer-bottom">
+    <div>© <span id="footerYear"></span> Colombia Abogados · Todos los derechos reservados</div>
+    <div>Portal interno · Sistema operativo</div>
+  </div>
+</footer>
+</div>
 <div class="modal-bg" id="modalConvertir"><div class="modal"><h3>Convertir a cliente</h3><p id="modalNombre" style="margin-bottom:4px">—</p><label>Nombre completo *</label><input type="text" id="modNombre" placeholder="NOMBRE COMPLETO DEL CLIENTE"><label>Cédula *</label><input type="text" id="modCedula" placeholder="1077853107" inputmode="numeric"><label>Correo</label><input type="email" id="modCorreo" placeholder="cliente@email.com"><label>Modalidad</label><select id="modModalidad"><option value="LIQUIDACIÓN">Liquidación</option><option value="ACUERDO">Acuerdo</option></select><label>Honorarios ($)</label><input type="number" id="modHonorarios" placeholder="1000000" oninput="prevCom()"><label>Centro ($)</label><input type="number" id="modCentro" placeholder="2300000" oninput="prevCom()"><label>% Dto centro</label><input type="number" id="modDescuento" placeholder="0" value="0" oninput="prevCom()"><label>Motivo insolvencia</label><textarea id="modMotivo" placeholder="Ej: Disminución de ingresos..."></textarea><label>Estrategia jurídica</label><textarea id="modEstrategia" placeholder="Ej: Negociación técnica..."></textarea><label>Asesor</label><select id="modAsesor"><option value="DAYANNA VIDAL">DAYANNA VIDAL</option><option value="SEBASTIAN PUERTAS">SEBASTIAN PUERTAS</option><option value="">Sin asesor</option></select><div class="preview-box" id="modPreview"><div class="preview-title">Resumen</div><div id="modPrevContent"></div></div><div class="msg" id="modMsg"></div><div class="modal-btns"><button class="btn btn-ghost btn-lg" onclick="cerrarModal()">Cancelar</button><button class="btn btn-ok btn-lg" onclick="ejecutarConversion()">Crear cliente</button></div></div></div>
 <div class="modal-bg" id="modalDetalle"><div class="modal" style="max-width:480px"><div id="detalleContent"></div><div style="margin-top:14px;display:flex;gap:8px"><button class="btn btn-ok btn-lg" onclick="irAPagos()">💰 Pagos</button><button class="btn btn-nv btn-lg" onclick="irACasos()">📋 Proceso</button></div><button class="btn btn-lg" id="btnWaPIN" style="margin-top:6px;background:#25D366;color:#fff;display:none" onclick="enviarPINwa()">📲 Enviar PIN por WhatsApp</button><button class="btn btn-ghost btn-lg" style="margin-top:6px" onclick="document.getElementById('modalDetalle').classList.remove('show')">Cerrar</button></div></div>
 <script>
@@ -304,7 +384,7 @@ var TABS=[{id:"dash",label:"Dashboard",icon:"📊"},{id:"analytics",label:"Analy
 (function(){var saved=localStorage.getItem("admin_key");if(saved){document.getElementById("keyInput").value=saved;setTimeout(doLogin,300)}})();
 function buildTabs(){var h="",s="";TABS.forEach(function(t){h+='<div class="tn'+(t.id==="dash"?" on":"")+'" data-tab="'+t.id+'">'+t.label+'</div>';s+='<div class="sn'+(t.id==="dash"?" on":"")+'" data-tab="'+t.id+'">'+t.icon+" "+t.label+"</div>"});document.getElementById("navTabs").innerHTML=h;document.getElementById("sideNav").innerHTML=s;document.querySelectorAll(".tn,.sn").forEach(function(t){t.addEventListener("click",function(){goTab(t.dataset.tab);if(t.dataset.tab==="analytics")cargarAnalytics();if(t.dataset.tab==="com")cargarComisiones();if(t.classList.contains("sn"))toggleSidebar()})})}
 function goTab(n){document.querySelectorAll(".pg").forEach(function(p){p.classList.remove("on")});document.querySelectorAll(".tn,.sn").forEach(function(t){t.classList.remove("on")});var pg=document.getElementById("pg-"+n);if(pg)pg.classList.add("on");document.querySelectorAll(".tn,.sn").forEach(function(t){if(t.dataset.tab===n)t.classList.add("on")})}
-function cerrarSesion(){if(confirm("¿Cerrar sesión?")){localStorage.removeItem("admin_key");KEY="";DASH_CACHE=null;LEAD_ACTUAL=null;DETALLE_CED="";document.getElementById("appPage").classList.add("hidden");document.getElementById("loginPage").classList.remove("hidden");document.getElementById("loginPage").style.display="";document.getElementById("keyInput").value="";document.getElementById("keyInput").type="password";document.getElementById("navTabs").innerHTML="";document.getElementById("sideNav").innerHTML="";document.querySelectorAll(".pg").forEach(function(p){p.classList.remove("on")});document.getElementById("pg-dash").classList.add("on")}}
+function cerrarSesion(){if(confirm("¿Cerrar sesión?")){localStorage.removeItem("admin_key");KEY="";DASH_CACHE=null;LEAD_ACTUAL=null;DETALLE_CED="";document.getElementById("appPage").classList.add("hidden");document.getElementById("loginPage").classList.remove("hidden");document.getElementById("loginPage").style.display="";document.getElementById("keyInput").value="";document.getElementById("keyInput").type="password";document.getElementById("navTabs").innerHTML="";document.getElementById("sideNav").innerHTML="";document.getElementById("loginMsg").innerHTML="";document.querySelectorAll(".pg").forEach(function(p){p.classList.remove("on")});document.getElementById("pg-dash").classList.add("on")}}
 function toggleSidebar(){document.getElementById("sidebar").classList.toggle("open");document.getElementById("sideOverlay").classList.toggle("show")}
 function togglePw(){var i=document.getElementById("keyInput"),t=document.getElementById("pwToggle");if(i.type==="password"){i.type="text";t.textContent="🔒 Ocultar clave"}else{i.type="password";t.textContent="👁 Mostrar clave"}}
 function doLogin(){KEY=document.getElementById("keyInput").value.trim();if(!KEY){var saved=localStorage.getItem("admin_key");if(saved){KEY=saved}}if(document.getElementById("rememberMe").checked&&KEY){localStorage.setItem("admin_key",KEY)}if(!KEY){showMsg("loginMsg","Ingrese la API Key","err");return}showMsg("loginMsg","Verificando...","info");callAPI("action=info_cliente&key="+enc(KEY)+"&cedula=0").then(function(d){if(d.error==="API key inválida"){showMsg("loginMsg","Clave incorrecta","err");KEY="";return}document.getElementById("loginPage").classList.add("hidden");document.getElementById("appPage").classList.remove("hidden");buildTabs();addLog("Sesión iniciada");cargarDashboard(true)}).catch(function(){showMsg("loginMsg","Error de conexión","err")})}
@@ -1706,6 +1786,19 @@ function enviarPINwa(){
 }
 
 function triggerWH(payload){fetch(MAKE_WH,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)}).catch(function(){})}function showMsg(id,m,t){var e=document.getElementById(id);e.textContent=m;e.className="msg show "+t}function hideMsg(id){document.getElementById(id).className="msg"}function addLog(m){var c=document.getElementById("logList");var t=new Date().toLocaleTimeString("es-CO",{hour:"2-digit",minute:"2-digit"});var r=document.createElement("div");r.className="log-row";r.innerHTML='<span class="log-time">'+t+'</span><span class="log-text">'+m+"</span>";if(c.querySelector("[style]"))c.innerHTML="";c.insertBefore(r,c.firstChild)}
+
+// Init: año dinámico en footer + scroll-hide de web-strip
+(function(){
+  var yr=document.getElementById("footerYear");if(yr)yr.textContent=new Date().getFullYear();
+  var lastY=0,ws=document.getElementById("webStrip");
+  if(!ws)return;
+  window.addEventListener("scroll",function(){
+    var y=window.scrollY||document.documentElement.scrollTop;
+    if(y>80 && y>lastY)ws.classList.add("hidden-scroll");
+    else ws.classList.remove("hidden-scroll");
+    lastY=y;
+  },{passive:true});
+})();
 </script>
 </body>
 </html>

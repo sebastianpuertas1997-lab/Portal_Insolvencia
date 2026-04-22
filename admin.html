@@ -12,18 +12,23 @@
 .top-web-btn{display:none}
 .web-back-link{display:inline-block;color:rgba(255,255,255,0.45);font-size:11px;font-weight:600;letter-spacing:0.5px;text-decoration:none;margin-bottom:20px;padding:6px 14px;border:1px solid rgba(255,255,255,0.15);border-radius:20px;transition:all 0.2s}
 .web-back-link:hover{color:var(--gold);border-color:var(--gold);background:rgba(201,164,73,0.08)}
-/* Barra web superior simplificada */
-.web-strip{background:linear-gradient(180deg,#050a14 0%,#0a1628 100%);border-bottom:1px solid rgba(201,164,73,0.25);padding:11px 24px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:60;transition:transform 0.3s}
-.web-strip.hidden-scroll{transform:translateY(-100%)}
+/* Barra web superior — fluye con scroll */
+.web-strip{background:linear-gradient(180deg,#050a14 0%,#0a1628 100%);border-bottom:1px solid rgba(201,164,73,0.25);padding:11px 24px;display:flex;align-items:center;gap:16px}
 .web-strip-brand-wrap{display:flex;align-items:center;gap:14px;min-width:0;flex:1}
 .web-strip-brand{font-family:'Belleza',serif;color:#fff;font-size:17px;letter-spacing:4px;text-transform:uppercase;font-weight:400;white-space:nowrap}
 .web-strip-sep{width:1px;height:18px;background:rgba(255,255,255,0.15)}
 .web-strip-current{font-family:'Belleza',serif;color:var(--gold);font-size:11px;letter-spacing:3px;text-transform:uppercase;font-weight:400;padding:5px 12px;border:1px solid rgba(201,164,73,0.4);border-radius:4px;background:rgba(201,164,73,0.06);white-space:nowrap}
-.web-strip-back{color:rgba(255,255,255,0.55);font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:2px;padding:7px 14px;border-radius:20px;text-decoration:none;transition:all 0.2s;font-family:'Belleza',serif;border:1px solid rgba(255,255,255,0.15);white-space:nowrap}
+.web-strip-back{color:rgba(255,255,255,0.7);font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:2px;padding:7px 14px;border-radius:20px;text-decoration:none;transition:all 0.2s;font-family:'Belleza',serif;border:1px solid rgba(255,255,255,0.2);white-space:nowrap;flex-shrink:0}
 .web-strip-back:hover{color:var(--nv);background:var(--gold);border-color:var(--gold)}
-@media(max-width:640px){.web-strip{padding:9px 12px;gap:10px}.web-strip-brand{font-size:12px;letter-spacing:2px}.web-strip-sep{height:14px}.web-strip-current{font-size:9px;letter-spacing:2px;padding:4px 8px}.web-strip-back{font-size:9px;padding:5px 10px;letter-spacing:1.5px}}
-/* Top existente: ajustar sticky para que no tape el web-strip */
-.top{top:42px !important}
+@media(max-width:700px){
+  .web-strip{padding:10px 14px;gap:10px}
+  .web-strip-brand{font-size:13px;letter-spacing:2px}
+  .web-strip-sep{display:none}
+  .web-strip-current{display:none}
+  .web-strip-back{font-size:9px;padding:6px 11px;letter-spacing:1.5px}
+}
+/* Top bar: sticky en top:0, sin gap */
+.top{top:0 !important}
 /* Footer web-style */
 .web-footer{background:#0a1628;color:rgba(255,255,255,0.7);padding:32px 24px 22px;margin-top:40px;border-top:3px solid var(--gold)}
 .web-footer-grid{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:30px;margin-bottom:22px}
@@ -211,7 +216,7 @@
 <div class="msg" id="loginMsg"></div>
 </div></div></div>
 <div id="appPage" class="hidden">
-<div class="web-strip" id="webStrip">
+<div class="web-strip">
   <div class="web-strip-brand-wrap">
     <span class="web-strip-brand">Colombia Abogados</span>
     <span class="web-strip-sep"></span>
@@ -222,7 +227,7 @@
 <div class="top"><button class="ham" onclick="toggleSidebar()">☰</button><div class="top-nav" id="navTabs"></div><button onclick="cerrarSesion()" style="background:none;border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.5);padding:6px 12px;border-radius:8px;font-size:11px;font-weight:600;cursor:pointer;font-family:Outfit;margin-left:auto">Salir</button></div>
 <div class="wrap">
 <div class="sidebar-overlay" id="sideOverlay" onclick="toggleSidebar()"></div>
-<div class="sidebar" id="sidebar"><button class="sidebar-close" onclick="toggleSidebar()">✕</button><h3>Navegación</h3><div id="sideNav"></div><button onclick="cerrarSesion()" style="margin-top:auto;width:100%;padding:12px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.5);border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:Outfit">Cerrar sesión</button></div>
+<div class="sidebar" id="sidebar"><button class="sidebar-close" onclick="toggleSidebar()">✕</button><h3>Navegación</h3><div id="sideNav"></div><a href="https://abogadodecolombia.com/abogados/" style="margin-top:auto;display:block;text-align:center;padding:12px;background:rgba(201,164,73,0.08);border:1px solid rgba(201,164,73,0.3);color:var(--gold);border-radius:10px;font-size:12px;font-weight:600;text-decoration:none;font-family:'Belleza',serif;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px">← Volver al sitio web</a><button onclick="cerrarSesion()" style="width:100%;padding:12px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.5);border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:Outfit">Cerrar sesión</button></div>
 <div class="pg on" id="pg-dash"><div class="kpis" id="kpiBar"></div><div class="acts"><div class="act" onclick="goTab('pagos')"><div class="act-icon">💰</div><div class="act-title">Gestión de pagos</div><div class="act-sub">Verificar transferencias</div></div><div class="act" onclick="goTab('casos')"><div class="act-icon">📋</div><div class="act-title">Gestión de procesos</div><div class="act-sub">Mover etapas</div></div></div><div style="margin-bottom:16px"><button onclick="window.open('Propuesta_CRM.html','_blank')" style="width:100%;padding:14px;background:var(--sf);border:1.5px dashed var(--bd);border-radius:16px;cursor:pointer;font-family:Outfit;font-size:13px;font-weight:700;color:var(--ac);transition:all 0.2s" onmouseover="this.style.borderColor='var(--ac)'" onmouseout="this.style.borderColor='var(--bd)'">📝 Crear propuesta económica</button></div><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><h3 style="font-size:14px;font-weight:800;color:var(--nv)">Clientes activos</h3><button class="btn btn-ghost" onclick="DASH_CACHE=null;cargarDashboard(true)" style="font-size:10px;padding:5px 10px">↻ Refresh</button></div><div class="grid" id="clientsGrid"></div></div>
 <div class="pg" id="pg-prop"><div class="card"><h3>Pipeline de propuestas</h3><button class="btn btn-nv" onclick="cargarPropuestas()" style="margin-bottom:12px">Actualizar</button><div id="propOut"></div></div><div class="msg" id="propMsg"></div></div>
 <div class="pg" id="pg-pagos"><div class="sb"><input type="text" id="pagCed" placeholder="Cédula" inputmode="numeric" onkeydown="if(event.key==='Enter')buscarPagos()"><button onclick="buscarPagos()">Buscar</button></div><div id="pagOut"></div><div class="msg" id="pagMsg"></div></div>
@@ -360,8 +365,8 @@
     </div>
     <div class="web-footer-col">
       <h4>Contacto</h4>
-      <a href="https://wa.me/573042426920">WhatsApp</a>
-      <a href="mailto:info@abogadodecolombia.com">info@abogadodecolombia.com</a>
+      <a href="https://wa.me/573043774232">+57 304 3774232</a>
+      <a href="mailto:contacto@abogadodecolombia.com">contacto@abogadodecolombia.com</a>
       <p>Medellín, Colombia</p>
     </div>
   </div>
@@ -1784,17 +1789,9 @@ function enviarPINwa(){
 
 function triggerWH(payload){fetch(MAKE_WH,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)}).catch(function(){})}function showMsg(id,m,t){var e=document.getElementById(id);e.textContent=m;e.className="msg show "+t}function hideMsg(id){document.getElementById(id).className="msg"}function addLog(m){var c=document.getElementById("logList");var t=new Date().toLocaleTimeString("es-CO",{hour:"2-digit",minute:"2-digit"});var r=document.createElement("div");r.className="log-row";r.innerHTML='<span class="log-time">'+t+'</span><span class="log-text">'+m+"</span>";if(c.querySelector("[style]"))c.innerHTML="";c.insertBefore(r,c.firstChild)}
 
-// Init: año dinámico en footer + scroll-hide de web-strip
+// Init: año dinámico en footer
 (function(){
   var yr=document.getElementById("footerYear");if(yr)yr.textContent=new Date().getFullYear();
-  var lastY=0,ws=document.getElementById("webStrip");
-  if(!ws)return;
-  window.addEventListener("scroll",function(){
-    var y=window.scrollY||document.documentElement.scrollTop;
-    if(y>80 && y>lastY)ws.classList.add("hidden-scroll");
-    else ws.classList.remove("hidden-scroll");
-    lastY=y;
-  },{passive:true});
 })();
 </script>
 </body>

@@ -79,6 +79,9 @@
 .liq-btn-pay:hover{background:#15803d}
 .liq-btn-revert{background:var(--sf);color:var(--warn);border:1px solid var(--warn);padding:5px 10px;border-radius:6px;font-family:inherit;font-size:10px;font-weight:700;cursor:pointer}
 .liq-btn-revert:hover{background:var(--warnb)}
+.liq-btn-edit{background:var(--sf);color:var(--info);border:1px solid var(--info);padding:5px 8px;border-radius:6px;font-family:inherit;font-size:11px;cursor:pointer}
+.liq-btn-edit:hover{background:var(--infob)}
+.liqt-footer td{border-top:2px solid var(--nv) !important;background:var(--sf2) !important}
 .liq-group-card{background:var(--sf);border:1.5px solid var(--bd);border-radius:10px;padding:12px 14px}
 .liq-group-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
 .liq-group-nm{font-size:13px;font-weight:800;color:var(--nv)}
@@ -202,8 +205,19 @@
 <div id="liqKpis" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px;margin-bottom:12px"></div>
 <div class="card" style="padding:12px;margin-bottom:12px"><div style="font-size:11px;font-weight:800;color:var(--tx3);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Pendientes por comercial</div><div id="liqPorComercial"></div></div>
 <div class="card" style="padding:0;overflow:hidden">
-<div style="padding:12px 14px;border-bottom:1px solid var(--bd);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px"><div style="font-size:11px;font-weight:800;color:var(--tx3);text-transform:uppercase;letter-spacing:1px">Eventos pendientes de pago al comercial</div>
+<div style="padding:12px 14px;border-bottom:1px solid var(--bd);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px"><div style="font-size:11px;font-weight:800;color:var(--tx3);text-transform:uppercase;letter-spacing:1px">Eventos de liquidación</div>
 <div style="display:flex;gap:4px"><button id="liq-v-pend" class="com-subtab on" onclick="cambiarVistaLiq('pend')" style="font-size:10px;padding:5px 10px">⏳ Pendientes (<span id="liqCountPend">0</span>)</button><button id="liq-v-hist" class="com-subtab" onclick="cambiarVistaLiq('hist')" style="font-size:10px;padding:5px 10px">✓ Historial (<span id="liqCountHist">0</span>)</button></div>
+</div>
+<!-- Barra de filtros -->
+<div style="padding:10px 14px;background:var(--sf2);border-bottom:1px solid var(--bd);display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+<label style="font-size:10px;font-weight:700;color:var(--tx2);text-transform:uppercase">Comercial:</label>
+<select id="liqFiltroComercial" onchange="renderLiquidaciones()" style="padding:6px 10px;border:1px solid var(--bd);border-radius:6px;font-family:inherit;font-size:11px;font-weight:600;cursor:pointer;background:var(--sf)"><option value="">Todos</option></select>
+<label style="font-size:10px;font-weight:700;color:var(--tx2);text-transform:uppercase">Tipo:</label>
+<select id="liqFiltroTipo" onchange="renderLiquidaciones()" style="padding:6px 10px;border:1px solid var(--bd);border-radius:6px;font-family:inherit;font-size:11px;font-weight:600;cursor:pointer;background:var(--sf)"><option value="">Todos</option><option value="base">Base</option><option value="adicional">Adicional</option><option value="centro">Centro</option></select>
+<label style="font-size:10px;font-weight:700;color:var(--tx2);text-transform:uppercase">Mes:</label>
+<select id="liqFiltroMes" onchange="renderLiquidaciones()" style="padding:6px 10px;border:1px solid var(--bd);border-radius:6px;font-family:inherit;font-size:11px;font-weight:600;cursor:pointer;background:var(--sf);min-width:130px"><option value="">Todos los meses</option></select>
+<button class="btn btn-ghost" onclick="limpiarFiltrosLiq()" style="font-size:10px;padding:5px 10px;margin-left:auto">Limpiar filtros</button>
+<button class="btn btn-ghost" onclick="exportarCSVLiquidaciones()" style="font-size:10px;padding:5px 10px">📊 CSV</button>
 </div>
 <div id="liqTablaWrap" style="overflow-x:auto"></div>
 </div>
@@ -618,22 +632,89 @@ function renderLiquidaciones(){
   if(!LIQ_CACHE)return;
   var d=LIQ_CACHE;
 
-  // KPIs
-  document.getElementById("liqCountPend").innerText=d.totalPendientes;
-  document.getElementById("liqCountHist").innerText=d.totalPagados;
+  // Poblar filtro de comercial (una sola vez)
+  var selCom=document.getElementById("liqFiltroComercial");
+  if(selCom && selCom.options.length<=1){
+    d.comerciales.forEach(function(c){
+      var o=document.createElement("option");o.value=c.nombre;o.text=c.nombre;selCom.add(o);
+    });
+  }
+
+  // Poblar filtro de meses (una sola vez) basado en fechas reales de eventos
+  var selMes=document.getElementById("liqFiltroMes");
+  if(selMes && selMes.options.length<=1){
+    var mesesSet={};
+    d.pendientes.concat(d.pagados).forEach(function(ev){
+      var ref=ev.fechaPagoRaw||ev.fechaRaw;
+      if(!ref)return;
+      var dt=new Date(ref);if(isNaN(dt))return;
+      var key=dt.getFullYear()+"-"+String(dt.getMonth()+1).padStart(2,"0");
+      mesesSet[key]=true;
+    });
+    var mesesArr=Object.keys(mesesSet).sort().reverse();
+    mesesArr.forEach(function(m){
+      var o=document.createElement("option");o.value=m;
+      var partes=m.split("-");var nombres=["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"];
+      o.text=nombres[Number(partes[1])-1]+" "+partes[0];
+      selMes.add(o);
+    });
+  }
+
+  // Aplicar filtros
+  var fCom=document.getElementById("liqFiltroComercial").value;
+  var fTipo=document.getElementById("liqFiltroTipo").value;
+  var fMes=document.getElementById("liqFiltroMes").value;
+
+  function matchFiltros(ev, usarFechaPago){
+    if(fCom && ev.comercial!==fCom)return false;
+    if(fTipo && ev.tipo!==fTipo)return false;
+    if(fMes){
+      var ref=usarFechaPago?(ev.fechaPagoRaw||ev.fechaRaw):ev.fechaRaw;
+      if(!ref)return false;
+      var dt=new Date(ref);if(isNaN(dt))return false;
+      var key=dt.getFullYear()+"-"+String(dt.getMonth()+1).padStart(2,"0");
+      if(key!==fMes)return false;
+    }
+    return true;
+  }
+
+  var pendFilt=d.pendientes.filter(function(e){return matchFiltros(e,false)});
+  var histFilt=d.pagados.filter(function(e){return matchFiltros(e,true)});
+
+  // Counts en toggles
+  document.getElementById("liqCountPend").innerText=pendFilt.length;
+  document.getElementById("liqCountHist").innerText=histFilt.length;
+
+  // KPIs basados en filtros (para que cambien al filtrar)
+  var kpiPend=0, kpiPagado=0;
+  pendFilt.forEach(function(e){kpiPend+=e.montoCalculado});
+  histFilt.forEach(function(e){kpiPagado+=e.montoPagado||e.montoCalculado});
+
   var kh=''
-    +'<div class="kpi"><div class="kpi-stripe" style="background:var(--warn)"></div><div class="kpi-label">Pendiente por pagar</div><div class="kpi-val" style="color:var(--warn);font-size:18px">'+fm(d.totales.pendiente)+'</div></div>'
-    +'<div class="kpi"><div class="kpi-stripe" style="background:var(--ok)"></div><div class="kpi-label">Ya pagado al comercial</div><div class="kpi-val" style="color:var(--ok);font-size:18px">'+fm(d.totales.pagado)+'</div></div>'
-    +'<div class="kpi"><div class="kpi-stripe" style="background:var(--info)"></div><div class="kpi-label">Eventos pendientes</div><div class="kpi-val" style="color:var(--info);font-size:18px">'+d.totalPendientes+'</div></div>'
-    +'<div class="kpi"><div class="kpi-stripe" style="background:var(--nv)"></div><div class="kpi-label">Eventos pagados</div><div class="kpi-val" style="color:var(--nv);font-size:18px">'+d.totalPagados+'</div></div>';
+    +'<div class="kpi"><div class="kpi-stripe" style="background:var(--warn)"></div><div class="kpi-label">Pendiente por pagar</div><div class="kpi-val" style="color:var(--warn);font-size:18px">'+fm(kpiPend)+'</div></div>'
+    +'<div class="kpi"><div class="kpi-stripe" style="background:var(--ok)"></div><div class="kpi-label">Pagado al comercial</div><div class="kpi-val" style="color:var(--ok);font-size:18px">'+fm(kpiPagado)+'</div></div>'
+    +'<div class="kpi"><div class="kpi-stripe" style="background:var(--info)"></div><div class="kpi-label">Eventos pendientes</div><div class="kpi-val" style="color:var(--info);font-size:18px">'+pendFilt.length+'</div></div>'
+    +'<div class="kpi"><div class="kpi-stripe" style="background:var(--nv)"></div><div class="kpi-label">Eventos pagados</div><div class="kpi-val" style="color:var(--nv);font-size:18px">'+histFilt.length+'</div></div>';
   document.getElementById("liqKpis").innerHTML=kh;
 
-  // Resumen por comercial (tarjetas)
+  // Resumen por comercial (basado en filtros activos)
+  var porCom={};
+  pendFilt.forEach(function(e){
+    if(!porCom[e.comercial])porCom[e.comercial]={pendiente:0,pagado:0,eventos:0};
+    porCom[e.comercial].pendiente+=e.montoCalculado;
+    porCom[e.comercial].eventos++;
+  });
+  histFilt.forEach(function(e){
+    if(!porCom[e.comercial])porCom[e.comercial]={pendiente:0,pagado:0,eventos:0};
+    porCom[e.comercial].pagado+=e.montoPagado||e.montoCalculado;
+    porCom[e.comercial].eventos++;
+  });
   var cc="";
-  if(!d.comerciales.length)cc='<p style="color:var(--tx3);font-size:12px">No hay comerciales con eventos</p>';
+  var comArr=Object.keys(porCom).map(function(nm){var x=porCom[nm];x.nombre=nm;return x}).sort(function(a,b){return b.pendiente-a.pendiente});
+  if(!comArr.length)cc='<p style="color:var(--tx3);font-size:12px">Sin datos con los filtros aplicados</p>';
   else {
     cc='<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:10px">';
-    d.comerciales.forEach(function(c){
+    comArr.forEach(function(c){
       cc+='<div class="liq-group-card">';
       cc+='<div class="liq-group-head"><div class="liq-group-nm">'+c.nombre+'</div><div class="liq-group-eventos">'+c.eventos+' eventos</div></div>';
       cc+='<div class="liq-group-nums">';
@@ -646,29 +727,31 @@ function renderLiquidaciones(){
   document.getElementById("liqPorComercial").innerHTML=cc;
 
   // Tabla según vista (pendientes / historial)
-  var items=LIQ_VISTA==="pend"?d.pendientes:d.pagados;
+  var items=LIQ_VISTA==="pend"?pendFilt:histFilt;
   if(!items.length){
-    document.getElementById("liqTablaWrap").innerHTML='<p style="padding:24px;color:var(--tx3);text-align:center">'+(LIQ_VISTA==="pend"?"🎉 No hay eventos pendientes de pago al comercial":"No hay historial aún")+'</p>';
+    document.getElementById("liqTablaWrap").innerHTML='<p style="padding:24px;color:var(--tx3);text-align:center">'+(LIQ_VISTA==="pend"?(fCom||fTipo||fMes?"Sin eventos pendientes con los filtros aplicados":"🎉 No hay eventos pendientes de pago al comercial"):"No hay historial con los filtros aplicados")+'</p>';
     return;
   }
 
   var t='<table class="liqt"><thead><tr>';
   if(LIQ_VISTA==="pend"){
-    t+='<th>Fecha liberación</th><th>Cliente</th><th>Comercial</th><th class="c">Tipo</th><th class="num">Monto calculado</th><th class="c">Acción</th>';
+    t+='<th>Fecha liberación</th><th>Cliente</th><th>Comercial</th><th class="c">Tipo</th><th class="num">Monto</th><th class="c">Acciones</th>';
   } else {
-    t+='<th>Fecha pago</th><th>Cliente</th><th>Comercial</th><th class="c">Tipo</th><th class="num">Monto pagado</th><th class="num">Calculado</th><th>Motivo</th><th class="c">Acción</th>';
+    t+='<th>Fecha pago</th><th>Cliente</th><th>Comercial</th><th class="c">Tipo</th><th class="num">Monto pagado</th><th class="num">Calculado</th><th>Motivo</th><th class="c">Acciones</th>';
   }
   t+='</tr></thead><tbody>';
 
   items.forEach(function(ev,i){
+    var globalIdx=LIQ_CACHE[LIQ_VISTA==="pend"?"pendientes":"pagados"].findIndex(function(e){return e.id===ev.id});
     t+='<tr>';
     if(LIQ_VISTA==="pend"){
+      var diffFlag=ev.difiere?' <span title="El valor guardado difiere del calculado por el sistema ('+fm(ev.montoCalculadoActual)+')" style="color:var(--warn);font-size:10px">⚠️ manual</span>':'';
       t+='<td style="font-size:10px;color:var(--tx3)">'+ev.fecha+'</td>';
       t+='<td class="nm">'+ev.nombre+'<div style="font-size:9px;color:var(--tx3)">CC '+ev.cedula+'</div></td>';
       t+='<td style="font-size:11px">'+ev.comercial+'</td>';
       t+='<td class="c"><span class="liq-tipo '+ev.tipo+'">'+ev.tipo+'</span></td>';
-      t+='<td class="num" style="color:var(--warn)">'+fm(ev.montoCalculado)+'</td>';
-      t+='<td class="c"><button class="liq-btn-pay" onclick="abrirModalPago(\''+ev.id+'\','+i+')">✓ Pagar</button></td>';
+      t+='<td class="num" style="color:var(--warn)">'+fm(ev.montoCalculado)+diffFlag+'</td>';
+      t+='<td class="c" style="white-space:nowrap"><button class="liq-btn-pay" onclick="abrirModalPago(\''+ev.id+'\','+globalIdx+')">✓ Pagar</button> <button class="liq-btn-edit" onclick="abrirModalEditar(\''+ev.id+'\',\'pend\','+globalIdx+')" title="Editar">✏️</button></td>';
     } else {
       var dif=ev.montoPagado!==ev.montoCalculado;
       t+='<td style="font-size:10px;color:var(--tx3)">'+ev.fechaPago+'</td>';
@@ -678,12 +761,26 @@ function renderLiquidaciones(){
       t+='<td class="num" style="color:var(--ok)">'+fm(ev.montoPagado)+'</td>';
       t+='<td class="num" style="color:var(--tx3);font-size:10px">'+fm(ev.montoCalculado)+'</td>';
       t+='<td style="font-size:10px;color:var(--tx2);max-width:180px">'+(dif?'⚠️ '+(ev.motivo||"Sin motivo"):"—")+'</td>';
-      t+='<td class="c"><button class="liq-btn-revert" onclick="confirmarRevertir(\''+ev.id+'\')">↩ Revertir</button></td>';
+      t+='<td class="c" style="white-space:nowrap"><button class="liq-btn-revert" onclick="confirmarRevertir(\''+ev.id+'\')">↩ Revertir</button> <button class="liq-btn-edit" onclick="abrirModalEditar(\''+ev.id+'\',\'hist\','+globalIdx+')" title="Editar">✏️</button></td>';
     }
     t+='</tr>';
   });
+
+  // FOOTER con totales
+  if(LIQ_VISTA==="pend"){
+    t+='<tr class="liqt-footer"><td colspan="4" style="text-align:right;font-weight:800;color:var(--tx2);padding:10px 8px;background:var(--sf2)">TOTAL FILTRADO:</td><td class="num" style="padding:10px 8px;background:var(--sf2);color:var(--warn);font-weight:800;font-size:13px">'+fm(kpiPend)+'</td><td style="background:var(--sf2)"></td></tr>';
+  } else {
+    t+='<tr class="liqt-footer"><td colspan="4" style="text-align:right;font-weight:800;color:var(--tx2);padding:10px 8px;background:var(--sf2)">TOTAL FILTRADO:</td><td class="num" style="padding:10px 8px;background:var(--sf2);color:var(--ok);font-weight:800;font-size:13px">'+fm(kpiPagado)+'</td><td colspan="3" style="background:var(--sf2)"></td></tr>';
+  }
   t+='</tbody></table>';
   document.getElementById("liqTablaWrap").innerHTML=t;
+}
+
+function limpiarFiltrosLiq(){
+  document.getElementById("liqFiltroComercial").value="";
+  document.getElementById("liqFiltroTipo").value="";
+  document.getElementById("liqFiltroMes").value="";
+  renderLiquidaciones();
 }
 
 function abrirModalPago(id,i){
@@ -744,6 +841,99 @@ function confirmarRevertir(id){
     cargarLiquidaciones();
     addLog("Liquidación "+id+" revertida");
   });
+}
+
+// ====================== EDITAR EVENTO ======================
+function abrirModalEditar(id,tipo,idx){
+  var ev=LIQ_CACHE[tipo==="pend"?"pendientes":"pagados"][idx];
+  if(!ev)return;
+  document.getElementById("liqModalSub").innerHTML=ev.nombre+' · '+ev.comercial+' · <strong>'+ev.tipo.toUpperCase()+'</strong> · <span style="color:var(--info)">Modo edición</span>';
+  var b='<div style="padding:10px 12px;background:var(--infob);color:var(--info);border-radius:8px;font-size:11px;margin-bottom:14px">💡 Los cambios aquí son bidireccionales con la hoja <strong>COMISIONES_PAGOS</strong>. También puedes editar directamente en el Excel.</div>';
+  if(ev.difiere){
+    b+='<div style="padding:8px 10px;background:var(--warnb);color:var(--warn);border-radius:6px;font-size:10px;margin-bottom:12px">⚠️ El valor guardado ('+fm(ev.montoCalculado)+') difiere del calculado actual por el sistema ('+fm(ev.montoCalculadoActual)+'). <button onclick="aplicarCalculadoActual(\''+id+'\','+ev.montoCalculadoActual+')" style="margin-left:6px;padding:3px 8px;border-radius:4px;background:var(--info);color:white;border:none;font-size:10px;cursor:pointer">Aplicar calculado</button></div>';
+  }
+  b+='<div class="liq-field"><label class="liq-field-lbl">Monto calculado (base)</label><input type="number" id="edMontoCalc" class="liq-input" value="'+ev.montoCalculado+'"></div>';
+  b+='<div class="liq-field"><label class="liq-field-lbl">Estado</label><select id="edEstado" class="liq-input"><option value="PENDIENTE"'+(ev.estado==="PENDIENTE"?" selected":"")+'>Pendiente</option><option value="PAGADO"'+(ev.estado==="PAGADO"?" selected":"")+'>Pagado</option></select></div>';
+  var fp=ev.fechaPagoRaw?new Date(ev.fechaPagoRaw).toISOString().slice(0,10):"";
+  b+='<div class="liq-field"><label class="liq-field-lbl">Fecha de pago al comercial (solo si está Pagado)</label><input type="date" id="edFechaPago" class="liq-input" value="'+fp+'"></div>';
+  b+='<div class="liq-field"><label class="liq-field-lbl">Monto realmente pagado (solo si está Pagado)</label><input type="number" id="edMontoPag" class="liq-input" value="'+(ev.montoPagado||"")+'"></div>';
+  b+='<div class="liq-field"><label class="liq-field-lbl">Motivo (si hay diferencia)</label><input type="text" id="edMotivo" class="liq-input" value="'+(ev.motivo||"").replace(/"/g,'&quot;')+'"></div>';
+  b+='<div class="liq-field"><label class="liq-field-lbl">Observaciones</label><input type="text" id="edObs" class="liq-input" value="'+(ev.observaciones||"").replace(/"/g,'&quot;')+'"></div>';
+  b+='<div id="edMsg"></div>';
+  b+='<div style="display:flex;gap:8px;justify-content:flex-end;margin-top:14px"><button class="btn btn-ghost" onclick="document.getElementById(\'liqModal\').style.display=\'none\'" style="padding:10px 18px">Cancelar</button><button class="btn btn-nv" onclick="guardarEdicion(\''+id+'\')" style="padding:10px 18px;font-size:12px">💾 Guardar cambios</button></div>';
+  document.getElementById("liqModalBody").innerHTML=b;
+  document.getElementById("liqModal").style.display="flex";
+}
+
+function aplicarCalculadoActual(id,valor){
+  document.getElementById("edMontoCalc").value=valor;
+}
+
+function guardarEdicion(id){
+  var montoCalc=document.getElementById("edMontoCalc").value;
+  var estado=document.getElementById("edEstado").value;
+  var fechaPago=document.getElementById("edFechaPago").value;
+  var montoPag=document.getElementById("edMontoPag").value;
+  var motivo=document.getElementById("edMotivo").value;
+  var obs=document.getElementById("edObs").value;
+  var msg=document.getElementById("edMsg");
+  msg.innerHTML='<div class="msg info">Guardando...</div>';
+  var qs="action=editar_evento&key="+enc(KEY)+"&id="+enc(id)
+    +"&monto_calculado="+enc(montoCalc)
+    +"&estado="+enc(estado)
+    +"&fecha_pago="+enc(fechaPago)
+    +"&monto_pagado="+enc(montoPag)
+    +"&motivo="+enc(motivo)
+    +"&observaciones="+enc(obs);
+  callAPI(qs).then(function(d){
+    if(!d.ok){msg.innerHTML='<div class="msg err">'+(d.error||"Error")+'</div>';return}
+    msg.innerHTML='<div class="msg ok">✅ Cambios guardados</div>';
+    setTimeout(function(){
+      document.getElementById("liqModal").style.display="none";
+      LIQ_CACHE=null;COM_CACHE=null;
+      cargarLiquidaciones();
+      addLog("Evento "+id+" editado");
+    },900);
+  }).catch(function(){msg.innerHTML='<div class="msg err">Error de conexión</div>'});
+}
+
+// ====================== CSV LIQUIDACIONES ======================
+function exportarCSVLiquidaciones(){
+  if(!LIQ_CACHE){showMsg("comMsg","Carga los datos primero","err");return}
+  var fCom=document.getElementById("liqFiltroComercial").value;
+  var fTipo=document.getElementById("liqFiltroTipo").value;
+  var fMes=document.getElementById("liqFiltroMes").value;
+  function mf(ev,usar){
+    if(fCom&&ev.comercial!==fCom)return false;
+    if(fTipo&&ev.tipo!==fTipo)return false;
+    if(fMes){
+      var ref=usar?(ev.fechaPagoRaw||ev.fechaRaw):ev.fechaRaw;
+      if(!ref)return false;
+      var dt=new Date(ref);if(isNaN(dt))return false;
+      var key=dt.getFullYear()+"-"+String(dt.getMonth()+1).padStart(2,"0");
+      if(key!==fMes)return false;
+    }
+    return true;
+  }
+  var items=LIQ_VISTA==="pend"?LIQ_CACHE.pendientes.filter(function(e){return mf(e,false)}):LIQ_CACHE.pagados.filter(function(e){return mf(e,true)});
+  if(!items.length){showMsg("comMsg","Sin datos para exportar","err");return}
+  var headers=["ID","Fecha Liberación","Cédula","Cliente","Comercial","Tipo","Monto Calculado","Estado","Fecha Pago","Monto Pagado","Motivo","Observaciones"];
+  var rows=[headers];
+  items.forEach(function(e){
+    rows.push([e.id,e.fecha,e.cedula,e.nombre,e.comercial,e.tipo,e.montoCalculado,e.estado,e.fechaPago,e.montoPagado||"",e.motivo||"",e.observaciones||""]);
+  });
+  // Total al final
+  var total=0;
+  items.forEach(function(e){total+=(LIQ_VISTA==="pend"?e.montoCalculado:(e.montoPagado||e.montoCalculado))});
+  rows.push(["","","","","","TOTAL",total,"","","","",""]);
+  var csv=rows.map(function(r){return r.map(function(v){var s=String(v==null?"":v);return s.indexOf(",")>-1||s.indexOf('"')>-1||s.indexOf("\n")>-1?'"'+s.replace(/"/g,'""')+'"':s}).join(",")}).join("\n");
+  var blob=new Blob(["\ufeff"+csv],{type:"text/csv;charset=utf-8;"});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement("a");
+  var suffix=[fCom,fTipo,fMes,LIQ_VISTA].filter(Boolean).join("_").replace(/\s+/g,"_")||"Todos";
+  a.href=url;a.download="Liquidaciones_"+suffix+"_"+new Date().toISOString().slice(0,10)+".csv";
+  document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
+  showMsg("comMsg","✅ CSV generado","ok");
 }
 
 // ====================== EXPORT CSV ======================

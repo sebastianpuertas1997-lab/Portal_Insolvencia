@@ -200,6 +200,10 @@
 <select id="comFiltro" onchange="renderComisiones()" style="padding:8px 12px;border:1.5px solid var(--bd);border-radius:8px;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;background:var(--sf);min-width:180px"><option value="">Todos los comerciales</option></select>
 <label style="font-size:11px;font-weight:700;color:var(--tx2);text-transform:uppercase;margin-left:8px">Estado:</label>
 <select id="comEstado" onchange="renderComisiones()" style="padding:8px 12px;border:1.5px solid var(--bd);border-radius:8px;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;background:var(--sf)"><option value="">Todos</option><option value="con_pendiente">Con pendiente</option><option value="sin_pagos">Sin pagos</option><option value="completos">Liquidados 100%</option></select>
+<label style="font-size:11px;font-weight:700;color:var(--tx2);text-transform:uppercase;margin-left:8px">Mes:</label>
+<select id="comFiltroMes" onchange="onComMesChange()" style="padding:8px 12px;border:1.5px solid var(--bd);border-radius:8px;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;background:var(--sf);min-width:130px"><option value="">Todos los meses</option></select>
+<label id="comLblDia" style="font-size:11px;font-weight:700;color:var(--tx2);text-transform:uppercase;display:none">Día:</label>
+<select id="comFiltroDia" onchange="renderComisiones()" style="padding:8px 12px;border:1.5px solid var(--bd);border-radius:8px;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;background:var(--sf);display:none"><option value="">Todos</option></select>
 <div style="margin-left:auto;position:relative">
 <button class="btn btn-nv" onclick="toggleDD('ddComDet')" style="font-size:11px;padding:7px 14px">⬇ Descargar <span style="margin-left:4px">▾</span></button>
 <div id="ddComDet" class="dd-menu" style="display:none"><button onclick="exportarCSVComisiones();cerrarDD()">📊 Descargar CSV</button><button onclick="exportarPDFComisiones();cerrarDD()">📄 Descargar PDF</button></div>
@@ -377,19 +381,97 @@ function buscarCaso(){var ced=document.getElementById("casCed").value.trim();if(
 function renderCaso(c,ced){var vis=c.steps.filter(function(s){return!(s.op&&s.est==="PENDIENTE")});var done=vis.filter(function(s){return s.est==="COMPLETADO"}).length;var total=vis.length;var pct=total?Math.round(done/total*100):0;var h='<div class="ch"><h2>'+c.nm+"</h2><p>"+c.mod+" · "+c.ab+'</p><div class="ch-tags"><div class="ch-tag">'+pct+'%</div><div class="ch-tag pin">PIN: '+c.pin+'</div></div></div><div class="prog"><div class="prog-row"><span>'+done+" completadas</span><span>"+total+'</span></div><div class="prog-bar"><div class="prog-fill" style="width:'+pct+'%;background:var(--ac)"></div></div></div><div class="card"><h3>Línea de tiempo</h3>';vis.forEach(function(s,i){var isDone=s.est==="COMPLETADO",isAct=s.est==="ACTIVO";var dot=isDone?"var(--ok)":isAct?"var(--ac)":"var(--bd)";var isLast=i===vis.length-1;h+='<div class="tl-item"><div class="tl-left"><div class="tl-dot" style="background:'+dot+'">'+(isDone?"✓":"")+"</div>";if(!isLast)h+='<div class="tl-line" style="background:'+(isDone?"var(--ok)":"var(--bd)")+'"></div>';h+='</div><div class="tl-right"><div class="tl-head"><span class="tl-name" style="color:'+(isDone||isAct?"var(--nv)":"var(--tx3)")+'">'+s.n+"</span>";if(s.fecha)h+='<span class="tl-date">'+fD(s.fecha)+"</span>";h+="</div>";if(isDone||isAct)h+='<div class="tl-desc">'+s.cd+"</div>";if(!isDone){h+='<div class="tl-form"><select id="es_'+s.id+'"><option value="COMPLETADO">Completado</option><option value="ACTIVO"'+(isAct?" selected":"")+'>Activo</option><option value="PENDIENTE">Pendiente</option></select><input type="date" id="dt_'+s.id+'" value="'+(fDi(s.fecha)||new Date().toISOString().split("T")[0])+'"><button class="btn btn-ok" onclick="moverEtapa(\''+ced+"','"+s.id+"','"+enc(s.n)+"','"+enc(c.nm)+"','"+enc(c.cel||"")+"')\">OK</button></div>"}h+="</div></div>"});h+="</div>";document.getElementById("casOut").innerHTML=h}
 function moverEtapa(ced,eid,nmE,nombreE,celE){var estado=document.getElementById("es_"+eid).value,fecha=document.getElementById("dt_"+eid).value;var etNm=decodeURIComponent(nmE),nombre=decodeURIComponent(nombreE),cel=decodeURIComponent(celE);showMsg("casMsg","✅ "+etNm+" → "+estado,"ok");var params="action=actualizar&key="+enc(KEY)+"&cedula="+enc(ced)+"&etapa="+eid+"&estado="+estado;if(fecha)params+="&fecha="+fecha;callAPI(params).then(function(d){if(!d.ok){showMsg("casMsg",d.error,"err");return}showMsg("casMsg","✅ "+etNm+" → "+estado,"ok");addLog("📋 "+etNm+" → "+estado+" — "+nombre);DASH_CACHE=null;setTimeout(function(){buscarCaso()},600);var HITOS=["s7","s8","s9","fn"];if(HITOS.indexOf(eid)!==-1&&estado==="COMPLETADO")triggerWH({evento:"hito_alcanzado",cedula:ced,nombre:nombre,celular:cel,etapa:eid,etapaNombre:etNm})}).catch(function(){showMsg("casMsg","Error","err")})}
 var COM_CACHE=null;
-function cargarComisiones(){if(COM_CACHE){renderComisiones();return}var el=document.getElementById("comTablaWrap");if(el)el.innerHTML='<p style="padding:20px;color:var(--tx3);text-align:center">Cargando...</p>';callAPI("action=comisiones_detalle&key="+enc(KEY)).then(function(d){if(!d.ok){if(el)el.innerHTML='<p style="padding:20px;color:var(--err);text-align:center">'+(d.error||"Error")+'</p>';return}COM_CACHE=d;var sel=document.getElementById("comFiltro");if(sel){var opts='<option value="">Todos los comerciales</option>';d.comerciales.forEach(function(a){opts+='<option value="'+a.nombre+'">'+a.nombre+'</option>'});sel.innerHTML=opts}renderComisiones()}).catch(function(){if(el)el.innerHTML='<p style="padding:20px;color:var(--err);text-align:center">Error de conexión. <button class="btn btn-ghost" onclick="COM_CACHE=null;cargarComisiones()">Reintentar</button></p>'})}
+function cargarComisiones(){
+  if(COM_CACHE){renderComisiones();return}
+  var el=document.getElementById("comTablaWrap");
+  if(el)el.innerHTML='<p style="padding:20px;color:var(--tx3);text-align:center">Cargando...</p>';
+  callAPI("action=comisiones_detalle&key="+enc(KEY)).then(function(d){
+    if(!d.ok){if(el)el.innerHTML='<p style="padding:20px;color:var(--err);text-align:center">'+(d.error||"Error")+'</p>';return}
+    COM_CACHE=d;
+    // Poblar filtro de comerciales
+    var sel=document.getElementById("comFiltro");
+    if(sel){var opts='<option value="">Todos los comerciales</option>';d.comerciales.forEach(function(a){opts+='<option value="'+a.nombre+'">'+a.nombre+'</option>'});sel.innerHTML=opts}
+    // Poblar filtro de meses basado en fechas de caso
+    var selMes=document.getElementById("comFiltroMes");
+    if(selMes){
+      var meses={};
+      d.clientes.forEach(function(c){
+        if(!c.fechaCasoRaw)return;
+        var dt=new Date(c.fechaCasoRaw);if(isNaN(dt))return;
+        var key=dt.getFullYear()+"-"+String(dt.getMonth()+1).padStart(2,"0");
+        meses[key]=true;
+      });
+      var mesArr=Object.keys(meses).sort().reverse();
+      var nombres=["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"];
+      var opts2='<option value="">Todos los meses</option>';
+      mesArr.forEach(function(m){
+        var p=m.split("-");
+        opts2+='<option value="'+m+'">'+nombres[Number(p[1])-1]+' '+p[0]+'</option>';
+      });
+      selMes.innerHTML=opts2;
+    }
+    renderComisiones();
+  }).catch(function(){if(el)el.innerHTML='<p style="padding:20px;color:var(--err);text-align:center">Error de conexión. <button class="btn btn-ghost" onclick="COM_CACHE=null;cargarComisiones()">Reintentar</button></p>'});
+}
 
 function filtrarComisiones(){
   if(!COM_CACHE)return{clientes:[],comerciales:[]};
   var f=document.getElementById("comFiltro").value;
   var est=document.getElementById("comEstado").value;
+  var fMes=(document.getElementById("comFiltroMes")||{}).value||"";
+  var fDia=(document.getElementById("comFiltroDia")||{}).value||"";
   var cli=COM_CACHE.clientes.slice();
   if(f)cli=cli.filter(function(c){return c.asesor===f});
   if(est==="con_pendiente")cli=cli.filter(function(c){return c.comision.totales.pendiente>0&&c.comision.totales.liquidado>0});
   else if(est==="sin_pagos")cli=cli.filter(function(c){return c.comision.totales.liquidado===0&&c.comision.totales.teorico>0});
   else if(est==="completos")cli=cli.filter(function(c){return c.comision.totales.teorico>0&&c.comision.totales.liquidado===c.comision.totales.teorico});
-  var com=f?COM_CACHE.comerciales.filter(function(a){return a.nombre===f}):COM_CACHE.comerciales;
+  if(fMes){
+    cli=cli.filter(function(c){
+      if(!c.fechaCasoRaw)return false;
+      var dt=new Date(c.fechaCasoRaw);if(isNaN(dt))return false;
+      var key=dt.getFullYear()+"-"+String(dt.getMonth()+1).padStart(2,"0");
+      if(key!==fMes)return false;
+      if(fDia&&dt.getDate()!==Number(fDia))return false;
+      return true;
+    });
+  }
+  // Recalcular comerciales con los clientes filtrados (para que el resumen cuadre)
+  var porCom={};
+  cli.forEach(function(c){
+    if(!porCom[c.asesor])porCom[c.asesor]={nombre:c.asesor,teorico:0,liquidado:0,pendiente:0,casos:0};
+    porCom[c.asesor].teorico+=c.comision.totales.teorico;
+    porCom[c.asesor].liquidado+=c.comision.totales.liquidado;
+    porCom[c.asesor].pendiente+=c.comision.totales.pendiente;
+    porCom[c.asesor].casos++;
+  });
+  var com=Object.keys(porCom).map(function(k){return porCom[k]}).sort(function(a,b){return b.pendiente-a.pendiente});
   return{clientes:cli,comerciales:com};
+}
+
+// Maneja el filtro de día cuando cambia el mes
+function onComMesChange(){
+  var mes=document.getElementById("comFiltroMes").value;
+  var selDia=document.getElementById("comFiltroDia");
+  var lblDia=document.getElementById("comLblDia");
+  if(!mes){
+    selDia.style.display="none";lblDia.style.display="none";selDia.value="";
+    renderComisiones();return;
+  }
+  var dias={};
+  if(COM_CACHE){
+    COM_CACHE.clientes.forEach(function(c){
+      if(!c.fechaCasoRaw)return;
+      var dt=new Date(c.fechaCasoRaw);if(isNaN(dt))return;
+      var key=dt.getFullYear()+"-"+String(dt.getMonth()+1).padStart(2,"0");
+      if(key===mes)dias[dt.getDate()]=true;
+    });
+  }
+  var opts='<option value="">Todos</option>';
+  Object.keys(dias).map(Number).sort(function(a,b){return a-b}).forEach(function(d){
+    opts+='<option value="'+d+'">'+d+'</option>';
+  });
+  selDia.innerHTML=opts;selDia.style.display="inline-block";lblDia.style.display="inline-block";
+  renderComisiones();
 }
 
 function renderComisiones(){
@@ -436,31 +518,30 @@ function renderComisiones(){
     +'<th>Cliente</th>'
     +'<th>Comercial</th>'
     +'<th class="c">Mod.</th>'
+    +'<th class="c">Fecha caso</th>'
     +'<th class="num">Deuda</th>'
     +'<th class="num" style="border-left:2px solid rgba(255,255,255,0.15)">Plan pagos</th>'
     +'<th class="num">Liquidado</th>'
     +'<th class="num">Pendiente</th>'
-    +'<th class="c">Último mov.</th>'
-    +'<th class="c">Progreso</th>'
+    +'<th class="c" style="width:60px">Prog.</th>'
     +'</tr></thead><tbody>';
   sorted.forEach(function(c,idx){
     var T=c.comision.totales;
     var pct=T.teorico>0?Math.round(T.liquidado/T.teorico*100):0;
     var pillCls=T.teorico===0?"zero":T.liquidado===T.teorico?"ok":T.liquidado>0?"partial":"pending";
-    var pillTx=T.teorico===0?"—":T.liquidado===T.teorico?"OK":T.liquidado>0?"Parcial":"Pendiente";
     var mod=(c.modalidad||"").substring(0,3);
-    var ultMov=c.ultimoMov||"—";
+    var fechaCaso=c.fechaCaso||"—";
     t+='<tr id="com-r-'+idx+'">'
       +'<td class="c"><button class="com-exp-btn" onclick="toggleComCaso('+idx+')">▼</button></td>'
       +'<td class="nm" title="'+c.nombre+'">'+c.nombre+'<div class="sub">CC '+c.cedula+'</div></td>'
       +'<td style="font-size:11px">'+c.asesor+'</td>'
       +'<td class="c"><span class="com-pill" style="background:var(--sf2);color:var(--nv)">'+mod+'</span></td>'
+      +'<td class="c" style="font-size:10px;color:var(--tx3);white-space:nowrap">'+fechaCaso+'</td>'
       +'<td class="num" style="font-size:11px;color:var(--tx2)">'+fm(c.deuda)+'</td>'
       +'<td class="num" style="color:var(--ac);border-left:2px solid var(--bd)">'+fm(T.teorico)+'</td>'
       +'<td class="num" style="color:var(--ok)">'+fm(T.liquidado)+'</td>'
       +'<td class="num" style="color:var(--warn)">'+fm(T.pendiente)+'</td>'
-      +'<td class="c" style="font-size:10px;color:var(--tx3);white-space:nowrap">'+ultMov+'</td>'
-      +'<td class="c"><div style="display:flex;align-items:center;gap:6px;justify-content:center"><span class="com-progress"><span class="com-progress-fill" style="display:block;width:'+pct+'%"></span></span><span class="com-pill '+pillCls+'">'+pct+'%</span></div></td>'
+      +'<td class="c"><span class="com-pill '+pillCls+'">'+pct+'%</span></td>'
       +'</tr>';
     // Row expandible (oculta inicialmente)
     t+='<tr class="com-exp-row" id="com-x-'+idx+'" style="display:none"><td colspan="10">'+renderExpanded(c)+'</td></tr>';
@@ -1287,12 +1368,12 @@ function exportarCSVComisiones(){
   var filtro=document.getElementById("comFiltro").value;
 
   // Encabezados
-  var headers=["Cliente","Cédula","Comercial","Modalidad","Deuda","Último movimiento","Tramo","Esquema","Honorarios Pricing","Honorarios Vendido","Diferencia","Centro Pricing","Centro Vendido","Descuento %","% Hon Pagado","% Cen Pagado","Base Teórico","Base Liquidado","Adicional Teórico","Adicional Liquidado","Centro Teórico","Centro Liquidado","Total Teórico","Total Liquidado","Total Pendiente"];
+  var headers=["Cliente","Cédula","Comercial","Modalidad","Deuda","Fecha caso","Tramo","Esquema","Honorarios Pricing","Honorarios Vendido","Diferencia","Centro Pricing","Centro Vendido","Descuento %","% Hon Pagado","% Cen Pagado","Base Teórico","Base Liquidado","Adicional Teórico","Adicional Liquidado","Centro Teórico","Centro Liquidado","Total Teórico","Total Liquidado","Total Pendiente"];
   var rows=[headers];
   fl.clientes.forEach(function(c){
     var P=c.comision.pricing,V=c.comision.vendido,K=c.comision.componentes,G=c.comision.pagos,T=c.comision.totales;
     rows.push([
-      c.nombre,c.cedula,c.asesor,c.modalidad,c.deuda,c.ultimoMov||"",P.tramo,P.esquema,
+      c.nombre,c.cedula,c.asesor,c.modalidad,c.deuda,c.fechaCaso||"",P.tramo,P.esquema,
       P.honorariosPricing,V.honorarios,V.honorarios-P.honorariosPricing,
       P.centroPricing,V.centro,V.descuentoPct,
       G.pctHonPagado,G.pctCenPagado,

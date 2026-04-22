@@ -12,11 +12,19 @@ body{font-family:'Outfit',sans-serif;background:linear-gradient(180deg,var(--bg)
  
 .login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--navy);padding:24px}
 .login-wrap{min-height:100vh;background:radial-gradient(ellipse at top,var(--navy-l) 0%,var(--navy) 45%,var(--navy-d) 100%);display:flex;align-items:center;justify-content:center;padding:20px;position:relative;overflow:hidden}
-.login-wrap::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,var(--gold),transparent);opacity:0.6}
-.login-box{text-align:center;max-width:420px;width:100%;position:relative;z-index:2}
+/* Patrón de fondo con balanzas sutiles */
+.login-wrap::after{content:"";position:absolute;inset:0;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140' viewBox='0 0 140 140'><g fill='none' stroke='%23c9a449' stroke-width='0.6' opacity='0.07'><path d='M70 25 L70 95 M50 95 L90 95 M45 45 L60 45 M80 45 L95 45 M52 45 L52 60 M58 45 L58 60 M52 60 Q55 65 58 60 M82 45 L82 60 M88 45 L88 60 M82 60 Q85 65 88 60'/><circle cx='70' cy='20' r='3'/></g></svg>");background-size:200px 200px;opacity:0.6;pointer-events:none;animation:patternDrift 80s linear infinite}
+/* Luces doradas que se mueven */
+.login-wrap::before{content:"";position:absolute;top:-20%;left:-10%;width:70%;height:80%;background:radial-gradient(circle,rgba(201,164,73,0.08) 0%,transparent 60%);pointer-events:none;animation:glow1 14s ease-in-out infinite alternate}
+.login-glow-2{position:absolute;bottom:-15%;right:-5%;width:60%;height:70%;background:radial-gradient(circle,rgba(201,164,73,0.06) 0%,transparent 65%);pointer-events:none;animation:glow2 18s ease-in-out infinite alternate;z-index:1}
+@keyframes patternDrift{from{transform:translate(0,0)}to{transform:translate(-200px,-200px)}}
+@keyframes glow1{from{transform:translate(0,0) scale(1)}to{transform:translate(20%,10%) scale(1.2)}}
+@keyframes glow2{from{transform:translate(0,0) scale(1)}to{transform:translate(-15%,-10%) scale(1.15)}}
+.login-box{text-align:center;max-width:420px;width:100%;position:relative;z-index:3}
 .login-logo{width:78px;height:78px;border-radius:18px;background:linear-gradient(135deg,var(--gold),var(--gold-h));display:flex;align-items:center;justify-content:center;margin:0 auto 26px;font-size:34px;box-shadow:0 20px 50px rgba(201,164,73,0.25),0 0 0 1px rgba(201,164,73,0.15)}
 .login-box h1{font-family:'Belleza',serif;font-size:34px;font-weight:400;color:#fff;margin-bottom:6px;letter-spacing:3px;text-transform:uppercase}
-.login-box .sub{color:var(--gold);font-size:10px;letter-spacing:4px;font-weight:600;text-transform:uppercase;margin-bottom:32px;font-family:'Belleza',serif}
+.login-box .sub{color:var(--gold);font-size:10px;letter-spacing:4px;font-weight:600;text-transform:uppercase;margin-bottom:14px;font-family:'Belleza',serif}
+.login-tagline{color:rgba(255,255,255,0.55);font-size:12px;line-height:1.7;margin-bottom:28px;max-width:320px;margin-left:auto;margin-right:auto;font-weight:500}
 .login-fields{display:flex;flex-direction:column;gap:12px}
 .login-box input{width:100%;padding:17px 20px;border-radius:12px;border:1.5px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.04);font-size:17px;outline:none;text-align:center;font-family:'Outfit';font-weight:600;letter-spacing:2px;color:#fff;transition:all 0.25s}
 .login-box input:focus{border-color:var(--gold);background:rgba(255,255,255,0.06);box-shadow:0 0 0 4px rgba(201,164,73,0.1)}
@@ -40,16 +48,21 @@ body{font-family:'Outfit',sans-serif;background:linear-gradient(180deg,var(--bg)
 .cliweb-top:hover{color:var(--navy);border-color:var(--gold);background:var(--gold)}
 .cliweb-back{display:inline-block;color:rgba(255,255,255,0.45);font-size:11px;font-weight:600;letter-spacing:0.5px;text-decoration:none;margin-bottom:20px;padding:6px 14px;border:1px solid rgba(255,255,255,0.15);border-radius:20px;transition:all 0.2s}
 .cliweb-back:hover{color:var(--gold);border-color:var(--gold);background:rgba(201,164,73,0.08)}
-/* Barra web superior simplificada */
-.web-strip{background:linear-gradient(180deg,var(--navy-d) 0%,var(--navy) 100%);border-bottom:1px solid rgba(201,164,73,0.25);padding:11px 24px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:60;transition:transform 0.3s}
-.web-strip.hidden-scroll{transform:translateY(-100%)}
+/* Barra web superior — fluye con scroll */
+.web-strip{background:linear-gradient(180deg,var(--navy-d) 0%,var(--navy) 100%);border-bottom:1px solid rgba(201,164,73,0.25);padding:11px 24px;display:flex;align-items:center;gap:16px}
 .web-strip-brand-wrap{display:flex;align-items:center;gap:14px;min-width:0;flex:1}
 .web-strip-brand{font-family:'Belleza',serif;color:#fff;font-size:17px;letter-spacing:4px;text-transform:uppercase;font-weight:400;white-space:nowrap}
 .web-strip-sep{width:1px;height:18px;background:rgba(255,255,255,0.15)}
 .web-strip-current{font-family:'Belleza',serif;color:var(--gold);font-size:11px;letter-spacing:3px;text-transform:uppercase;font-weight:400;padding:5px 12px;border:1px solid rgba(201,164,73,0.4);border-radius:4px;background:rgba(201,164,73,0.06);white-space:nowrap}
-.web-strip-back{color:rgba(255,255,255,0.55);font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:2px;padding:7px 14px;border-radius:20px;text-decoration:none;transition:all 0.2s;font-family:'Belleza',serif;border:1px solid rgba(255,255,255,0.15);white-space:nowrap}
+.web-strip-back{color:rgba(255,255,255,0.7);font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:2px;padding:7px 14px;border-radius:20px;text-decoration:none;transition:all 0.2s;font-family:'Belleza',serif;border:1px solid rgba(255,255,255,0.2);white-space:nowrap;flex-shrink:0}
 .web-strip-back:hover{color:var(--navy);background:var(--gold);border-color:var(--gold)}
-@media(max-width:640px){.web-strip{padding:9px 12px;gap:10px}.web-strip-brand{font-size:12px;letter-spacing:2px}.web-strip-sep{height:14px}.web-strip-current{font-size:9px;letter-spacing:2px;padding:4px 8px}.web-strip-back{font-size:9px;padding:5px 10px;letter-spacing:1.5px}}
+@media(max-width:700px){
+  .web-strip{padding:10px 14px;gap:10px}
+  .web-strip-brand{font-size:13px;letter-spacing:2px}
+  .web-strip-sep{display:none}
+  .web-strip-current{display:none}
+  .web-strip-back{font-size:9px;padding:6px 11px;letter-spacing:1.5px}
+}
 /* Footer */
 .web-footer{background:var(--navy-d);color:rgba(255,255,255,0.7);padding:40px 24px 24px;margin-top:48px;border-top:3px solid var(--gold);position:relative}
 .web-footer::before{content:"";position:absolute;top:-3px;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent 0%,var(--gold) 50%,transparent 100%)}
@@ -195,7 +208,7 @@ body{font-family:'Outfit',sans-serif;background:linear-gradient(180deg,var(--bg)
 </style>
 </head>
 <body>
-<div class="web-strip" id="webStrip">
+<div class="web-strip">
   <div class="web-strip-brand-wrap">
     <span class="web-strip-brand">Colombia Abogados</span>
     <span class="web-strip-sep"></span>
@@ -205,10 +218,12 @@ body{font-family:'Outfit',sans-serif;background:linear-gradient(180deg,var(--bg)
 </div>
 
 <div class="login-wrap" id="loginView">
+  <span class="login-glow-2"></span>
   <div class="login-box">
     <div class="login-logo">⚖️</div>
     <h1>Consulte su Proceso</h1>
     <p class="sub">Colombia Abogados</p>
+    <p class="login-tagline">Consulte el estado de su proceso de insolvencia, documentos, audiencias y pagos · 24/7</p>
     <div class="login-fields">
       <input type="text" id="cedInput" placeholder="Número de cédula" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
       <input type="text" id="pinInput" placeholder="PIN de seguridad" inputmode="numeric" maxlength="6" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
@@ -805,17 +820,9 @@ function abrirAyuda(){
   window.open(waUrl, "_blank");
 }
 
-// Init: scroll-hide del web-strip + año dinámico del footer
+// Init: año dinámico del footer
 (function(){
   var yr=document.getElementById("footerYear");if(yr)yr.textContent=new Date().getFullYear();
-  var lastY=0,ws=document.getElementById("webStrip");
-  if(!ws)return;
-  window.addEventListener("scroll",function(){
-    var y=window.scrollY||document.documentElement.scrollTop;
-    if(y>80 && y>lastY)ws.classList.add("hidden-scroll");
-    else ws.classList.remove("hidden-scroll");
-    lastY=y;
-  },{passive:true});
 })();
 </script>
 <footer class="web-footer">
@@ -832,8 +839,8 @@ function abrirAyuda(){
     </div>
     <div class="web-footer-col">
       <h4>Contacto</h4>
-      <a href="https://wa.me/573042426920">WhatsApp</a>
-      <a href="mailto:info@abogadodecolombia.com">info@abogadodecolombia.com</a>
+      <a href="https://wa.me/573043774232">+57 304 3774232</a>
+      <a href="mailto:contacto@abogadodecolombia.com">contacto@abogadodecolombia.com</a>
       <p>Medellín, Colombia</p>
     </div>
   </div>

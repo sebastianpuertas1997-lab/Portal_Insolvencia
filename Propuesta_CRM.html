@@ -8,8 +8,13 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #f1f5f9; margin: 0; padding: 0; overflow: hidden; }
-        
+        body { font-family: 'Inter', sans-serif; background-color: #f1f5f9; margin: 0; padding: 0; }
+
+        /* ===== DESKTOP (por defecto) ===== */
+        #app-container { display: flex; height: 100vh; width: 100%; overflow: hidden; }
+        #config-panel { width: 400px; flex-shrink: 0; }
+        #preview-panel { flex: 1; overflow-y: auto; padding: 2rem; display: flex; justify-content: center; background: #cbd5e1; }
+
         #proposal-content {
             width: 794px; 
             min-width: 794px; 
@@ -23,16 +28,56 @@
             box-sizing: border-box; 
             position: relative;
             overflow: hidden;
+            transform-origin: top center;
+        }
+
+        /* Wrapper que reserva el espacio correcto cuando se escala el preview */
+        #preview-wrapper {
+            position: relative;
         }
 
         .brand-navy { color: #002855; }
         .bg-brand-navy { background-color: #002855; }
         .section-marker { width: 12px; height: 12px; background-color: #002855; display: inline-block; margin-right: 10px; border-radius: 2px; }
 
+        /* ===== MOBILE / TABLET ===== */
+        @media (max-width: 1024px) {
+            body { overflow: auto; }
+            #app-container { 
+                flex-direction: column; 
+                height: auto; 
+                min-height: 100vh; 
+                overflow: visible;
+            }
+            #config-panel { 
+                width: 100%; 
+                max-height: none;
+                border-right: none;
+                border-bottom: 1px solid #e2e8f0;
+                position: sticky;
+                top: 0;
+                z-index: 20;
+            }
+            /* Panel colapsable en móvil */
+            #config-panel.collapsed #config-body { display: none; }
+            #config-toggle { display: flex !important; }
+
+            #preview-panel { 
+                padding: 1rem 0.5rem; 
+                overflow-x: hidden;
+                overflow-y: visible;
+            }
+        }
+
+        @media (min-width: 1025px) {
+            #config-toggle { display: none; }
+        }
+
         @media print {
             .no-print { display: none !important; }
-            #preview-panel { padding: 0 !important; background: white !important; }
-            #proposal-content { box-shadow: none !important; }
+            #preview-panel { padding: 0 !important; background: white !important; overflow: visible !important; }
+            #proposal-content { box-shadow: none !important; transform: none !important; }
+            #preview-wrapper { height: auto !important; }
         }
 
         .custom-scroll::-webkit-scrollbar { width: 6px; }
@@ -40,256 +85,303 @@
         .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
     </style>
 </head>
-<body class="flex h-screen w-full">
+<body>
+
+<div id="app-container">
 
     <!-- CONFIGURACIÓN LATERAL -->
-    <div class="w-[400px] shrink-0 bg-white border-r border-slate-200 overflow-y-auto p-5 flex flex-col gap-4 no-print shadow-xl z-10 text-[11px] custom-scroll">
-        <div>
-            <h2 class="text-xl font-black text-[#002855]">Configuración V17</h2>
-            <p class="text-slate-500 font-medium italic">Versión con F1 Dominante y Hook de Cierre.</p>
-        </div>
-
-        <div class="space-y-1">
-            <label class="font-bold text-slate-700 uppercase">Modo de Presentación</label>
-            <select id="in-modo-presentacion" onchange="actualizarVista()" class="w-full bg-[#002855] text-white rounded-lg px-3 py-2.5 font-bold outline-none cursor-pointer">
-                <option value="ambas">Mostrar Ambas Modalidades</option>
-                <option value="acuerdo">Solo Acuerdo con Acreedores</option>
-                <option value="liquidacion">Solo Liquidación Patrimonial</option>
-            </select>
-        </div>
-
-        <div class="space-y-1">
-            <label class="font-bold text-slate-700 uppercase">Logo Circular</label>
-            <input type="file" id="in-logo" accept="image/*" onchange="previewImage(event)" class="w-full text-[10px] file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:bg-blue-50 file:text-blue-700 cursor-pointer">
-        </div>
-
-        <div class="grid grid-cols-1 gap-2">
-            <input type="text" id="in-cliente" oninput="actualizarVista()" placeholder="Nombre del Cliente" class="w-full bg-slate-50 border border-slate-200 rounded px-3 py-2">
-            <div class="grid grid-cols-2 gap-2">
-                <input type="text" id="in-id-cliente" oninput="actualizarVista()" placeholder="Cédula / ID" class="bg-slate-50 border border-slate-200 rounded px-3 py-2">
-                <input type="text" id="in-celular" oninput="actualizarVista()" placeholder="Celular" class="bg-slate-50 border border-slate-200 rounded px-3 py-2">
-            </div>
-            <select id="in-asesor" onchange="actualizarVista()" class="bg-slate-50 border border-slate-200 rounded px-3 py-2 font-bold uppercase">
-                <option value="DAYANNA VIDAL">DAYANNA VIDAL</option>
-                <option value="SEBASTIAN PUERTAS">SEBASTIAN PUERTAS</option>
-            </select>
-        </div>
-
-        <div class="space-y-2 p-3 bg-slate-50 rounded-lg border border-slate-100">
-            <label class="font-bold text-slate-700 uppercase">Pasivos Principales</label>
-            <div class="grid grid-cols-3 gap-1"><input type="text" id="in-ac-1" oninput="actualizarVista()" placeholder="Acreedor 1" class="col-span-2 border rounded px-2 py-1"><input type="number" id="in-mt-1" oninput="actualizarVista()" placeholder="Monto" class="border rounded px-2 py-1 font-bold"></div>
-            <div class="grid grid-cols-3 gap-1"><input type="text" id="in-ac-2" oninput="actualizarVista()" placeholder="Acreedor 2" class="col-span-2 border rounded px-2 py-1"><input type="number" id="in-mt-2" oninput="actualizarVista()" placeholder="Monto" class="border rounded px-2 py-1 font-bold"></div>
-            <div class="grid grid-cols-3 gap-1"><input type="text" id="in-ac-otros" oninput="actualizarVista()" placeholder="Otros" class="col-span-2 border rounded px-2 py-1"><input type="number" id="in-mt-otros" oninput="actualizarVista()" placeholder="Monto" class="border rounded px-2 py-1 font-bold"></div>
-        </div>
-
-        <div class="space-y-2">
-            <label class="font-bold text-slate-700 uppercase">Contexto del Supuesto</label>
-            <textarea id="in-contexto" oninput="actualizarVista()" rows="2" class="w-full border rounded px-3 py-2 text-[10px]">El cliente se encuentra en supuesto de insolvencia debido a una disminución drástica de sus ingresos mensuales, lo que le impide atender el servicio de la deuda sin afectar su mínimo vital.</textarea>
-
-            <label class="font-bold text-slate-700 uppercase">Estrategia: Acuerdo</label>
-            <textarea id="in-est-acu" oninput="actualizarVista()" rows="2" class="w-full border rounded px-3 py-2 text-[10px]">Negociación técnica para normalizar pasivos con quitas superiores al 60% de intereses y plazos de pago ajustados a su capacidad real.</textarea>
-            
-            <label class="font-bold text-slate-700 uppercase">Estrategia: Liquidación</label>
-            <textarea id="in-est-liq" oninput="actualizarVista()" rows="2" class="w-full border rounded px-3 py-2 text-[10px]">Procedimiento de descarga total de obligaciones mediante la adjudicación de activos o saldos insolutos, logrando la rehabilitación financiera inmediata.</textarea>
-        </div>
-
-        <div class="grid grid-cols-2 gap-2">
-            <div class="space-y-1">
-                <label class="font-bold text-[9px] uppercase">Honorarios Acuerdo</label>
-                <input type="number" id="in-hon-acuerdo" oninput="actualizarVista()" class="w-full border rounded px-2 py-2">
-            </div>
-            <div class="space-y-1">
-                <label class="font-bold text-[9px] uppercase">Hon. Liquidación</label>
-                <input type="number" id="in-hon-liquidacion" oninput="actualizarVista()" class="w-full border rounded px-2 py-2">
-            </div>
-            <div class="space-y-1">
-                <label class="font-bold text-[9px] uppercase">Gasto Centro</label>
-                <input type="number" id="in-conciliacion" oninput="actualizarVista()" class="w-full border rounded px-2 py-2">
-            </div>
-            <div class="space-y-1">
-                <label class="font-bold text-[9px] uppercase">% Dcto Centro</label>
-                <input type="number" id="in-descuento-pct" oninput="actualizarVista()" class="w-full border border-emerald-200 bg-emerald-50 rounded px-2 py-2 font-bold">
-            </div>
-        </div>
-
-        <button onclick="procesarYDescargar()" class="w-full bg-[#002855] text-white py-4 rounded-xl font-black tracking-widest hover:bg-slate-800 transition-all shadow-lg">
-            GENERAR PDF FINAL
+    <div id="config-panel" class="bg-white overflow-y-auto border-r border-slate-200 no-print shadow-xl text-[11px] custom-scroll">
+        
+        <!-- Toggle móvil -->
+        <button id="config-toggle" onclick="toggleConfig()" class="hidden w-full bg-[#002855] text-white py-3 px-4 font-black tracking-widest items-center justify-between">
+            <span>⚙️ CONFIGURACIÓN</span>
+            <span id="toggle-icon">▼</span>
         </button>
 
-        <div class="mt-2">
-            <button onclick="enviarATracking()" class="w-full bg-amber-500 text-white py-3 rounded-xl font-bold text-[11px] tracking-wider hover:bg-amber-600 transition-all">
-                📊 GUARDAR EN TRACKING (Propuesta Enviada)
+        <div id="config-body" class="p-5 flex flex-col gap-4">
+            <div>
+                <h2 class="text-xl font-black text-[#002855]">Configuración V17</h2>
+                <p class="text-slate-500 font-medium italic">Versión responsive con F1 dominante.</p>
+            </div>
+
+            <div class="space-y-1">
+                <label class="font-bold text-slate-700 uppercase">Modo de Presentación</label>
+                <select id="in-modo-presentacion" onchange="actualizarVista()" class="w-full bg-[#002855] text-white rounded-lg px-3 py-2.5 font-bold outline-none cursor-pointer">
+                    <option value="ambas">Mostrar Ambas Modalidades</option>
+                    <option value="acuerdo">Solo Acuerdo con Acreedores</option>
+                    <option value="liquidacion">Solo Liquidación Patrimonial</option>
+                </select>
+            </div>
+
+            <div class="space-y-1">
+                <label class="font-bold text-slate-700 uppercase">Logo Circular</label>
+                <input type="file" id="in-logo" accept="image/*" onchange="previewImage(event)" class="w-full text-[10px] file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:bg-blue-50 file:text-blue-700 cursor-pointer">
+            </div>
+
+            <div class="grid grid-cols-1 gap-2">
+                <input type="text" id="in-cliente" oninput="actualizarVista()" placeholder="Nombre del Cliente" class="w-full bg-slate-50 border border-slate-200 rounded px-3 py-2">
+                <div class="grid grid-cols-2 gap-2">
+                    <input type="text" id="in-id-cliente" oninput="actualizarVista()" placeholder="Cédula / ID" class="bg-slate-50 border border-slate-200 rounded px-3 py-2">
+                    <input type="tel" id="in-celular" oninput="actualizarVista()" placeholder="Celular" class="bg-slate-50 border border-slate-200 rounded px-3 py-2">
+                </div>
+                <select id="in-asesor" onchange="actualizarVista()" class="bg-slate-50 border border-slate-200 rounded px-3 py-2 font-bold uppercase">
+                    <option value="DAYANNA VIDAL">DAYANNA VIDAL</option>
+                    <option value="SEBASTIAN PUERTAS">SEBASTIAN PUERTAS</option>
+                </select>
+            </div>
+
+            <div class="space-y-2 p-3 bg-slate-50 rounded-lg border border-slate-100">
+                <label class="font-bold text-slate-700 uppercase">Pasivos Principales</label>
+                <div class="grid grid-cols-3 gap-1"><input type="text" id="in-ac-1" oninput="actualizarVista()" placeholder="Acreedor 1" class="col-span-2 border rounded px-2 py-1"><input type="number" inputmode="numeric" id="in-mt-1" oninput="actualizarVista()" placeholder="Monto" class="border rounded px-2 py-1 font-bold"></div>
+                <div class="grid grid-cols-3 gap-1"><input type="text" id="in-ac-2" oninput="actualizarVista()" placeholder="Acreedor 2" class="col-span-2 border rounded px-2 py-1"><input type="number" inputmode="numeric" id="in-mt-2" oninput="actualizarVista()" placeholder="Monto" class="border rounded px-2 py-1 font-bold"></div>
+                <div class="grid grid-cols-3 gap-1"><input type="text" id="in-ac-otros" oninput="actualizarVista()" placeholder="Otros" class="col-span-2 border rounded px-2 py-1"><input type="number" inputmode="numeric" id="in-mt-otros" oninput="actualizarVista()" placeholder="Monto" class="border rounded px-2 py-1 font-bold"></div>
+            </div>
+
+            <div class="space-y-2">
+                <label class="font-bold text-slate-700 uppercase">Contexto del Supuesto</label>
+                <textarea id="in-contexto" oninput="actualizarVista()" rows="2" class="w-full border rounded px-3 py-2 text-[10px]">El cliente se encuentra en supuesto de insolvencia debido a una disminución drástica de sus ingresos mensuales, lo que le impide atender el servicio de la deuda sin afectar su mínimo vital.</textarea>
+
+                <label class="font-bold text-slate-700 uppercase">Estrategia: Acuerdo</label>
+                <textarea id="in-est-acu" oninput="actualizarVista()" rows="2" class="w-full border rounded px-3 py-2 text-[10px]">Negociación técnica para normalizar pasivos con quitas superiores al 60% de intereses y plazos de pago ajustados a su capacidad real.</textarea>
+                
+                <label class="font-bold text-slate-700 uppercase">Estrategia: Liquidación</label>
+                <textarea id="in-est-liq" oninput="actualizarVista()" rows="2" class="w-full border rounded px-3 py-2 text-[10px]">Procedimiento de descarga total de obligaciones mediante la adjudicación de activos o saldos insolutos, logrando la rehabilitación financiera inmediata.</textarea>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2">
+                <div class="space-y-1">
+                    <label class="font-bold text-[9px] uppercase">Honorarios Acuerdo</label>
+                    <input type="number" inputmode="numeric" id="in-hon-acuerdo" oninput="actualizarVista()" class="w-full border rounded px-2 py-2">
+                </div>
+                <div class="space-y-1">
+                    <label class="font-bold text-[9px] uppercase">Hon. Liquidación</label>
+                    <input type="number" inputmode="numeric" id="in-hon-liquidacion" oninput="actualizarVista()" class="w-full border rounded px-2 py-2">
+                </div>
+                <div class="space-y-1">
+                    <label class="font-bold text-[9px] uppercase">Gasto Centro</label>
+                    <input type="number" inputmode="numeric" id="in-conciliacion" oninput="actualizarVista()" class="w-full border rounded px-2 py-2">
+                </div>
+                <div class="space-y-1">
+                    <label class="font-bold text-[9px] uppercase">% Dcto Centro</label>
+                    <input type="number" inputmode="numeric" id="in-descuento-pct" oninput="actualizarVista()" class="w-full border border-emerald-200 bg-emerald-50 rounded px-2 py-2 font-bold">
+                </div>
+            </div>
+
+            <button onclick="procesarYDescargar()" class="w-full bg-[#002855] text-white py-4 rounded-xl font-black tracking-widest hover:bg-slate-800 transition-all shadow-lg">
+                GENERAR PDF FINAL
             </button>
+
+            <div class="mt-2">
+                <button onclick="enviarATracking()" class="w-full bg-amber-500 text-white py-3 rounded-xl font-bold text-[11px] tracking-wider hover:bg-amber-600 transition-all">
+                    📊 GUARDAR EN TRACKING (Propuesta Enviada)
+                </button>
+            </div>
+            <p id="crm-msg" class="text-[10px] text-center mt-2 font-bold hidden"></p>
         </div>
-        <p id="crm-msg" class="text-[10px] text-center mt-2 font-bold hidden"></p>
     </div>
 
     <!-- PREVISUALIZACIÓN -->
-    <div id="preview-panel" class="flex-1 overflow-y-auto p-8 flex justify-center bg-slate-300">
-        <div id="proposal-content" class="shadow-2xl">
-            
-            <!-- HEADER -->
-            <div class="border-b-2 border-slate-100 pb-3 mb-4 flex justify-between items-center">
-                <div class="w-24 h-24 flex items-center justify-start overflow-hidden">
-                    <img id="pdf-logo" src="" alt="Firma Logo" class="max-h-full max-w-full object-contain hidden rounded-full border border-slate-100 shadow-sm">
-                    <div id="logo-placeholder" class="w-20 h-20 bg-slate-50 rounded-full border-2 border-dashed border-slate-100 flex items-center justify-center text-[8px] text-slate-300 font-bold uppercase p-2 text-center leading-tight">Subir Logo</div>
-                </div>
-                <div class="text-right">
-                    <div class="flex justify-end gap-3 mb-1 text-[9px] font-bold text-slate-400 uppercase">
-                        <p>FECHA: <span id="pdf-fecha" class="text-slate-800">--/--/----</span></p>
-                        <p>ASESOR: <span id="pdf-asesor" class="text-slate-800">--</span></p>
+    <div id="preview-panel">
+        <div id="preview-wrapper">
+            <div id="proposal-content" class="shadow-2xl">
+                
+                <!-- HEADER -->
+                <div class="border-b-2 border-slate-100 pb-3 mb-4 flex justify-between items-center">
+                    <div class="w-24 h-24 flex items-center justify-start overflow-hidden">
+                        <img id="pdf-logo" src="" alt="Firma Logo" class="max-h-full max-w-full object-contain hidden rounded-full border border-slate-100 shadow-sm">
+                        <div id="logo-placeholder" class="w-20 h-20 bg-slate-50 rounded-full border-2 border-dashed border-slate-100 flex items-center justify-center text-[8px] text-slate-300 font-bold uppercase p-2 text-center leading-tight">Subir Logo</div>
                     </div>
-                    <h1 class="text-3xl font-black brand-navy uppercase tracking-tighter leading-none">Propuesta Económica</h1>
-                    <p id="pdf-cliente" class="text-slate-400 font-bold text-xl mt-0.5 uppercase tracking-wider">[NOMBRE DEL CLIENTE]</p>
-                    <div class="flex justify-end gap-3 mt-1 text-[9px] font-bold text-slate-400 uppercase">
-                        <p>ID: <span id="pdf-id" class="text-slate-600">--</span></p>
-                        <p>CEL: <span id="pdf-cel" class="text-slate-600">--</span></p>
+                    <div class="text-right">
+                        <div class="flex justify-end gap-3 mb-1 text-[9px] font-bold text-slate-400 uppercase">
+                            <p>FECHA: <span id="pdf-fecha" class="text-slate-800">--/--/----</span></p>
+                            <p>ASESOR: <span id="pdf-asesor" class="text-slate-800">--</span></p>
+                        </div>
+                        <h1 class="text-3xl font-black brand-navy uppercase tracking-tighter leading-none">Propuesta Económica</h1>
+                        <p id="pdf-cliente" class="text-slate-400 font-bold text-xl mt-0.5 uppercase tracking-wider">[NOMBRE DEL CLIENTE]</p>
+                        <div class="flex justify-end gap-3 mt-1 text-[9px] font-bold text-slate-400 uppercase">
+                            <p>ID: <span id="pdf-id" class="text-slate-600">--</span></p>
+                            <p>CEL: <span id="pdf-cel" class="text-slate-600">--</span></p>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- FASE 1: PASIVOS (AGRANDADA) -->
-            <section class="mb-6">
-                <div class="flex items-center mb-3">
-                    <span class="section-marker"></span>
-                    <h2 class="font-black text-slate-800 text-[12px] uppercase tracking-wider">Fase 1: Diagnóstico de Pasivos en Riesgo (<span id="pdf-total-deudas" class="text-blue-600">$0</span>)</h2>
-                </div>
-                <div class="grid grid-cols-3 gap-4 mb-4">
-                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 relative overflow-hidden shadow-sm">
-                        <div id="bar-1" class="absolute bottom-0 left-0 h-1.5 bg-blue-500" style="width: 0%"></div>
-                        <p class="text-[9px] font-black text-slate-400 uppercase truncate mb-1" id="pdf-ac-1">Acreedor 1</p>
-                        <div class="flex justify-between items-end">
-                            <p id="pdf-mt-1" class="text-lg font-black brand-navy">$0</p>
-                            <p id="pdf-pct-1" class="text-[10px] font-black text-blue-600">0%</p>
+                <!-- FASE 1: PASIVOS -->
+                <section class="mb-6">
+                    <div class="flex items-center mb-3">
+                        <span class="section-marker"></span>
+                        <h2 class="font-black text-slate-800 text-[12px] uppercase tracking-wider">Fase 1: Diagnóstico de Pasivos en Riesgo (<span id="pdf-total-deudas" class="text-blue-600">$0</span>)</h2>
+                    </div>
+                    <div class="grid grid-cols-3 gap-4 mb-4">
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 relative overflow-hidden shadow-sm">
+                            <div id="bar-1" class="absolute bottom-0 left-0 h-1.5 bg-blue-500" style="width: 0%"></div>
+                            <p class="text-[9px] font-black text-slate-400 uppercase truncate mb-1" id="pdf-ac-1">Acreedor 1</p>
+                            <div class="flex justify-between items-end">
+                                <p id="pdf-mt-1" class="text-lg font-black brand-navy">$0</p>
+                                <p id="pdf-pct-1" class="text-[10px] font-black text-blue-600">0%</p>
+                            </div>
+                        </div>
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 relative overflow-hidden shadow-sm">
+                            <div id="bar-2" class="absolute bottom-0 left-0 h-1.5 bg-blue-500" style="width: 0%"></div>
+                            <p class="text-[9px] font-black text-slate-400 uppercase truncate mb-1" id="pdf-ac-2">Acreedor 2</p>
+                            <div class="flex justify-between items-end">
+                                <p id="pdf-mt-2" class="text-lg font-black brand-navy">$0</p>
+                                <p id="pdf-pct-2" class="text-[10px] font-black text-blue-600">0%</p>
+                            </div>
+                        </div>
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 relative overflow-hidden shadow-sm">
+                            <div id="bar-otros" class="absolute bottom-0 left-0 h-1.5 bg-slate-300" style="width: 0%"></div>
+                            <p class="text-[9px] font-black text-slate-400 uppercase truncate mb-1" id="pdf-ac-otros">Otros</p>
+                            <div class="flex justify-between items-end">
+                                <p id="pdf-mt-otros" class="text-lg font-black brand-navy">$0</p>
+                                <p id="pdf-pct-otros" class="text-[10px] font-black text-slate-500">0%</p>
+                            </div>
                         </div>
                     </div>
-                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 relative overflow-hidden shadow-sm">
-                        <div id="bar-2" class="absolute bottom-0 left-0 h-1.5 bg-blue-500" style="width: 0%"></div>
-                        <p class="text-[9px] font-black text-slate-400 uppercase truncate mb-1" id="pdf-ac-2">Acreedor 2</p>
-                        <div class="flex justify-between items-end">
-                            <p id="pdf-mt-2" class="text-lg font-black brand-navy">$0</p>
-                            <p id="pdf-pct-2" class="text-[10px] font-black text-blue-600">0%</p>
-                        </div>
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 border-l-4 border-l-blue-600">
+                        <p class="text-[9px] font-black text-slate-400 uppercase mb-1">MOTIVO DE INSOLVENCIA:</p>
+                        <p id="pdf-contexto" class="text-[11px] text-slate-600 leading-normal italic text-justify"></p>
                     </div>
-                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 relative overflow-hidden shadow-sm">
-                        <div id="bar-otros" class="absolute bottom-0 left-0 h-1.5 bg-slate-300" style="width: 0%"></div>
-                        <p class="text-[9px] font-black text-slate-400 uppercase truncate mb-1" id="pdf-ac-otros">Otros</p>
-                        <div class="flex justify-between items-end">
-                            <p id="pdf-mt-otros" class="text-lg font-black brand-navy">$0</p>
-                            <p id="pdf-pct-otros" class="text-[10px] font-black text-slate-500">0%</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 border-l-4 border-l-blue-600">
-                    <p class="text-[9px] font-black text-slate-400 uppercase mb-1">MOTIVO DE INSOLVENCIA:</p>
-                    <p id="pdf-contexto" class="text-[11px] text-slate-600 leading-normal italic text-justify"></p>
-                </div>
-            </section>
+                </section>
 
-            <!-- FASE 2: ESTRATEGIAS -->
-            <section class="mb-4">
-                <div class="flex items-center mb-2.5">
-                    <span class="section-marker"></span>
-                    <h2 class="font-black text-slate-800 text-[10px] uppercase tracking-wider">Fase 2: ESTRATEGIA JURIDICA </h2>
-                </div>
-                <div id="grid-estrategia" class="grid grid-cols-2 gap-3">
-                    <div id="box-est-acu" class="p-3.5 rounded-xl border border-slate-200 bg-white shadow-sm">
-                        <h3 class="font-black brand-navy text-[9px] uppercase mb-1 border-b pb-1">Modalidad: Acuerdo</h3>
-                        <p id="pdf-est-acu" class="text-[9px] text-slate-600 leading-snug text-justify"></p>
+                <!-- FASE 2: ESTRATEGIAS -->
+                <section class="mb-4">
+                    <div class="flex items-center mb-2.5">
+                        <span class="section-marker"></span>
+                        <h2 class="font-black text-slate-800 text-[10px] uppercase tracking-wider">Fase 2: ESTRATEGIA JURIDICA </h2>
                     </div>
-                    <div id="box-est-liq" class="p-3.5 rounded-xl border border-slate-200 bg-white shadow-sm">
-                        <h3 class="font-black brand-navy text-[9px] uppercase mb-1 border-b pb-1">Modalidad: Liquidación</h3>
-                        <p id="pdf-est-liq" class="text-[9px] text-slate-600 leading-snug text-justify"></p>
+                    <div id="grid-estrategia" class="grid grid-cols-2 gap-3">
+                        <div id="box-est-acu" class="p-3.5 rounded-xl border border-slate-200 bg-white shadow-sm">
+                            <h3 class="font-black brand-navy text-[9px] uppercase mb-1 border-b pb-1">Modalidad: Acuerdo</h3>
+                            <p id="pdf-est-acu" class="text-[9px] text-slate-600 leading-snug text-justify"></p>
+                        </div>
+                        <div id="box-est-liq" class="p-3.5 rounded-xl border border-slate-200 bg-white shadow-sm">
+                            <h3 class="font-black brand-navy text-[9px] uppercase mb-1 border-b pb-1">Modalidad: Liquidación</h3>
+                            <p id="pdf-est-liq" class="text-[9px] text-slate-600 leading-snug text-justify"></p>
+                        </div>
                     </div>
-                </div>
-            </section>
+                </section>
 
-            <!-- FASE 3: INVERSIÓN -->
-            <section class="bg-brand-navy p-4 rounded-xl text-white shadow-lg mb-4">
-                <div class="flex items-center mb-2.5 border-b border-white/10 pb-1.5">
-                    <h2 class="font-bold uppercase tracking-widest text-[9px]">Fase 3: Presupuesto de Inversión Profesional</h2>
-                </div>
-                <div id="grid-inversion" class="grid grid-cols-2 gap-6">
-                    <div id="col-inv-liq">
-                        <h4 class="text-[8px] font-black uppercase text-blue-300 mb-1.5">Opción: Liquidación</h4>
-                        <div class="space-y-1.5">
-                            <div class="flex justify-between text-[10px] opacity-80"><span>Honorarios Firma:</span><span id="val-hon-liq">$0</span></div>
-                            <div class="flex justify-between text-[10px] opacity-80"><span>Centro Conciliación:</span><span id="val-con-liq">$0</span></div>
-                            <div id="row-desc-liq" class="flex justify-between text-[9px] text-emerald-400 font-bold hidden"><span>Bono Descuento:</span><span id="val-desc-liq">-$0</span></div>
-                            <div class="flex justify-between items-end border-t border-white/10 pt-1.5 mt-1"><span class="text-[8px] font-bold uppercase opacity-50">Total Inversión:</span><span id="tot-inv-liq" class="text-xl font-black text-emerald-400 leading-none">$0</span></div>
+                <!-- FASE 3: INVERSIÓN -->
+                <section class="bg-brand-navy p-4 rounded-xl text-white shadow-lg mb-4">
+                    <div class="flex items-center mb-2.5 border-b border-white/10 pb-1.5">
+                        <h2 class="font-bold uppercase tracking-widest text-[9px]">Fase 3: Presupuesto de Inversión Profesional</h2>
+                    </div>
+                    <div id="grid-inversion" class="grid grid-cols-2 gap-6">
+                        <div id="col-inv-liq">
+                            <h4 class="text-[8px] font-black uppercase text-blue-300 mb-1.5">Opción: Liquidación</h4>
+                            <div class="space-y-1.5">
+                                <div class="flex justify-between text-[10px] opacity-80"><span>Honorarios Firma:</span><span id="val-hon-liq">$0</span></div>
+                                <div class="flex justify-between text-[10px] opacity-80"><span>Centro Conciliación:</span><span id="val-con-liq">$0</span></div>
+                                <div id="row-desc-liq" class="flex justify-between text-[9px] text-emerald-400 font-bold hidden"><span>Bono Descuento:</span><span id="val-desc-liq">-$0</span></div>
+                                <div class="flex justify-between items-end border-t border-white/10 pt-1.5 mt-1"><span class="text-[8px] font-bold uppercase opacity-50">Total Inversión:</span><span id="tot-inv-liq" class="text-xl font-black text-emerald-400 leading-none">$0</span></div>
+                            </div>
+                        </div>
+                        <div id="col-inv-acu" class="border-l border-white/10 pl-6">
+                            <h4 class="text-[8px] font-black uppercase text-blue-300 mb-1.5">Opción: Acuerdo</h4>
+                            <div class="space-y-1.5">
+                                <div class="flex justify-between text-[10px] opacity-80"><span>Honorarios Firma:</span><span id="val-hon-acu">$0</span></div>
+                                <div class="flex justify-between text-[10px] opacity-80"><span>Centro Conciliación:</span><span id="val-con-acu">$0</span></div>
+                                <div id="row-desc-acu" class="flex justify-between text-[9px] text-emerald-400 font-bold hidden"><span>Bono Descuento:</span><span id="val-desc-acu">-$0</span></div>
+                                <div class="flex justify-between items-end border-t border-white/10 pt-1.5 mt-1"><span class="text-[8px] font-bold uppercase opacity-50">Total Inversión:</span><span id="tot-inv-acu" class="text-xl font-black text-emerald-400 leading-none">$0</span></div>
+                            </div>
                         </div>
                     </div>
-                    <div id="col-inv-acu" class="border-l border-white/10 pl-6">
-                        <h4 class="text-[8px] font-black uppercase text-blue-300 mb-1.5">Opción: Acuerdo</h4>
-                        <div class="space-y-1.5">
-                            <div class="flex justify-between text-[10px] opacity-80"><span>Honorarios Firma:</span><span id="val-hon-acu">$0</span></div>
-                            <div class="flex justify-between text-[10px] opacity-80"><span>Centro Conciliación:</span><span id="val-con-acu">$0</span></div>
-                            <div id="row-desc-acu" class="flex justify-between text-[9px] text-emerald-400 font-bold hidden"><span>Bono Descuento:</span><span id="val-desc-acu">-$0</span></div>
-                            <div class="flex justify-between items-end border-t border-white/10 pt-1.5 mt-1"><span class="text-[8px] font-bold uppercase opacity-50">Total Inversión:</span><span id="tot-inv-acu" class="text-xl font-black text-emerald-400 leading-none">$0</span></div>
-                        </div>
-                    </div>
-                </div>
-            </section>
+                </section>
 
-            <!-- FASE 4: CRONOGRAMA -->
-            <section class="mb-4">
-                <div class="flex items-center mb-2.5">
-                    <span class="section-marker"></span>
-                    <h2 class="font-black text-slate-800 text-[10px] uppercase tracking-wider">Fase 4: Cronograma de Pagos Diferido (50% - 25% - 25%)</h2>
-                </div>
-                <div class="grid grid-cols-2 gap-3.5">
-                    <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
-                        <p class="text-[9px] font-black text-slate-400 uppercase mb-2.5 border-b pb-1">Honorarios de la Firma</p>
-                        <div id="cron-firma-acu" class="space-y-2 mb-3">
-                            <p class="text-[7px] font-bold text-blue-600 uppercase">Modalidad Acuerdo:</p>
-                            <div class="flex justify-between text-[11px] font-medium"><span>Apertura (50%):</span><span id="hon-acu-p1" class="brand-navy">$0</span></div>
-                            <div class="flex justify-between text-[10px] opacity-60"><span>Mes 1 y 2 (25% c/u):</span><span id="hon-acu-p23">$0</span></div>
+                <!-- FASE 4: CRONOGRAMA -->
+                <section class="mb-4">
+                    <div class="flex items-center mb-2.5">
+                        <span class="section-marker"></span>
+                        <h2 class="font-black text-slate-800 text-[10px] uppercase tracking-wider">Fase 4: Cronograma de Pagos Diferido (50% - 25% - 25%)</h2>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3.5">
+                        <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
+                            <p class="text-[9px] font-black text-slate-400 uppercase mb-2.5 border-b pb-1">Honorarios de la Firma</p>
+                            <div id="cron-firma-acu" class="space-y-2 mb-3">
+                                <p class="text-[7px] font-bold text-blue-600 uppercase">Modalidad Acuerdo:</p>
+                                <div class="flex justify-between text-[11px] font-medium"><span>Apertura (50%):</span><span id="hon-acu-p1" class="brand-navy">$0</span></div>
+                                <div class="flex justify-between text-[10px] opacity-60"><span>Mes 1 y 2 (25% c/u):</span><span id="hon-acu-p23">$0</span></div>
+                            </div>
+                            <div id="cron-firma-liq" class="space-y-2">
+                                <p class="text-[7px] font-bold text-emerald-600 uppercase">Modalidad Liquidación:</p>
+                                <div class="flex justify-between text-[11px] font-medium"><span>Apertura (50%):</span><span id="hon-liq-p1" class="brand-navy">$0</span></div>
+                                <div class="flex justify-between text-[10px] opacity-60"><span>Mes 1 y 2 (25% c/u):</span><span id="hon-liq-p23">$0</span></div>
+                            </div>
                         </div>
-                        <div id="cron-firma-liq" class="space-y-2">
-                            <p class="text-[7px] font-bold text-emerald-600 uppercase">Modalidad Liquidación:</p>
-                            <div class="flex justify-between text-[11px] font-medium"><span>Apertura (50%):</span><span id="hon-liq-p1" class="brand-navy">$0</span></div>
-                            <div class="flex justify-between text-[10px] opacity-60"><span>Mes 1 y 2 (25% c/u):</span><span id="hon-liq-p23">$0</span></div>
+                        <div class="bg-slate-50 border border-slate-200 rounded-xl p-4">
+                            <p class="text-[9px] font-black text-slate-400 uppercase mb-2.5 border-b pb-1">Gastos Centro de Conciliación</p>
+                            <div class="space-y-2">
+                                <div class="flex justify-between text-[11px] font-bold text-blue-700"><span>Previo Admisión:</span><span id="con-p1">$0</span></div>
+                                <div class="flex justify-between text-[11px] font-bold text-blue-700"><span>Previo Audiencia:</span><span id="con-p2">$0</span></div>
+                                <p class="text-[8px] text-slate-400 italic mt-5 leading-tight">Pagos requeridos por Ley para avanzar el proceso. Valores no reembolsables por el Centro.</p>
+                            </div>
                         </div>
                     </div>
-                    <div class="bg-slate-50 border border-slate-200 rounded-xl p-4">
-                        <p class="text-[9px] font-black text-slate-400 uppercase mb-2.5 border-b pb-1">Gastos Centro de Conciliación</p>
-                        <div class="space-y-2">
-                            <div class="flex justify-between text-[11px] font-bold text-blue-700"><span>Previo Admisión:</span><span id="con-p1">$0</span></div>
-                            <div class="flex justify-between text-[11px] font-bold text-blue-700"><span>Previo Audiencia:</span><span id="con-p2">$0</span></div>
-                            <p class="text-[8px] text-slate-400 italic mt-5 leading-tight">Pagos requeridos por Ley para avanzar el proceso. Valores no reembolsables por el Centro.</p>
-                        </div>
-                    </div>
-                </div>
-            </section>
+                </section>
 
-            <!-- HOOK FINAL PORCENTUAL (OPTIMIZADO COMO CLOSER) -->
-            <div id="hook-section" class="mt-auto p-5 bg-blue-50 border-2 border-blue-200 rounded-2xl shadow-sm">
-                <div class="flex items-center gap-6">
-                    <div class="flex-1">
-                        <h3 class="text-blue-900 font-black text-[13px] uppercase mb-1.5 flex items-center">
-                            <svg class="w-4 h-4 mr-2 text-blue-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd"></path></svg>
-                            Blindaje Patrimonial de Alta Especialidad
-                        </h3>
-                        <p class="text-[10.5px] text-blue-900 leading-snug">
-                            Su pasivo de <span id="hook-total" class="font-bold text-slate-800">$0</span> representa un riesgo inminente de embargo sobre su mínimo vital. Esta inversión de solo el <span id="hook-pct" class="font-black text-blue-600 text-lg">0%</span> es el único vehículo legal técnico para congelar sus deudas y recuperar su libertad financiera hoy. <span class="font-bold underline">Cualquier día de demora incrementa el riesgo de pérdida definitiva de sus activos.</span>
-                        </p>
-                    </div>
-                    <div class="text-right border-l-2 border-blue-200 pl-6 min-w-[170px]">
-                        <p class="text-[9px] font-bold text-blue-400 uppercase mb-0.5">Inversión Final Sugerida</p>
-                        <p id="hook-inv-total" class="text-2xl font-black brand-navy leading-none mt-1">$0</p>
+                <!-- HOOK FINAL -->
+                <div id="hook-section" class="mt-auto p-5 bg-blue-50 border-2 border-blue-200 rounded-2xl shadow-sm">
+                    <div class="flex items-center gap-6">
+                        <div class="flex-1">
+                            <h3 class="text-blue-900 font-black text-[13px] uppercase mb-1.5 flex items-center">
+                                <svg class="w-4 h-4 mr-2 text-blue-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd"></path></svg>
+                                Blindaje Patrimonial de Alta Especialidad
+                            </h3>
+                            <p class="text-[10.5px] text-blue-900 leading-snug">
+                                Su pasivo de <span id="hook-total" class="font-bold text-slate-800">$0</span> representa un riesgo inminente de embargo sobre su mínimo vital. Esta inversión de solo el <span id="hook-pct" class="font-black text-blue-600 text-lg">0%</span> es el único vehículo legal técnico para congelar sus deudas y recuperar su libertad financiera hoy. <span class="font-bold underline">Cualquier día de demora incrementa el riesgo de pérdida definitiva de sus activos.</span>
+                            </p>
+                        </div>
+                        <div class="text-right border-l-2 border-blue-200 pl-6 min-w-[170px]">
+                            <p class="text-[9px] font-bold text-blue-400 uppercase mb-0.5">Inversión Final Sugerida</p>
+                            <p id="hook-inv-total" class="text-2xl font-black brand-navy leading-none mt-1">$0</p>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- FOOTER -->
-            <div class="mt-4 text-center">
-                <p class="text-[8px] font-black brand-navy uppercase tracking-[0.8em] opacity-30">Colombia Abogados • Especialistas en Insolvencia Técnica</p>
+                <!-- FOOTER -->
+                <div class="mt-4 text-center">
+                    <p class="text-[8px] font-black brand-navy uppercase tracking-[0.8em] opacity-30">Colombia Abogados • Especialistas en Insolvencia Técnica</p>
+                </div>
             </div>
         </div>
     </div>
 
+</div>
+
     <script>
         const formatMoney = (val) => new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(val || 0);
+
+        // ============================================================
+        //  RESPONSIVE SCALING — mantiene 794x1123 pero escala visualmente
+        // ============================================================
+        function escalarPreview() {
+            const panel = document.getElementById('preview-panel');
+            const content = document.getElementById('proposal-content');
+            const wrapper = document.getElementById('preview-wrapper');
+            if (!panel || !content || !wrapper) return;
+
+            // Ancho disponible del panel menos un pequeño padding
+            const available = panel.clientWidth - 24;
+            const naturalWidth = 794;
+            const naturalHeight = 1123;
+
+            let scale = 1;
+            if (available < naturalWidth) {
+                scale = available / naturalWidth;
+            }
+
+            content.style.transform = `scale(${scale})`;
+            // Reservar el alto correcto en el wrapper para que el scroll funcione
+            wrapper.style.width = (naturalWidth * scale) + 'px';
+            wrapper.style.height = (naturalHeight * scale) + 'px';
+        }
+
+        function toggleConfig() {
+            const panel = document.getElementById('config-panel');
+            const icon = document.getElementById('toggle-icon');
+            panel.classList.toggle('collapsed');
+            icon.textContent = panel.classList.contains('collapsed') ? '▶' : '▼';
+        }
 
         function previewImage(event) {
             const reader = new FileReader();
@@ -407,6 +499,16 @@
         function procesarYDescargar() {
             const cliente = document.getElementById('in-cliente').value || 'Propuesta';
             const element = document.getElementById('proposal-content');
+            const wrapper = document.getElementById('preview-wrapper');
+
+            // CRÍTICO: quitar escalado temporalmente para que el PDF salga en tamaño nativo
+            const prevTransform = element.style.transform;
+            const prevWrapperW = wrapper.style.width;
+            const prevWrapperH = wrapper.style.height;
+            element.style.transform = 'none';
+            wrapper.style.width = '794px';
+            wrapper.style.height = '1123px';
+
             const opt = {
                 margin: 0,
                 filename: `Insolvencia_${cliente.replace(/\s+/g, '_')}.pdf`,
@@ -414,7 +516,14 @@
                 html2canvas: { scale: 3, useCORS: true, letterRendering: true },
                 jsPDF: { unit: 'px', format: [794, 1123], orientation: 'portrait' }
             };
-            html2pdf().set(opt).from(element).save();
+
+            html2pdf().set(opt).from(element).save().then(() => {
+                // Restaurar escalado responsive después de generar
+                element.style.transform = prevTransform;
+                wrapper.style.width = prevWrapperW;
+                wrapper.style.height = prevWrapperH;
+                escalarPreview();
+            });
         }
 
         // ============================================================
@@ -433,7 +542,6 @@
             const m2 = Number(document.getElementById('in-mt-2').value) || 0;
             const mO = Number(document.getElementById('in-mt-otros').value) || 0;
 
-            // Determinar modalidad y honorarios según modo
             let modalidad = "LIQUIDACIÓN";
             let honorarios = hLiq;
             if (modo === "acuerdo") { modalidad = "ACUERDO"; honorarios = hAcu; }
@@ -476,7 +584,6 @@
 
             showCrmMsg('📊 Guardando en tracking...', '#2563eb');
 
-            // Llama a Apps Script para guardar en MA_TRACKING
             const params = new URLSearchParams({
                 action: 'guardar_tracking',
                 key: API_KEY,
@@ -506,10 +613,19 @@
                 .catch(() => showCrmMsg('❌ Error de conexión', '#dc2626'));
         }
 
-        window.onload = () => {
+        window.addEventListener('load', () => {
             document.getElementById('pdf-fecha').innerText = new Date().toLocaleDateString('es-CO');
             actualizarVista();
-        };
+            escalarPreview();
+
+            // Colapsar panel por defecto en móvil para mostrar preview primero
+            if (window.innerWidth <= 1024) {
+                document.getElementById('config-panel').classList.add('collapsed');
+                document.getElementById('toggle-icon').textContent = '▶';
+            }
+        });
+
+        window.addEventListener('resize', escalarPreview);
     </script>
 </body>
 </html>

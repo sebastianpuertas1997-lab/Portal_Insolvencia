@@ -1490,50 +1490,57 @@ function adaptAN(d){
   };
 }
 
-function cargarAnalytics(force){
-  if(AN_CACHE.data&&!force){renderAN();return}
+function cargarAnalytics(force,mesEspecifico){
+  var mesKey=mesEspecifico||"all";
+  if(AN_CACHE[mesKey]&&!force){AN_CACHE.actual=AN_CACHE[mesKey];renderAN();return}
   var el=document.getElementById("anKpis");
   if(el)el.innerHTML='<div class="skel-card" style="grid-column:1/-1;padding:20px"><div class="skel skel-line" style="width:60%"></div><div class="skel skel-line" style="width:40%"></div></div>';
-  callAPI("action=analytics&key="+enc(KEY)).then(function(d){
+  var qs="action=analytics&key="+enc(KEY);
+  if(mesEspecifico)qs+="&mes="+encodeURIComponent(mesEspecifico);
+  callAPI(qs).then(function(d){
     if(!d.ok){showMsg("anMsg",d.error||"Error","err");return}
-    AN_CACHE.data=adaptAN(d);
-    var sel=document.getElementById("anMesFilter");
-    if(sel&&sel.options.length<=1){
-      AN_CACHE.data.porMes.forEach(function(m){
-        var o=document.createElement("option");o.value=m.key;o.text=mesNm(m.key);sel.add(o);
-      });
+    var adapted=adaptAN(d);
+    AN_CACHE[mesKey]=adapted;
+    AN_CACHE.actual=adapted;
+    if(mesKey==="all"){
+      AN_CACHE.global=adapted;
+      var sel=document.getElementById("anMesFilter");
+      if(sel&&sel.options.length<=1){
+        adapted.porMes.forEach(function(m){
+          var o=document.createElement("option");o.value=m.key;o.text=mesNm(m.key);sel.add(o);
+        });
+      }
     }
     renderAN();
   }).catch(function(){showMsg("anMsg","Error de conexión","err")});
 }
 
-function filtrarAnalytics(){renderAN()}
+function filtrarAnalytics(){
+  var mf=document.getElementById("anMesFilter").value;
+  if(mf==="all")cargarAnalytics(false);
+  else cargarAnalytics(false,mf);
+}
 
 function fmm(n){return new Intl.NumberFormat("es-CO").format(n||0)}
 function lk(k){return k.split("-").reverse().join("/")}
 function mesNm(k){var p=k.split("-");var n=["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"];return n[Number(p[1])-1]+" "+p[0]}
 
 function renderAN(){
-  var d=AN_CACHE.data;if(!d)return;
-  var mf=document.getElementById("anMesFilter").value;
-  var base=d;
-  if(mf!=="all"&&d.porMes){
-    var mesData=d.porMes.find(function(m){return m.key===mf});
-    if(mesData)base=mesData;
-  }
+  var d=AN_CACHE.actual;if(!d)return;
+  var global=AN_CACHE.global||d;
   var kh=''
-    +'<div class="kpi"><div class="kpi-stripe" style="background:var(--ac)"></div><div class="kpi-label">Leads totales</div><div class="kpi-val" style="color:var(--ac)">'+fmm(base.totalLeads||0)+'</div></div>'
-    +'<div class="kpi"><div class="kpi-stripe" style="background:var(--purple)"></div><div class="kpi-label">Propuestas</div><div class="kpi-val" style="color:var(--purple)">'+fmm(base.propuestas||0)+'</div></div>'
-    +'<div class="kpi"><div class="kpi-stripe" style="background:var(--ok)"></div><div class="kpi-label">Clientes</div><div class="kpi-val" style="color:var(--ok)">'+fmm(base.clientes||0)+'</div></div>'
-    +'<div class="kpi"><div class="kpi-stripe" style="background:var(--gold)"></div><div class="kpi-label">Conversión</div><div class="kpi-val" style="color:var(--gold)">'+(base.tasaConversion||0)+'%</div></div>';
+    +'<div class="kpi"><div class="kpi-stripe" style="background:var(--ac)"></div><div class="kpi-label">Leads totales</div><div class="kpi-val" style="color:var(--ac)">'+fmm(d.totalLeads||0)+'</div></div>'
+    +'<div class="kpi"><div class="kpi-stripe" style="background:var(--purple)"></div><div class="kpi-label">Propuestas</div><div class="kpi-val" style="color:var(--purple)">'+fmm(d.propuestas||0)+'</div></div>'
+    +'<div class="kpi"><div class="kpi-stripe" style="background:var(--ok)"></div><div class="kpi-label">Clientes</div><div class="kpi-val" style="color:var(--ok)">'+fmm(d.clientes||0)+'</div></div>'
+    +'<div class="kpi"><div class="kpi-stripe" style="background:var(--gold)"></div><div class="kpi-label">Conversión</div><div class="kpi-val" style="color:var(--gold)">'+(d.tasaConversion||0)+'%</div></div>';
   document.getElementById("anKpis").innerHTML=kh;
-  drawFunnel(base);
-  drawTrend(d);
-  drawDonut("anCanal",base.porCanal||[]);
-  drawHBars("anCiudad",base.porCiudad||[]);
-  drawHBars("anEtapas",base.porEtapa||[]);
-  drawDonut("anDescartados",base.porDescarte||[]);
-  drawTable(d);
+  drawFunnel(d);
+  drawTrend(global);
+  drawDonut("anCanal",d.porCanal||[]);
+  drawHBars("anCiudad",d.porCiudad||[]);
+  drawHBars("anEtapas",d.porEtapa||[]);
+  drawDonut("anDescartados",d.porDescarte||[]);
+  drawTable(global);
 }
 
 function drawFunnel(b){
@@ -1554,21 +1561,44 @@ function drawFunnel(b){
 }
 
 function drawTrend(d){
-  var arr=(d.porMes||[]).slice(-8);
+  var arr=(d.porMes||[]).slice(-12);
   if(!arr.length){document.getElementById("anTrend").innerHTML='<p style="color:var(--tx3);font-size:11px;padding:20px;text-align:center">Sin datos</p>';return}
-  var max=Math.max.apply(null,arr.map(function(m){return m.totalLeads||0})) || 1;
-  var h='<div style="display:flex;align-items:flex-end;gap:5px;height:100px;margin-top:6px">';
-  arr.forEach(function(m){
-    var pct=(m.totalLeads||0)/max*100;
-    h+='<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px">';
-    h+='<div style="width:100%;background:var(--ac);border-radius:3px 3px 0 0;height:'+pct+'%;min-height:3px;position:relative;cursor:pointer" title="'+mesNm(m.key)+': '+m.totalLeads+' leads"></div>';
-    h+='</div>';
+  var W=100,H=100,padL=8,padR=4,padT=8,padB=18;
+  var plotW=W-padL-padR,plotH=H-padT-padB;
+  var maxLeads=Math.max.apply(null,arr.map(function(m){return m.totalLeads||0}))||1;
+  var maxCli=Math.max.apply(null,arr.map(function(m){return m.clientes||0}))||1;
+  var n=arr.length,stepX=n>1?plotW/(n-1):0,barW=plotW/n*0.45;
+  var pts=arr.map(function(m,i){
+    var x=padL+(n>1?i*stepX:plotW/2);
+    var y=padT+plotH-(m.totalLeads/maxLeads)*plotH;
+    return [x,y,m];
   });
-  h+='</div>';
-  h+='<div class="an-trend-val">';
-  arr.forEach(function(m){h+='<span>'+m.key.split("-")[1]+'</span>';});
-  h+='</div>';
-  document.getElementById("anTrend").innerHTML=h;
+  var pathD=pts.map(function(p,i){return (i===0?"M":"L")+p[0].toFixed(2)+" "+p[1].toFixed(2)}).join(" ");
+  var bars="";
+  pts.forEach(function(p){
+    var m=p[2];
+    var bh=m.clientes>0?(m.clientes/maxCli)*plotH*0.65:0;
+    var bx=p[0]-barW/2;
+    var by=padT+plotH-bh;
+    bars+='<rect x="'+bx.toFixed(2)+'" y="'+by.toFixed(2)+'" width="'+barW.toFixed(2)+'" height="'+bh.toFixed(2)+'" fill="var(--ok)" opacity="0.55" rx="0.6"></rect>';
+  });
+  var dots=pts.map(function(p){
+    return '<circle cx="'+p[0].toFixed(2)+'" cy="'+p[1].toFixed(2)+'" r="1.2" fill="var(--ac)" stroke="white" stroke-width="0.4"><title>'+mesNm(p[2].key)+': '+p[2].totalLeads+' leads, '+p[2].clientes+' clientes</title></circle>';
+  }).join("");
+  var labels=pts.map(function(p){
+    var lab=mesNm(p[2].key).split(" ")[0];
+    return '<text x="'+p[0].toFixed(2)+'" y="'+(H-4)+'" text-anchor="middle" font-size="3.2" fill="var(--tx3)">'+lab+'</text>';
+  }).join("");
+  var svg='<svg viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none" style="width:100%;height:160px;display:block;overflow:visible">'
+    +bars
+    +'<path d="'+pathD+'" fill="none" stroke="var(--ac)" stroke-width="0.7" stroke-dasharray="1.6 1.3" stroke-linecap="round" stroke-linejoin="round"/>'
+    +dots+labels
+    +'</svg>';
+  var legend='<div style="display:flex;gap:14px;justify-content:center;margin-top:8px;font-size:10px;color:var(--tx2)">'
+    +'<span style="display:inline-flex;align-items:center;gap:5px"><svg width="16" height="6" style="overflow:visible"><line x1="0" y1="3" x2="16" y2="3" stroke="var(--ac)" stroke-width="1.5" stroke-dasharray="3 2"/></svg>Leads totales</span>'
+    +'<span style="display:inline-flex;align-items:center;gap:5px"><span style="display:inline-block;width:9px;height:9px;background:var(--ok);opacity:0.55;border-radius:1px"></span>Clientes</span>'
+    +'</div>';
+  document.getElementById("anTrend").innerHTML=svg+legend;
 }
 
 function drawDonut(id,arr){
@@ -1576,13 +1606,33 @@ function drawDonut(id,arr){
   if(!arr.length){el.innerHTML='<p style="color:var(--tx3);font-size:11px;padding:14px">Sin datos</p>';return}
   var total=arr.reduce(function(a,b){return a+(b.count||0)},0);
   if(!total){el.innerHTML='<p style="color:var(--tx3);font-size:11px;padding:14px">Sin datos</p>';return}
-  var h='<div class="an-donut-legend">';
-  arr.slice(0,6).forEach(function(item,i){
+  var top=arr.slice(0,6);
+  var R=18,r=11,cx=22,cy=22;
+  var circ=2*Math.PI*R,acc=0;
+  var segs=top.map(function(item,i){
+    var pct=(item.count||0)/total;
+    var len=pct*circ;
+    var dasharray=len.toFixed(2)+" "+(circ-len).toFixed(2);
+    var dashoffset=(-acc).toFixed(2);
+    acc+=len;
+    return '<circle cx="'+cx+'" cy="'+cy+'" r="'+R+'" fill="none" stroke="'+AC[i%AC.length]+'" stroke-width="'+(R-r)+'" stroke-dasharray="'+dasharray+'" stroke-dashoffset="'+dashoffset+'" transform="rotate(-90 '+cx+' '+cy+')"><title>'+item.name+': '+item.count+' ('+Math.round(pct*100)+'%)</title></circle>';
+  }).join("");
+  var bigPct=top[0]?Math.round((top[0].count||0)/total*100):0;
+  var bigName=top[0]?top[0].name:"";
+  var bigNameShort=bigName.length>9?bigName.substring(0,9)+"…":bigName;
+  var svg='<svg viewBox="0 0 44 44" style="width:104px;height:104px;flex-shrink:0">'
+    +'<circle cx="'+cx+'" cy="'+cy+'" r="'+R+'" fill="none" stroke="var(--sf2)" stroke-width="'+(R-r)+'"/>'
+    +segs
+    +'<text x="'+cx+'" y="'+(cy)+'" text-anchor="middle" font-size="7.5" font-weight="800" fill="var(--tx1)">'+bigPct+'%</text>'
+    +'<text x="'+cx+'" y="'+(cy+5)+'" text-anchor="middle" font-size="2.8" fill="var(--tx3)">'+bigNameShort+'</text>'
+    +'</svg>';
+  var legend='<div style="flex:1;display:flex;flex-direction:column;gap:7px;font-size:11px;min-width:0">';
+  top.forEach(function(item,i){
     var pct=Math.round((item.count||0)/total*100);
-    h+='<div class="an-donut-item"><span class="an-donut-dot" style="background:'+AC[i%AC.length]+'"></span><span style="flex:1">'+(item.name||"—")+'</span><span class="an-donut-val">'+fmm(item.count)+' ('+pct+'%)</span></div>';
+    legend+='<div style="display:flex;align-items:center;gap:7px"><span style="width:9px;height:9px;border-radius:50%;background:'+AC[i%AC.length]+';flex-shrink:0"></span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="'+item.name+'">'+(item.name||"—")+'</span><span style="font-weight:700">'+fmm(item.count)+'</span><span style="color:var(--tx3);min-width:30px;text-align:right">'+pct+'%</span></div>';
   });
-  h+='</div>';
-  el.innerHTML=h;
+  legend+='</div>';
+  el.innerHTML='<div style="display:flex;align-items:center;gap:14px;padding:8px 6px">'+svg+legend+'</div>';
 }
 
 function drawHBars(id,arr){
@@ -1599,11 +1649,12 @@ function drawHBars(id,arr){
 }
 
 function drawTable(d){
-  var arr=d.porMes||[];
+  var arr=(d.porMes||[]).slice();
   if(!arr.length){document.getElementById("anTabla").innerHTML='<p style="color:var(--tx3);font-size:11px;padding:10px">Sin datos</p>';return}
   var h='<table class="an-tbl"><thead><tr><th>Mes</th><th class="num">Leads</th><th class="num">Contactados</th><th class="num">Propuestas</th><th class="num">Clientes</th><th class="num">Conv. %</th></tr></thead><tbody>';
-  arr.slice().reverse().forEach(function(m){
-    h+='<tr><td style="font-weight:700">'+mesNm(m.key)+'</td><td class="num">'+fmm(m.totalLeads)+'</td><td class="num">'+fmm(m.contactados||0)+'</td><td class="num">'+fmm(m.propuestas||0)+'</td><td class="num">'+fmm(m.clientes||0)+'</td><td class="num">'+(m.tasaConversion||0)+'%</td></tr>';
+  arr.forEach(function(m,i){
+    var color=AC[i%AC.length];
+    h+='<tr style="border-left:3px solid '+color+'"><td style="font-weight:700;padding-left:10px">'+mesNm(m.key)+'</td><td class="num">'+fmm(m.totalLeads)+'</td><td class="num">'+fmm(m.contactados||0)+'</td><td class="num">'+fmm(m.propuestas||0)+'</td><td class="num">'+fmm(m.clientes||0)+'</td><td class="num">'+(m.tasaConversion||0)+'%</td></tr>';
   });
   h+='</tbody></table>';
   document.getElementById("anTabla").innerHTML=h;

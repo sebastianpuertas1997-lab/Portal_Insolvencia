@@ -1457,16 +1457,49 @@ function exportarPDFComisiones(){
 // ====================== ANALYTICS ======================
 var AN_CACHE={},AC=["#3b5bdb","#c9a449","#16a34a","#f59e0b","#c92a2a","#7048e8","#1971c2","#e67700","#2b8a3e","#9ba3bf"];
 
+function adaptAN(d){
+  function mapLV(arr){return (arr||[]).map(function(x){return {name:x.label,count:x.value}})}
+  var mesMap={};
+  function add(arr,key){(arr||[]).forEach(function(x){if(!mesMap[x.label])mesMap[x.label]={key:x.label,totalLeads:0,propuestas:0,clientes:0,descartados:0,contactados:0};mesMap[x.label][key]=x.value})}
+  add(d.leadsPorMes,"totalLeads");
+  add(d.propPorMes,"propuestas");
+  add(d.clientesPorMes,"clientes");
+  add(d.descPorMes,"descartados");
+  var porMes=Object.keys(mesMap).sort().map(function(k){
+    var m=mesMap[k];
+    m.contactados=Math.max(0,m.totalLeads-m.descartados);
+    m.tasaConversion=m.totalLeads?Math.round(m.clientes/m.totalLeads*100):0;
+    return m;
+  });
+  var totalDesc=(d.funnel&&d.funnel.descartados)||0;
+  var totalProp=(d.funnel&&d.funnel.propuestas)||0;
+  var totalCli=d.totalClientes||0;
+  var totalLeads=d.totalLeads||0;
+  return {
+    ok:d.ok,
+    totalLeads:totalLeads,
+    propuestas:totalProp,
+    clientes:totalCli,
+    contactados:Math.max(0,totalLeads-totalDesc),
+    tasaConversion:totalLeads?Math.round(totalCli/totalLeads*100):0,
+    porMes:porMes,
+    porCanal:mapLV(d.leadsPorCanal),
+    porCiudad:mapLV(d.leadsPorCiudad),
+    porEtapa:mapLV(d.leadsPorEtapa),
+    porDescarte:mapLV(d.descartados)
+  };
+}
+
 function cargarAnalytics(force){
   if(AN_CACHE.data&&!force){renderAN();return}
   var el=document.getElementById("anKpis");
   if(el)el.innerHTML='<div class="skel-card" style="grid-column:1/-1;padding:20px"><div class="skel skel-line" style="width:60%"></div><div class="skel skel-line" style="width:40%"></div></div>';
   callAPI("action=analytics&key="+enc(KEY)).then(function(d){
     if(!d.ok){showMsg("anMsg",d.error||"Error","err");return}
-    AN_CACHE.data=d;
+    AN_CACHE.data=adaptAN(d);
     var sel=document.getElementById("anMesFilter");
-    if(sel&&sel.options.length<=1&&d.porMes){
-      d.porMes.forEach(function(m){
+    if(sel&&sel.options.length<=1){
+      AN_CACHE.data.porMes.forEach(function(m){
         var o=document.createElement("option");o.value=m.key;o.text=mesNm(m.key);sel.add(o);
       });
     }
